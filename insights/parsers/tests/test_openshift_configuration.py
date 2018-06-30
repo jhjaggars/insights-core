@@ -201,12 +201,14 @@ volumeConfig:
 
 def test_ose_node_config():
     result = openshift_configuration.OseMasterConfig(context_wrap(MASTER_CONFIG))
-    assert result.data['assetConfig']['masterPublicURL'] == 'https://master.ose.com:8443'
-    assert result.data['corsAllowedOrigins'][1] == 'localhost'
-    assert result.data['projectConfig']['defaultNodeSelector'] == ""
+    assert (
+        result.data["assetConfig"]["masterPublicURL"] == "https://master.ose.com:8443"
+    )
+    assert result.data["corsAllowedOrigins"][1] == "localhost"
+    assert result.data["projectConfig"]["defaultNodeSelector"] == ""
 
 
 def test_ose_master_config():
     result = openshift_configuration.OseNodeConfig(context_wrap(NODE_CONFIG))
-    assert result.data['apiVersion'] == "v1"
-    assert result.data['masterClientConnectionOverrides']['burst'] == 200
+    assert result.data["apiVersion"] == "v1"
+    assert result.data["masterClientConnectionOverrides"]["burst"] == 200

@@ -99,6 +99,7 @@ from insights.specs import Specs
 @parser(Specs.xinetd_conf)
 class XinetdConf(LegacyItemAccess, Parser):
     """Parse contents of file ``/etc/xinetd.conf`` and ``/etc/xinetd.d/*``."""
+
     def parse_content(self, content):
         self.data = {}
         self.is_valid = True
@@ -127,4 +128,4 @@ class XinetdConf(LegacyItemAccess, Parser):
             else:
                 self.is_valid = False
                 break
-        self.is_includedir = '/etc/xinetd.d' == self.data.get('includedir')
+        self.is_includedir = "/etc/xinetd.d" == self.data.get("includedir")

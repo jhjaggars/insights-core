@@ -52,6 +52,7 @@ class ThpUseZeroPage(Parser):
     Attributes:
         use_zero_page (str): The setting, should be 0 or 1.
     """
+
     def parse_content(self, content):
         self.use_zero_page = " ".join(content).strip()
 
@@ -67,6 +68,7 @@ class ThpEnabled(Parser):
         line (str): Contents of the input file.
         active_option (str): The active option for transparent huge pages, or `None` if not present.
     """
+
     def parse_content(self, content):
         self.line = " ".join(content).strip()
         self.active_option = None

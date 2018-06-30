@@ -90,36 +90,38 @@ class AllVirtWhoConf(object):
         self.background = False
         self.oneshot = True
         self.interval = 3600
-        self.sm_type = 'cp'  # report to Red Hat Customer Portal by default
+        self.sm_type = "cp"  # report to Red Hat Customer Portal by default
         self.hypervisors = []
         self.hypervisor_types = []
 
         # Check VirtWhoConf at first
         types = set()
         for c in vwc:
-            if c.has_option('global', 'oneshot'):
-                self.oneshot = c.getboolean('global', 'oneshot')
-            if c.has_option('global', 'interval'):
-                self.interval = c.getint('global', 'interval')
+            if c.has_option("global", "oneshot"):
+                self.oneshot = c.getboolean("global", "oneshot")
+            if c.has_option("global", "interval"):
+                self.interval = c.getint("global", "interval")
             for section in c.sections():
                 # Check Hypervisor back-ends
-                if c.has_option(section, 'type'):
-                    hyper = {'name': section}
+                if c.has_option(section, "type"):
+                    hyper = {"name": section}
                     hyper.update(c.items(section))
-                    types.add(hyper['type'])
+                    types.add(hyper["type"])
                     self.hypervisors.append(hyper)
         self.hypervisor_types = list(types)
 
-        self.background = ('1' == svw.get('VIRTWHO_BACKGROUND'))
-        ost = svw.get('VIRTWHO_ONE_SHOT')
-        self.oneshot = (ost == '1') if ost else self.oneshot
-        itv = svw.get('VIRTWHO_INTERVAL')
+        self.background = "1" == svw.get("VIRTWHO_BACKGROUND")
+        ost = svw.get("VIRTWHO_ONE_SHOT")
+        self.oneshot = (ost == "1") if ost else self.oneshot
+        itv = svw.get("VIRTWHO_INTERVAL")
         self.interval = int(itv) if itv and itv.isdigit() else self.interval
 
         # Check which subscription manager will report to
-        if svw.get('VIRTWHO_SAM') == '1':
-            self.sm_type = 'sam'  # report to SAM
-        elif svw.get('VIRTWHO_SATELLITE6') == '1':
-            self.sm_type = 'sat6'  # report to Satellite 6
-        elif svw.get('VIRTWHO_SATELLITE5') == '1' or svw.get('VIRTWHO_SATELLITE') == '1':
-            self.sm_type = 'sat5'  # report to Satellite 5
+        if svw.get("VIRTWHO_SAM") == "1":
+            self.sm_type = "sam"  # report to SAM
+        elif svw.get("VIRTWHO_SATELLITE6") == "1":
+            self.sm_type = "sat6"  # report to Satellite 6
+        elif (
+            svw.get("VIRTWHO_SATELLITE5") == "1" or svw.get("VIRTWHO_SATELLITE") == "1"
+        ):
+            self.sm_type = "sat5"  # report to Satellite 5

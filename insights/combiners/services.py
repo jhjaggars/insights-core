@@ -41,6 +41,7 @@ class Services(object):
     * ``service_line(service_name)`` returns the actual line that contained
       the service name.
     """
+
     def __init__(self, chk_config, unit_files):
         self.services = {}
         self.parsed_lines = {}
@@ -65,8 +66,9 @@ class Services(object):
         Returns:
             bool: True if service is enabled, False otherwise.
         """
-        return self.services.get(service_name + '.service',
-                                 self.services.get(service_name, False))
+        return self.services.get(
+            service_name + ".service", self.services.get(service_name, False)
+        )
 
     def service_line(self, service_name):
         """
@@ -79,8 +81,9 @@ class Services(object):
         Returns:
             str: True if service is enabled, False otherwise.
         """
-        return self.parsed_lines.get(service_name + '.service',
-                                     self.parsed_lines.get(service_name, ''))
+        return self.parsed_lines.get(
+            service_name + ".service", self.parsed_lines.get(service_name, "")
+        )
 
     def __contains__(self, service_name):
         """

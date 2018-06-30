@@ -29,31 +29,38 @@ def test_ls_etc():
     list_etc = ls_etc.LsEtc(context_wrap(LS_ETC))
     assert "/etc/sysconfig" in list_etc
     assert len(list_etc.files_of("/etc/sysconfig")) == 3
-    assert list_etc.files_of("/etc/sysconfig") == ['ebtables-config', 'firewalld', 'grub']
-    assert list_etc.dirs_of("/etc/sysconfig") == ['.', '..', 'cbq', 'console']
+    assert list_etc.files_of("/etc/sysconfig") == [
+        "ebtables-config",
+        "firewalld",
+        "grub",
+    ]
+    assert list_etc.dirs_of("/etc/sysconfig") == [".", "..", "cbq", "console"]
     assert list_etc.specials_of("/etc/sysconfig") == []
     assert list_etc.total_of("/etc/sysconfig") == 96
     grub = list_etc.dir_entry("/etc/sysconfig", "grub")
     assert grub is not None
     assert grub == {
-        'group': '0',
-        'name': 'grub',
-        'links': 1,
-        'perms': 'rwxrwxrwx.',
-        'raw_entry': 'lrwxrwxrwx.  1 0 0   17 Jul  6 23:32 grub -> /etc/default/grub',
-        'owner': '0',
-        'link': '/etc/default/grub',
-        'date': 'Jul  6 23:32',
-        'type': 'l',
-        'size': 17,
-        'dir': '/etc/sysconfig'}
-    assert list_etc.files_of("/etc/rc.d/rc3.d") == ['K50netconsole',
-                                                  'S10network', 'S97rhnsd']
+        "group": "0",
+        "name": "grub",
+        "links": 1,
+        "perms": "rwxrwxrwx.",
+        "raw_entry": "lrwxrwxrwx.  1 0 0   17 Jul  6 23:32 grub -> /etc/default/grub",
+        "owner": "0",
+        "link": "/etc/default/grub",
+        "date": "Jul  6 23:32",
+        "type": "l",
+        "size": 17,
+        "dir": "/etc/sysconfig",
+    }
+    assert list_etc.files_of("/etc/rc.d/rc3.d") == [
+        "K50netconsole",
+        "S10network",
+        "S97rhnsd",
+    ]
 
 
 def test_ls_etc_documentation():
     failed_count, tests = doctest.testmod(
-        ls_etc,
-        globs={'ls_etc': ls_etc.LsEtc(context_wrap(LS_ETC))}
+        ls_etc, globs={"ls_etc": ls_etc.LsEtc(context_wrap(LS_ETC))}
     )
     assert failed_count == 0

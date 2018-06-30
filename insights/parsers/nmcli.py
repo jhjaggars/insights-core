@@ -125,11 +125,11 @@ class NmcliDevShow(CommandParser, LegacyItemAccess):
             if not ("not found" in line or "Error" in line or "No such file" in line):
                 key, val = line.split(": ")
                 if "IP" in key:
-                    proto = re.sub(r'\[|\]', r'', key.split('.')[1])
-                    key = key.split('.')[0] + "_" + proto
+                    proto = re.sub(r"\[|\]", r"", key.split(".")[1])
+                    key = key.split(".")[0] + "_" + proto
                 else:
-                    key = key.split('.')[1]
-                val = re.sub(r'\d+\s|\(|\)', r'', val.strip())
+                    key = key.split(".")[1]
+                val = re.sub(r"\d+\s|\(|\)", r"", val.strip())
 
                 # Device configuration details starts here
                 if key == "DEVICE" and not current_dev:
@@ -150,6 +150,6 @@ class NmcliDevShow(CommandParser, LegacyItemAccess):
         """(list): The list of devices who's state is connected and managed by NetworkManager"""
         con_dev = []
         for key in self.data:
-            if 'STATE' in self.data[key] and self.data[key]['STATE'] == 'connected':
+            if "STATE" in self.data[key] and self.data[key]["STATE"] == "connected":
                 con_dev.append(key)
         return con_dev

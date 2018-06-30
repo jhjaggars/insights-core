@@ -49,7 +49,7 @@ def test_xen():
 
 def test_error_handling():
     v = VirtWhat(context_wrap(errors[0]))
-    assert v.generic == ''
+    assert v.generic == ""
     assert v.specifics == []
     assert v.is_virtual is None
     assert v.is_physical is None

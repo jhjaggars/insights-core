@@ -4,7 +4,7 @@ from insights.specs import Specs
 
 @parser(Specs.systemid)
 class SystemID(XMLParser):
-    '''
+    """
     ---------------
     Return a SystemId object which contains a dict below:
         {
@@ -77,14 +77,14 @@ class SystemID(XMLParser):
     </struct></value>
     </param>
     </params>
-    '''
+    """
 
     def parse_dom(self):
         systemid_info = {}
 
         for member in self.dom.findall(".//member"):
             # ignore "fields" infos
-            if member[0].text != 'fields':
+            if member[0].text != "fields":
                 key = member[0].text
                 value = member[1][0].text
                 systemid_info[key] = value

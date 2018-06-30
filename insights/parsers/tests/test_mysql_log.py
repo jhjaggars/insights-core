@@ -27,4 +27,4 @@ def test_mysql_log():
     log = MysqlLog(context_wrap(MYSQL_LOG))
     assert len(log.get("[Warning]")) == 9
     assert len(log.get("[Note]")) == 2
-    assert 'ready for connections' in log
+    assert "ready for connections" in log

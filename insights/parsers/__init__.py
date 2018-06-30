@@ -13,6 +13,7 @@ class ParseException(Exception):
     is thrown, the exception message and data are logged and no
     parser output data is saved.
     """
+
     pass
 
 
@@ -24,6 +25,7 @@ class SkipException(SkipComponent):
     signal to the infrastructure that the parser's output should not be
     retained.
     """
+
     pass
 
 
@@ -53,10 +55,12 @@ def get_active_lines(lines, comment_char="#"):
         >>> get_active_lines(lines)
         ['First line', 'Inline comment', 'Whitespace', 'Last line']
     """
-    return list(filter(None, (line.split(comment_char, 1)[0].strip() for line in lines)))
+    return list(
+        filter(None, (line.split(comment_char, 1)[0].strip() for line in lines))
+    )
 
 
-def optlist_to_dict(optlist, opt_sep=',', kv_sep='=', strip_quotes=False):
+def optlist_to_dict(optlist, opt_sep=",", kv_sep="=", strip_quotes=False):
     """Parse an option list into a dictionary.
 
     Takes a list of options separated by ``opt_sep`` and places them into
@@ -85,6 +89,7 @@ def optlist_to_dict(optlist, opt_sep=',', kv_sep='=', strip_quotes=False):
         >>> optlist_to_dict(optlist)
         {'rw': True, 'ro': True, 'rsize': '32168', 'xyz': True}
     """
+
     def make_kv(opt):
         if kv_sep is not None and kv_sep in opt:
             k, v = opt.split(kv_sep, 1)
@@ -98,7 +103,14 @@ def optlist_to_dict(optlist, opt_sep=',', kv_sep='=', strip_quotes=False):
     return dict(make_kv(opt) for opt in optlist.split(opt_sep))
 
 
-def split_kv_pairs(lines, comment_char="#", filter_string=None, split_on="=", use_partition=False, ordered=False):
+def split_kv_pairs(
+    lines,
+    comment_char="#",
+    filter_string=None,
+    split_on="=",
+    use_partition=False,
+    ordered=False,
+):
     """Split lines of a list into key/value pairs
 
     Use this function to filter and split all lines of a list of strings into
@@ -160,8 +172,14 @@ def split_kv_pairs(lines, comment_char="#", filter_string=None, split_on="=", us
         OrderedDict([('keyword1', 'value1'), ('keyword2', 'value2a=True, value2b=100M'), ('keyword3', '')])
 
     """
-    _lines = lines if comment_char is None else get_active_lines(lines, comment_char=comment_char)
-    _lines = _lines if filter_string is None else [l for l in _lines if filter_string in l]
+    _lines = (
+        lines
+        if comment_char is None
+        else get_active_lines(lines, comment_char=comment_char)
+    )
+    _lines = (
+        _lines if filter_string is None else [l for l in _lines if filter_string in l]
+    )
     kv_pairs = OrderedDict() if ordered else {}
 
     for line in _lines:
@@ -175,7 +193,7 @@ def split_kv_pairs(lines, comment_char="#", filter_string=None, split_on="=", us
     return kv_pairs
 
 
-def unsplit_lines(lines, cont_char='\\', keep_cont_char=False):
+def unsplit_lines(lines, cont_char="\\", keep_cont_char=False):
     """Recombine lines having a continuation character at end.
 
     Generator that recombines lines in the list that have the char `cont_char`
@@ -213,10 +231,10 @@ def unsplit_lines(lines, cont_char='\\', keep_cont_char=False):
         if line.endswith(cont_char):
             unsplit_lines.append(line if keep_cont_char else line[:-1])
         else:
-            yield ''.join(unsplit_lines) + line
+            yield "".join(unsplit_lines) + line
             unsplit_lines = []
     if unsplit_lines:
-        yield ''.join(unsplit_lines)
+        yield "".join(unsplit_lines)
 
 
 def calc_offset(lines, target, invert_search=False):
@@ -267,20 +285,21 @@ def calc_offset(lines, target, invert_search=False):
             found_any = any([line.startswith(t) for t in target])
             if not invert_search and found_any:
                 return offset
-            elif invert_search and not(line == '' or found_any):
+            elif invert_search and not (line == "" or found_any):
                 return offset
 
         # If we get here then we didn't find any of the targets
-        raise ValueError("Line containing '{}' was not found in table".format(','.join(target)))
+        raise ValueError(
+            "Line containing '{}' was not found in table".format(",".join(target))
+        )
     else:
         # If no target then return index 0
         return 0
 
 
-def parse_fixed_table(table_lines,
-                      heading_ignore=[],
-                      header_substitute=[],
-                      trailing_ignore=[]):
+def parse_fixed_table(
+    table_lines, heading_ignore=[], header_substitute=[], trailing_ignore=[]
+):
     """
     Function to parse table data containing column headings in the first row and
     data in fixed positions in each remaining row of table data.
@@ -326,9 +345,9 @@ def parse_fixed_table(table_lines,
     """
     first_line = calc_offset(table_lines, heading_ignore)
     try:
-        last_line = len(table_lines) - calc_offset(reversed(table_lines),
-                                                   trailing_ignore,
-                                                   invert_search=True)
+        last_line = len(table_lines) - calc_offset(
+            reversed(table_lines), trailing_ignore, invert_search=True
+        )
     except ValueError:
         last_line = len(table_lines)
 
@@ -340,26 +359,28 @@ def parse_fixed_table(table_lines,
     col_index = [header.index(c) for c in col_headers]
 
     table_data = []
-    for line in table_lines[first_line + 1:last_line]:
+    for line in table_lines[first_line + 1 : last_line]:
         col_data = dict(
-            (col_headers[c], line[col_index[c]:col_index[c + 1]].strip())
+            (col_headers[c], line[col_index[c] : col_index[c + 1]].strip())
             for c in range(len(col_index) - 1)
         )
-        col_data[col_headers[-1]] = line[col_index[-1]:].strip()
+        col_data[col_headers[-1]] = line[col_index[-1] :].strip()
         table_data.append(col_data)
 
     return table_data
 
 
-def parse_delimited_table(table_lines,
-                          delim=None,
-                          max_splits=-1,
-                          strip=True,
-                          header_delim='same as delimiter',
-                          heading_ignore=None,
-                          header_substitute=None,
-                          trailing_ignore=None,
-                          raw_line_key=None):
+def parse_delimited_table(
+    table_lines,
+    delim=None,
+    max_splits=-1,
+    strip=True,
+    header_delim="same as delimiter",
+    heading_ignore=None,
+    header_substitute=None,
+    trailing_ignore=None,
+    raw_line_key=None,
+):
     """
     Parses table-like text.  Uses the first (non-ignored) row as the list of
     column names, which cannot contain the delimiter.  Fields cannot contain
@@ -410,21 +431,21 @@ def parse_delimited_table(table_lines,
     try:
         # Ignore everything before the heading in this search
         last_line = len(table_lines) - calc_offset(
-            reversed(table_lines[first_line + 1:]), trailing_ignore, invert_search=True
+            reversed(table_lines[first_line + 1 :]), trailing_ignore, invert_search=True
         )
     except ValueError:
         # We seem to have run out of content before we found something we
         # wanted - return an empty list.
         return []
 
-    if header_delim == 'same as delimiter':
+    if header_delim == "same as delimiter":
         header_delim = delim
     header = table_lines[first_line]
     if header_substitute:
         for old_val, new_val in header_substitute:
             header = header.replace(old_val, new_val)
 
-    content = table_lines[first_line + 1:last_line]
+    content = table_lines[first_line + 1 : last_line]
     headings = [c.strip() if strip else c for c in header.split(header_delim)]
     r = []
     for row in content:
@@ -492,23 +513,23 @@ def keyword_search(rows, **kwargs):
     # Allows us to transform the key and do lookups like __contains and
     # __startswith
     matchers = {
-        'default': lambda s, v: s == v,
-        'contains': lambda s, v: v in s,
-        'startswith': lambda s, v: s.startswith(v),
-        'lower_value': lambda s, v: s.lower() == v.lower(),
+        "default": lambda s, v: s == v,
+        "contains": lambda s, v: v in s,
+        "startswith": lambda s, v: s.startswith(v),
+        "lower_value": lambda s, v: s.lower() == v.lower(),
     }
 
     def key_match(row, key, value):
         # Translate ' ' and '-' of keys in dict to '_' to match keyword arguments.
         my_row = {}
         for my_key, val in row.items():
-            my_row[my_key.replace(' ', '_').replace('-', '_')] = val
-        matcher_fn = matchers['default']
-        if '__' in key:
-            key, matcher = key.split('__', 1)
+            my_row[my_key.replace(" ", "_").replace("-", "_")] = val
+        matcher_fn = matchers["default"]
+        if "__" in key:
+            key, matcher = key.split("__", 1)
             if matcher not in matchers:
                 # put key back the way we found it, matcher fn unchanged
-                key = key + '__' + matcher
+                key = key + "__" + matcher
             else:
                 matcher_fn = matchers[matcher]
         return key in my_row and matcher_fn(my_row[key], value)

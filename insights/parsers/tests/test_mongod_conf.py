@@ -96,33 +96,34 @@ def test_mongodb_conf():
     result = MongodbConf(context_wrap(YAML_CONF))
     assert result.get("security") is None
     assert result.get("processManagement") == {
-            'fork': True,
-            'pidFilePath': '/var/run/mongodb/mongod.pid'}
+        "fork": True,
+        "pidFilePath": "/var/run/mongodb/mongod.pid",
+    }
     assert result.is_yaml is True
     assert result.port == 27017
     assert result.bindip is None
-    assert result.dbpath == '/var/lib/mongo'
+    assert result.dbpath == "/var/lib/mongo"
     assert result.fork is True
-    assert result.pidfilepath == '/var/run/mongodb/mongod.pid'
-    assert result.syslog == 'file'
-    assert result.logpath == '/var/log/mongodb/mongod.log'
+    assert result.pidfilepath == "/var/run/mongodb/mongod.pid"
+    assert result.syslog == "file"
+    assert result.logpath == "/var/log/mongodb/mongod.log"
 
     result = MongodbConf(context_wrap(NORMAL_CONF))
     assert result.is_yaml is False
     assert result.port is None
-    assert result.bindip == '127.0.0.1'
-    assert result.dbpath == '/var/lib/mongodb'
-    assert result.fork == 'true'
-    assert result.pidfilepath == '/var/run/mongodb/mongodb.pid'
+    assert result.bindip == "127.0.0.1"
+    assert result.dbpath == "/var/lib/mongodb"
+    assert result.fork == "true"
+    assert result.pidfilepath == "/var/run/mongodb/mongodb.pid"
     assert result.syslog is None
-    assert result.logpath == '/var/log/mongodb/mongodb.log'
-    assert result.get("abc") == ''
+    assert result.logpath == "/var/log/mongodb/mongodb.log"
+    assert result.get("abc") == ""
     assert result.get("def") is None
 
     result = MongodbConf(context_wrap(NORMAL_CONF_V1))
     assert result.is_yaml is False
     assert len(result.data) == 2
-    assert result.get("logappend") == 'true'
+    assert result.get("logappend") == "true"
 
     with pytest.raises(ParseException) as e:
         MongodbConf(context_wrap(YAML_CONF_UNPARSABLE))

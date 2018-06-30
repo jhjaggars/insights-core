@@ -13,6 +13,6 @@ MULTICAST_QUERIER = """
 
 def test_mcast_queri():
     result = MulticastQuerier(context_wrap(MULTICAST_QUERIER))
-    assert result.bri_val == {'br0': 0, 'br1': 1, 'br2': 0}
-    assert result.bri_val['br1'] == 1
+    assert result.bri_val == {"br0": 0, "br1": 1, "br2": 0}
+    assert result.bri_val["br1"] == 1
     assert len(result.bri_val) == 3

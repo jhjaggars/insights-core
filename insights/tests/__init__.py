@@ -33,7 +33,13 @@ def unordered_compare(result, expected):
     Deep compare rule reducer results when testing.  Developed to find
     arbitrarily nested lists and remove differences based on ordering.
     """
-    logger.debug("--Comparing-- (%s) %s to (%s) %s", type(result), result, type(expected), expected)
+    logger.debug(
+        "--Comparing-- (%s) %s to (%s) %s",
+        type(result),
+        result,
+        type(expected),
+        expected,
+    )
 
     if isinstance(result, dict) and expected is None:
         assert result["type"] == "skip", result
@@ -77,23 +83,31 @@ def integrate(input_data, component):
     return run_test(component, input_data)
 
 
-def context_wrap(lines,
-                 path="path",
-                 hostname=DEFAULT_HOSTNAME,
-                 release=DEFAULT_RELEASE,
-                 version="-1.-1",
-                 machine_id="machine_id",
-                 strip=True,
-                 **kwargs):
+def context_wrap(
+    lines,
+    path="path",
+    hostname=DEFAULT_HOSTNAME,
+    release=DEFAULT_RELEASE,
+    version="-1.-1",
+    machine_id="machine_id",
+    strip=True,
+    **kwargs
+):
     if isinstance(lines, six.string_types):
         if strip:
             lines = lines.strip()
         lines = lines.splitlines()
 
-    return Context(content=lines,
-                   path=path, hostname=hostname,
-                   release=release, version=version.split("."),
-                   machine_id=machine_id, relative_path=path, **kwargs)
+    return Context(
+        content=lines,
+        path=path,
+        hostname=hostname,
+        release=release,
+        version=version.split("."),
+        machine_id=machine_id,
+        relative_path=path,
+        **kwargs
+    )
 
 
 input_data_cache = {}
@@ -103,10 +117,7 @@ counter = itertools.count()
 
 
 def create_metadata(system_id, product):
-    ctx_metadata = {
-        "system_id": system_id,
-        "links": []
-    }
+    ctx_metadata = {"system_id": system_id, "links": []}
     ctx_metadata["type"] = product.role
     ctx_metadata["product"] = product.__class__.__name__
     return json.dumps(ctx_metadata)
@@ -132,6 +143,7 @@ class InputData(object):
     contain the specified value in the context.path field.  This is useful for
     testing pattern-like file parsers.
     """
+
     def __init__(self, name=None, hostname=None):
         cnt = input_data_cache.get(name, 0)
         self.name = "{0}-{1:0>5}".format(name, cnt)
@@ -284,6 +296,7 @@ def archive_provider(component, test_func=unordered_compare, stride=1):
 
     [1] insights.tests.unordered_compare()
     """
+
     def _wrap(func):
         @six.wraps(func)
         def __wrap(stride=stride):
@@ -293,4 +306,5 @@ def archive_provider(component, test_func=unordered_compare, stride=1):
         __wrap.stride = stride
         ARCHIVE_GENERATORS.append(__wrap)
         return __wrap
+
     return _wrap

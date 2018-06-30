@@ -1,13 +1,16 @@
 import pytest
 import warnings
 from insights.tests import unordered_compare
-from insights.core.dr import split_requirements, stringify_requirements, get_missing_requirements
+from insights.core.dr import (
+    split_requirements,
+    stringify_requirements,
+    get_missing_requirements,
+)
 from insights.core import context
 from insights.util import case_variants, deprecated
 
 
 class t(object):
-
     def __init__(self, n):
         self.serializable_id = self.n = n
 
@@ -114,21 +117,43 @@ def test_deep_nest():
 
 
 def test_case_variants():
-    filter_list = ['Ciphers', 'MACs', 'UsePAM', 'MaxAuthTries', 'nt pipe support',
-                   'A-Dash-SEPARATED-tESt-tEST-tesT-test-ExAMPle']
-    expanded_list = ['Ciphers', 'ciphers', 'CIPHERS',
-                     'MACs', 'Macs', 'macs', 'MACS',
-                     'UsePAM', 'UsePam', 'usepam', 'USEPAM', 'Usepam',
-                     'MaxAuthTries', 'maxauthtries', 'MAXAUTHTRIES', 'Maxauthtries',
-                     'nt pipe support', 'NT PIPE SUPPORT', 'Nt Pipe Support',
-                     'A-Dash-SEPARATED-tESt-tEST-tesT-test-ExAMPle',
-                     'A-Dash-Separated-tEst-tEst-tesT-test-ExAmple',
-                     'a-dash-separated-test-test-test-test-example',
-                     'A-DASH-SEPARATED-TEST-TEST-TEST-TEST-EXAMPLE',
-                     'A-Dash-Separated-Test-Test-Test-Test-Example']
+    filter_list = [
+        "Ciphers",
+        "MACs",
+        "UsePAM",
+        "MaxAuthTries",
+        "nt pipe support",
+        "A-Dash-SEPARATED-tESt-tEST-tesT-test-ExAMPle",
+    ]
+    expanded_list = [
+        "Ciphers",
+        "ciphers",
+        "CIPHERS",
+        "MACs",
+        "Macs",
+        "macs",
+        "MACS",
+        "UsePAM",
+        "UsePam",
+        "usepam",
+        "USEPAM",
+        "Usepam",
+        "MaxAuthTries",
+        "maxauthtries",
+        "MAXAUTHTRIES",
+        "Maxauthtries",
+        "nt pipe support",
+        "NT PIPE SUPPORT",
+        "Nt Pipe Support",
+        "A-Dash-SEPARATED-tESt-tEST-tesT-test-ExAMPle",
+        "A-Dash-Separated-tEst-tEst-tesT-test-ExAmple",
+        "a-dash-separated-test-test-test-test-example",
+        "A-DASH-SEPARATED-TEST-TEST-TEST-TEST-EXAMPLE",
+        "A-Dash-Separated-Test-Test-Test-Test-Example",
+    ]
     assert case_variants(*filter_list) == expanded_list
 
-    assert case_variants('hosts:') == ['hosts:', 'HOSTS:', 'Hosts:']
+    assert case_variants("hosts:") == ["hosts:", "HOSTS:", "Hosts:"]
 
 
 def test_deprecated():
@@ -142,7 +167,7 @@ def test_deprecated():
     assert normal_fn() == 1
 
     # For all remaining tests, cause the warnings to always be caught
-    warnings.simplefilter('always')
+    warnings.simplefilter("always")
 
     with warnings.catch_warnings(record=True) as w:
         assert deprecated_fn() == 3

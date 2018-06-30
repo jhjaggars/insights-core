@@ -57,13 +57,13 @@ from insights.parsers import ParseException
 from insights.specs import Specs
 
 BOND_PREFIX_MAP = {
-    'load balancing (round-robin)': '0',
-    'fault-tolerance (active-backup)': '1',
-    'load balancing (xor)': '2',
-    'fault-tolerance (broadcast)': '3',
-    'IEEE 802.3ad Dynamic link aggregation': '4',
-    'transmit load balancing': '5',
-    'adaptive load balancing': '6'
+    "load balancing (round-robin)": "0",
+    "fault-tolerance (active-backup)": "1",
+    "load balancing (xor)": "2",
+    "fault-tolerance (broadcast)": "3",
+    "IEEE 802.3ad Dynamic link aggregation": "4",
+    "transmit load balancing": "5",
+    "adaptive load balancing": "6",
 }
 """dict: bonding mode parameter string linked to bond type index."""
 
@@ -107,13 +107,15 @@ class Bond(Parser):
                 if raw_mode in BOND_PREFIX_MAP:
                     self._bond_mode = BOND_PREFIX_MAP[raw_mode]
                 else:
-                    raise ParseException("Unrecognised bonding mode '{b}'".format(b=raw_mode))
+                    raise ParseException(
+                        "Unrecognised bonding mode '{b}'".format(b=raw_mode)
+                    )
             elif line.startswith("Partner Mac Address: "):
                 self._partner_mac_address = line.split(":", 1)[1].strip()
             elif line.startswith("Slave Interface: "):
                 self._slave_interface.append(line.split(":", 1)[1].strip())
             elif line.strip().startswith("Aggregator ID: "):
-                self._aggregator_id.append(line.strip().split(':', 1)[1].strip())
+                self._aggregator_id.append(line.strip().split(":", 1)[1].strip())
             elif line.strip().startswith("Transmit Hash Policy"):
                 # No need of values in bracket:
                 # Integer notification (0), (1), (2) of layer2, layer3+4, layer2+3 resp

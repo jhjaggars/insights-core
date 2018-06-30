@@ -44,4 +44,5 @@ class MysqlLog(LogFileOutput):
     .. note::
         Please refer to its super-class :class:`insights.core.LogFileOutput`
     """
+
     pass

@@ -35,12 +35,21 @@ ectory=/home/test/jboss/machine2/domain/servers/server-one/data/messagingjournal
 
 def test_jboss_domain_server_log():
     out_log = JbossDomainServerLog(
-        context_wrap(OUT1, path="/home/test/jboss/machine2/domain/servers/server-one/log/server.log"))
-    assert out_log.file_path == "/home/test/jboss/machine2/domain/servers/server-one/log/server.log"
+        context_wrap(
+            OUT1,
+            path="/home/test/jboss/machine2/domain/servers/server-one/log/server.log",
+        )
+    )
+    assert (
+        out_log.file_path
+        == "/home/test/jboss/machine2/domain/servers/server-one/log/server.log"
+    )
     assert "XNIO Version 3.0.14.GA-redhat-1" in out_log
     assert len(out_log.get("GA-redhat-1")) == 2
-    assert out_log.get("GA-redhat-1")[0].get(
-        "raw_message") == "16:22:57,476 INFO  [org.xnio] (MSC service thread 1-12) XNIO Version 3.0.14.GA-redhat-1"
+    assert (
+        out_log.get("GA-redhat-1")[0].get("raw_message")
+        == "16:22:57,476 INFO  [org.xnio] (MSC service thread 1-12) XNIO Version 3.0.14.GA-redhat-1"
+    )
     assert "Listening on 192.168.199.175:444" in out_log
     assert len(list(out_log.get_after(time(16, 23, 0o4)))) == 16
 
@@ -56,8 +65,13 @@ OUT2 = """
 
 def test_jboss_domain_server_log_doc_examples():
     env = {
-            'JbossDomainServerLog': JbossDomainServerLog,
-            'log': JbossDomainServerLog(context_wrap(OUT2, path='/home/test/jboss/machine2/domain/servers/server-one/log/server.log')),
-          }
+        "JbossDomainServerLog": JbossDomainServerLog,
+        "log": JbossDomainServerLog(
+            context_wrap(
+                OUT2,
+                path="/home/test/jboss/machine2/domain/servers/server-one/log/server.log",
+            )
+        ),
+    }
     failed, total = doctest.testmod(jboss_domain_log, globs=env)
     assert failed == 0

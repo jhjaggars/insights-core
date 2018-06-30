@@ -13,5 +13,5 @@ KEYSTONE_LOG = """
 
 def test_keystone_log():
     log = KeystoneLog(context_wrap(KEYSTONE_LOG))
-    assert len(log.get('INFO')) == 2
+    assert len(log.get("INFO")) == 2
     assert len(list(log.get_after(datetime(2016, 11, 9, 14, 31, 0)))) == 4

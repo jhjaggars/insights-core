@@ -216,10 +216,10 @@ def test_listunits():
     service_name = "neutron-dhcp-agent.service"
     service_details = list_units.get_service_details(service_name)
     assert list_units.is_running(service_name) is True
-    assert service_details['UNIT'] == "neutron-dhcp-agent.service"
+    assert service_details["UNIT"] == "neutron-dhcp-agent.service"
     service_name = "virtlogd.socket"
     service_details = list_units.get_service_details(service_name)
-    assert service_details['SUB'] == "listening"
+    assert service_details["SUB"] == "listening"
 
     context = context_wrap(LISTUNITS_CONTENT_2)
     list_units = ListUnits(context)
@@ -227,7 +227,7 @@ def test_listunits():
     assert list_units.is_active(service_name) is True
     assert list_units.is_running(service_name) is False
     service_details = list_units.get_service_details(service_name)
-    assert service_details['UNIT'] == "systemd-shutdownd.socket"
+    assert service_details["UNIT"] == "systemd-shutdownd.socket"
     service_name = "random.service"
     service_details = list_units.get_service_details(service_name)
-    assert service_details['ACTIVE'] is None
+    assert service_details["ACTIVE"] is None

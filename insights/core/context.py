@@ -29,7 +29,6 @@ def get_system(metadata, hostname):
 
 
 class MultiNodeProduct(object):
-
     def __init__(self, role=None):
         self.role = role
 
@@ -84,8 +83,7 @@ class RHEL(object):
         self.release = release
 
     def __bool__(self):
-        return all([(self.version != DEFAULT_VERSION),
-                   bool(self.release)])
+        return all([(self.version != DEFAULT_VERSION), bool(self.release)])
 
     __nonzero__ = __bool__
 
@@ -99,8 +97,14 @@ class Context(object):
         self.version = kwargs.pop("version", DEFAULT_VERSION)
         self.metadata = kwargs.pop("metadata", {})
         optional_attrs = [
-            "content", "path", "hostname", "release",
-            "machine_id", "target", "last_client_run", "relative_path"
+            "content",
+            "path",
+            "hostname",
+            "release",
+            "machine_id",
+            "target",
+            "last_client_run",
+            "relative_path",
         ]
         for k in optional_attrs:
             setattr(self, k, kwargs.pop(k, None))
@@ -130,7 +134,9 @@ class ExecutionContext(object):
         """ Subclasses can override to provide special
             environment setup, command prefixes, etc.
         """
-        return call(cmd, timeout=timeout or self.timeout, stderr=STDOUT, keep_rc=keep_rc)
+        return call(
+            cmd, timeout=timeout or self.timeout, stderr=STDOUT, keep_rc=keep_rc
+        )
 
     def shell_out(self, cmd, split=True, timeout=None, keep_rc=False):
         rc = None

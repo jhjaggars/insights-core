@@ -53,4 +53,5 @@ from insights.specs import Specs
 @parser(Specs.keystone_conf)
 class KeystoneConf(IniConfigFile):
     """Parse contents of file ``/etc/keystone/keystone.conf``."""
+
     pass

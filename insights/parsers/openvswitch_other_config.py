@@ -35,7 +35,7 @@ class OpenvSwitchOtherConfig(LegacyItemAccess, CommandParser):
 
     def parse_content(self, content):
         self.data = {}
-        one_line_content = ''.join(content).strip()
+        one_line_content = "".join(content).strip()
         if one_line_content.startswith("{"):
             new_line = one_line_content.strip("{}")
             if new_line:

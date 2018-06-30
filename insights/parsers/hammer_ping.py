@@ -52,7 +52,8 @@ class HammerPing(CommandParser):
         are_all_ok (bool): Are all services read correctly and are they all in 'ok' state?
 
     """
-    def services_of_status(self, status='ok'):
+
+    def services_of_status(self, status="ok"):
         """
         List of the services in the given status.
 
@@ -63,8 +64,9 @@ class HammerPing(CommandParser):
         Returns: List of service names having that status.
         """
         status = status.lower()
-        return [svc for svc in self.service_list
-                if self.status_of_service[svc] == status]
+        return [
+            svc for svc in self.service_list if self.status_of_service[svc] == status
+        ]
 
     def parse_content(self, content):
         self.status_of_service = {}
@@ -84,9 +86,9 @@ class HammerPing(CommandParser):
                 status_line = next(lines).strip()
                 response_line = next(lines).strip()
 
-                service = service_line.split(':')[0]
-                status = status_line.split(':', 1)[-1].strip().lower()
-                response = response_line.split(':', 1)[-1].strip()
+                service = service_line.split(":")[0]
+                status = status_line.split(":", 1)[-1].strip().lower()
+                response = response_line.split(":", 1)[-1].strip()
 
                 self.service_list.append(service)
                 self.status_of_service[service] = status
@@ -94,7 +96,6 @@ class HammerPing(CommandParser):
         else:
             self.errors.extend(content)
 
-        self.are_all_ok = (
-            not self.errors and
-            all(status == 'ok' for status in self.status_of_service.values())
+        self.are_all_ok = not self.errors and all(
+            status == "ok" for status in self.status_of_service.values()
         )

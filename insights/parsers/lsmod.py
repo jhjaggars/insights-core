@@ -54,14 +54,14 @@ class LsMod(CommandParser):
 
     def parse_content(self, content):
         module_dict = {}
-        memb_keys = ['size', 'depnum', 'deplist']
+        memb_keys = ["size", "depnum", "deplist"]
         # skip the title
         for line in content[1:]:
             if line.strip():
                 line_split = line.split()
                 # make sure the deplist element exists
                 if len(line_split) == 3:
-                    line_split.append('')
+                    line_split.append("")
                 if len(line_split) == 4:
                     mod_attrs = {}
                     for i, key in enumerate(memb_keys):

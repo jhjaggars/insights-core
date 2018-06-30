@@ -13,5 +13,5 @@ API_LOG = """
 
 def test_glance_api_log():
     log = GlanceApiLog(context_wrap(API_LOG))
-    assert len(log.get('INFO')) == 3
+    assert len(log.get("INFO")) == 3
     assert len(list(log.get_after(datetime(2016, 11, 9, 14, 36, 38)))) == 3

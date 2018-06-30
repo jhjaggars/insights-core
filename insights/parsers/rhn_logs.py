@@ -37,7 +37,8 @@ class TaskomaticDaemonLog(LogFileOutput):
         >>> td_log.last_log_date
         2016-05-18 15:13:40
     """
-    time_format = '%Y/%m/%d %H:%M:%S'
+
+    time_format = "%Y/%m/%d %H:%M:%S"
 
     def parse_content(self, content):
         """
@@ -48,11 +49,12 @@ class TaskomaticDaemonLog(LogFileOutput):
         self.last_log_date = None
 
         for l in reversed(self.lines):
-            l_sp = l.split('|')
+            l_sp = l.split("|")
             if len(l_sp) >= 3:
                 try:
                     self.last_log_date = datetime.strptime(
-                            l_sp[2].strip(), self.time_format)
+                        l_sp[2].strip(), self.time_format
+                    )
                     break
                 except Exception:
                     continue
@@ -95,12 +97,15 @@ class ServerXMLRPCLog(LogFileOutput):
           'args': "'lang: None'",
           'raw_message': "..."}]
     """
-    time_format = '%Y/%m/%d %H:%M:%S'
 
-    _LINE_STR = r"^(?P<timestamp>\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2} " + \
-        r"[+-]?\d{2}:\d{2}) (?P<pid>\d+) (?P<client_ip>\S+): " + \
-        r"(?P<module>\w+)/(?P<function>[\w.-]+)" + \
-        r"(?:\((?:(?P<client_id>\d+), ?)?(?P<args>.*?),?\))?$"
+    time_format = "%Y/%m/%d %H:%M:%S"
+
+    _LINE_STR = (
+        r"^(?P<timestamp>\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2} "
+        + r"[+-]?\d{2}:\d{2}) (?P<pid>\d+) (?P<client_ip>\S+): "
+        + r"(?P<module>\w+)/(?P<function>[\w.-]+)"
+        + r"(?:\((?:(?P<client_id>\d+), ?)?(?P<args>.*?),?\))?$"
+    )
     _LINE_RE = re.compile(_LINE_STR)
 
     def parse_content(self, content):
@@ -116,7 +121,7 @@ class ServerXMLRPCLog(LogFileOutput):
         for l in reversed(self.lines):
             msg_info = self._parse_line(l)
             # assume parse is successful if we got an IP address
-            if 'client_ip' in msg_info:
+            if "client_ip" in msg_info:
                 break
         # Get the last one even if it didn't parse.
         self.last = msg_info
@@ -128,17 +133,16 @@ class ServerXMLRPCLog(LogFileOutput):
         'raw_message'.
         """
         msg_info = dict()
-        msg_info['raw_message'] = line
+        msg_info["raw_message"] = line
 
         match = self._LINE_RE.search(line)
         if match:
             msg_info.update(match.groupdict())
             # Try converting the time stamp but move on if it fails
             try:
-                stamp = match.group('timestamp')
+                stamp = match.group("timestamp")
                 # Cannot guess time zone from e.g. '+01:00', so strip timezone
-                msg_info['datetime'] = datetime.strptime(
-                    stamp[0:19], self.time_format)
+                msg_info["datetime"] = datetime.strptime(stamp[0:19], self.time_format)
             except ValueError:
                 pass
 
@@ -169,7 +173,8 @@ class SearchDaemonLog(LogFileOutput):
         >>> list(log.get_after(datetime(2013, 1, 29, 0, 0, 0)))[0]['raw_message']
         'STATUS | wrapper  | 2013/01/29 17:04:25 | TERM trapped.  Shutting down.'
     """
-    time_format = '%Y/%m/%d %H:%M:%S'
+
+    time_format = "%Y/%m/%d %H:%M:%S"
 
 
 @parser(Specs.rhn_server_satellite_log)
@@ -197,4 +202,5 @@ class SatelliteServerLog(LogFileOutput):
         >>> list(log.set_after(datetime(2016, 11, 19, 1, 13, 44)))[0]['raw_message']
         '2016/11/19 01:13:44 -04:00 channel-families data complete', '2016/11/19 01:13:44 -04:00 ', '2016/11/19 01:13:44 -04:00 RHN Entitlement Certificate sync'
     """
-    time_format = '%Y/%m/%d %H:%M:%S'
+
+    time_format = "%Y/%m/%d %H:%M:%S"

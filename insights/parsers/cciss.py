@@ -23,7 +23,7 @@ from insights.specs import Specs
 
 @parser(Specs.cciss)
 class Cciss(Parser):
-    '''
+    """
     Class for parsing the content of ``/etc/device/cciss*``
 
     Raw Data::
@@ -61,7 +61,7 @@ class Cciss(Parser):
             "Max Q depth since init": "84"
         }
 
-    '''
+    """
 
     def parse_content(self, content):
         self.device = self.file_name
@@ -74,10 +74,10 @@ class Cciss(Parser):
 
     @property
     def firmware_version(self):
-        '''Return the Firmware Version.'''
-        return self.data.get('Firmware Version')
+        """Return the Firmware Version."""
+        return self.data.get("Firmware Version")
 
     @property
     def model(self):
-        '''Return the full model name of the cciss device.'''
+        """Return the full model name of the cciss device."""
         return self.data.get(self.device)

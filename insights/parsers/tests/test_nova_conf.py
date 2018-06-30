@@ -84,7 +84,12 @@ def test_nova_conf():
     assert result.get("DEFAULT", "report_interval") == "10"
     assert result.get("DEFAULT", "novncproxy_host") == "fd00:4888:1000:f901::c1"
 
-    assert result.get("keystone_authtoken", "auth_uri") == "http://[fd00:4888:1000:f901::a000]:5000/v2.0"
+    assert (
+        result.get("keystone_authtoken", "auth_uri")
+        == "http://[fd00:4888:1000:f901::a000]:5000/v2.0"
+    )
     assert result.get("keystone_authtoken", "service_metadata_proxy") == "True"
-    assert result.get("keystone_authtoken", "rabbit_hosts")\
+    assert (
+        result.get("keystone_authtoken", "rabbit_hosts")
         == "fd00:4888:1000:f901::c0,fd00:4888:1000:f901::c1,fd00:4888:1000:f901::c2"
+    )

@@ -7,13 +7,13 @@ ResolvConf - file ``/etc/resolv.conf``
 from .. import Parser, parser, get_active_lines, LegacyItemAccess
 from insights.specs import Specs
 
-KEYWORD1 = 'search'
-KEYWORD2 = 'domain'
+KEYWORD1 = "search"
+KEYWORD2 = "domain"
 
 
 @parser(Specs.resolv_conf)
 class ResolvConf(LegacyItemAccess, Parser):
-    '''
+    """
     Parse the ``/etc/resolv.conf`` file into a dictionary of keywords and
     their values.  This is made available via the ``data`` property but the
     object itself can be used as a dictionary thanks to the
@@ -49,7 +49,7 @@ class ResolvConf(LegacyItemAccess, Parser):
         ["a.b.com", "b.c.com"]
         >>> resolv.data["options"]  # old style access
         ["timeout:2", "attempts:2"]
-    '''
+    """
 
     def parse_content(self, content):
 
@@ -63,9 +63,9 @@ class ResolvConf(LegacyItemAccess, Parser):
         # resolve_info pointing out which keywords is effective.
         for line in get_active_lines(content):
             # ignore the lines commented by ';'
-            if line.startswith(';'):
+            if line.startswith(";"):
                 continue
-            if line.startswith('nameserver'):
+            if line.startswith("nameserver"):
                 name_info.append(line.split()[1])
             else:
                 temp = line.split()
@@ -74,11 +74,11 @@ class ResolvConf(LegacyItemAccess, Parser):
                     key2_domain = temp[0] == KEYWORD2
                 resolv_info[temp[0]] = temp[1:]
 
-        resolv_info['nameserver'] = name_info
-        resolv_info['active'] = ''
+        resolv_info["nameserver"] = name_info
+        resolv_info["active"] = ""
         if key1_search and not key2_domain:
-            resolv_info['active'] = KEYWORD1
+            resolv_info["active"] = KEYWORD1
         elif key2_domain and not key1_search:
-            resolv_info['active'] = KEYWORD2
+            resolv_info["active"] = KEYWORD2
 
         self.data = resolv_info

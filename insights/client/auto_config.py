@@ -20,8 +20,10 @@ APP_NAME = constants.app_name
 
 
 def _is_rhn_or_rhsm(hostname):
-    return (hostname == 'subscription.rhn.redhat.com' or
-            hostname == 'subscription.rhsm.redhat.com')
+    return (
+        hostname == "subscription.rhn.redhat.com"
+        or hostname == "subscription.rhsm.redhat.com"
+    )
 
 
 def verify_connectivity(config):
@@ -42,7 +44,7 @@ def verify_connectivity(config):
         return False
 
     try:
-        remote_leaf = branch_info['remote_leaf']
+        remote_leaf = branch_info["remote_leaf"]
         return remote_leaf
     except LookupError as e:
         logger.debug(e)
@@ -65,15 +67,14 @@ def set_auto_configuration(config, hostname, ca_cert, proxy):
     if proxy is not None:
         saved_proxy = config.proxy
         config.proxy = proxy
-    config.base_url = hostname + '/r/insights'
+    config.base_url = hostname + "/r/insights"
 
     if not verify_connectivity(config):
         logger.warn("Could not auto configure, falling back to static config")
-        logger.warn("See %s for additional information",
-                    constants.default_log_file)
+        logger.warn("See %s for additional information", constants.default_log_file)
         config.base_url = saved_base_url
         if proxy is not None:
-            if saved_proxy is not None and saved_proxy.lower() == 'none':
+            if saved_proxy is not None and saved_proxy.lower() == "none":
                 saved_proxy = None
             config.proxy = saved_proxy
         if ca_cert is not None:
@@ -86,24 +87,25 @@ def _try_satellite6_configuration(config):
     """
     try:
         from rhsm.config import initConfig
+
         rhsm_config = initConfig()
 
-        logger.debug('Trying to autoconfigure...')
-        cert = open(rhsmCertificate.certpath(), 'r').read()
-        key = open(rhsmCertificate.keypath(), 'r').read()
+        logger.debug("Trying to autoconfigure...")
+        cert = open(rhsmCertificate.certpath(), "r").read()
+        key = open(rhsmCertificate.keypath(), "r").read()
         rhsm = rhsmCertificate(key, cert)
 
         # This will throw an exception if we are not registered
-        logger.debug('Checking if system is subscription-manager registered')
+        logger.debug("Checking if system is subscription-manager registered")
         rhsm.getConsumerId()
-        logger.debug('System is subscription-manager registered')
+        logger.debug("System is subscription-manager registered")
 
-        rhsm_hostname = rhsm_config.get('server', 'hostname')
-        rhsm_hostport = rhsm_config.get('server', 'port')
-        rhsm_proxy_hostname = rhsm_config.get('server', 'proxy_hostname').strip()
-        rhsm_proxy_port = rhsm_config.get('server', 'proxy_port').strip()
-        rhsm_proxy_user = rhsm_config.get('server', 'proxy_user').strip()
-        rhsm_proxy_pass = rhsm_config.get('server', 'proxy_password').strip()
+        rhsm_hostname = rhsm_config.get("server", "hostname")
+        rhsm_hostport = rhsm_config.get("server", "port")
+        rhsm_proxy_hostname = rhsm_config.get("server", "proxy_hostname").strip()
+        rhsm_proxy_port = rhsm_config.get("server", "proxy_port").strip()
+        rhsm_proxy_user = rhsm_config.get("server", "proxy_user").strip()
+        rhsm_proxy_pass = rhsm_config.get("server", "proxy_password").strip()
         proxy = None
         if rhsm_proxy_hostname != "":
             logger.debug("Found rhsm_proxy_hostname %s", rhsm_proxy_hostname)
@@ -111,39 +113,41 @@ def _try_satellite6_configuration(config):
             if rhsm_proxy_user != "" and rhsm_proxy_pass != "":
                 logger.debug("Found user and password for rhsm_proxy")
                 proxy = proxy + rhsm_proxy_user + ":" + rhsm_proxy_pass + "@"
-            proxy = proxy + rhsm_proxy_hostname + ':' + rhsm_proxy_port
+            proxy = proxy + rhsm_proxy_hostname + ":" + rhsm_proxy_port
             logger.debug("RHSM Proxy: %s", proxy)
-        logger.debug("Found %sHost: %s, Port: %s",
-                     ('' if _is_rhn_or_rhsm(rhsm_hostname)
-                         else 'Satellite 6 Server '),
-                     rhsm_hostname, rhsm_hostport)
-        rhsm_ca = rhsm_config.get('rhsm', 'repo_ca_cert')
+        logger.debug(
+            "Found %sHost: %s, Port: %s",
+            ("" if _is_rhn_or_rhsm(rhsm_hostname) else "Satellite 6 Server "),
+            rhsm_hostname,
+            rhsm_hostport,
+        )
+        rhsm_ca = rhsm_config.get("rhsm", "repo_ca_cert")
         logger.debug("Found CA: %s", rhsm_ca)
         logger.debug("Setting authmethod to CERT")
-        config.authmethod = 'CERT'
+        config.authmethod = "CERT"
 
         # Directly connected to Red Hat, use cert auth directly with the api
         if _is_rhn_or_rhsm(rhsm_hostname):
             logger.debug("Connected to Red Hat Directly, using cert-api")
-            rhsm_hostname = 'cert-api.access.redhat.com'
+            rhsm_hostname = "cert-api.access.redhat.com"
             rhsm_ca = None
         else:
             # Set the host path
             # 'rhsm_hostname' should really be named ~ 'rhsm_host_base_url'
-            rhsm_hostname = rhsm_hostname + ':' + rhsm_hostport + '/redhat_access'
+            rhsm_hostname = rhsm_hostname + ":" + rhsm_hostport + "/redhat_access"
 
         logger.debug("Trying to set auto_configuration")
         set_auto_configuration(config, rhsm_hostname, rhsm_ca, proxy)
         return True
     except Exception as e:
         logger.debug(e)
-        logger.debug('System is NOT subscription-manager registered')
+        logger.debug("System is NOT subscription-manager registered")
         return False
 
 
 def _read_systemid_file(path):
     with open(path, "r") as systemid:
-        data = systemid.read().replace('\n', '')
+        data = systemid.read().replace("\n", "")
     return data
 
 
@@ -152,8 +156,8 @@ def _try_satellite5_configuration(config):
     Attempt to determine Satellite 5 Configuration
     """
     logger.debug("Trying Satellite 5 auto_config")
-    rhn_config = '/etc/sysconfig/rhn/up2date'
-    systemid = '/etc/sysconfig/rhn/systemid'
+    rhn_config = "/etc/sysconfig/rhn/up2date"
+    systemid = "/etc/sysconfig/rhn/systemid"
     if os.path.isfile(rhn_config):
         if os.path.isfile(systemid):
             config.systemid = _read_systemid_file(systemid)
@@ -162,25 +166,25 @@ def _try_satellite5_configuration(config):
             return False
 
         logger.debug("Found Satellite 5 Config")
-        rhn_conf_file = open(rhn_config, 'r')
+        rhn_conf_file = open(rhn_config, "r")
         hostname = None
         for line in rhn_conf_file:
-            if line.startswith('serverURL='):
-                url = urlparse(line.split('=')[1])
-                hostname = url.netloc + '/redhat_access'
+            if line.startswith("serverURL="):
+                url = urlparse(line.split("=")[1])
+                hostname = url.netloc + "/redhat_access"
                 logger.debug("Found hostname %s", hostname)
-            if line.startswith('sslCACert='):
-                rhn_ca = line.strip().split('=')[1]
+            if line.startswith("sslCACert="):
+                rhn_ca = line.strip().split("=")[1]
 
             # Auto discover proxy stuff
-            if line.startswith('enableProxy='):
-                proxy_enabled = line.strip().split('=')[1]
-            if line.startswith('httpProxy='):
-                proxy_host_port = line.strip().split('=')[1]
-            if line.startswith('proxyUser='):
-                proxy_user = line.strip().split('=')[1]
-            if line.startswith('proxyPassword='):
-                proxy_password = line.strip().split('=')[1]
+            if line.startswith("enableProxy="):
+                proxy_enabled = line.strip().split("=")[1]
+            if line.startswith("httpProxy="):
+                proxy_host_port = line.strip().split("=")[1]
+            if line.startswith("proxyUser="):
+                proxy_user = line.strip().split("=")[1]
+            if line.startswith("proxyPassword="):
+                proxy_password = line.strip().split("=")[1]
 
         if hostname:
             proxy = None
@@ -188,7 +192,7 @@ def _try_satellite5_configuration(config):
                 proxy = "http://"
                 if proxy_user != "" and proxy_password != "":
                     logger.debug("Found user and password for rhn_proxy")
-                    proxy = proxy + proxy_user + ':' + proxy_password
+                    proxy = proxy + proxy_user + ":" + proxy_password
                     proxy = proxy + "@" + proxy_host_port
                 else:
                     proxy = proxy + proxy_host_port

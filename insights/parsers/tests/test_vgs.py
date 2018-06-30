@@ -8,38 +8,38 @@ LVM2_VG_FMT='lvm2'|LVM2_VG_UUID='123456-LEly-THGL-YXhC-t3q6-mUQV-123456'|LVM2_VG
 """.strip()
 
 VGS_INFO_FEDORA = {
-    'VG': 'fedora',
-    'Attr': 'wz--n-',
-    'VSize': '476.45g',
-    'VFree': '4.00m',
-    '#PV': '1',
-    '#LV': '3',
-    '#SN': '0',
-    '#Ext': '121971',
-    '#VMda': '1',
-    '#VMdaCps': 'unmanaged',
-    '#VMdaUse': '1',
-    'AllocPol': 'normal',
-    'Clustered': '',
-    'Exported': '',
-    'Ext': '4.00m',
-    'Extendable': 'extendable',
-    'Fmt': 'lvm2',
-    'Free': '1',
-    'Lock Args': '',
-    'Lock_Type': '',
-    'MaxLV': '0',
-    'MaxPV': '0',
-    'Partial': '',
-    'SYS_ID': '',
-    'Seq': '4',
-    'System_ID': '',
-    'VG_Tags': '',
-    'VG_UUID': '123456-LEly-THGL-YXhC-t3q6-mUQV-123456',
-    'VMdaFree': '0',
-    'VMdaSize': '1020.00k',
-    'VPerms': 'writeable',
-    'VProfile': ''
+    "VG": "fedora",
+    "Attr": "wz--n-",
+    "VSize": "476.45g",
+    "VFree": "4.00m",
+    "#PV": "1",
+    "#LV": "3",
+    "#SN": "0",
+    "#Ext": "121971",
+    "#VMda": "1",
+    "#VMdaCps": "unmanaged",
+    "#VMdaUse": "1",
+    "AllocPol": "normal",
+    "Clustered": "",
+    "Exported": "",
+    "Ext": "4.00m",
+    "Extendable": "extendable",
+    "Fmt": "lvm2",
+    "Free": "1",
+    "Lock Args": "",
+    "Lock_Type": "",
+    "MaxLV": "0",
+    "MaxPV": "0",
+    "Partial": "",
+    "SYS_ID": "",
+    "Seq": "4",
+    "System_ID": "",
+    "VG_Tags": "",
+    "VG_UUID": "123456-LEly-THGL-YXhC-t3q6-mUQV-123456",
+    "VMdaFree": "0",
+    "VMdaSize": "1020.00k",
+    "VPerms": "writeable",
+    "VProfile": "",
 }
 
 VGS_HEADER_INFO = """
@@ -54,24 +54,24 @@ VGS_HEADER_INFO = """
   rootvg        wz--n- 4.00m   1   6   0  19.51g    1.95g p4tLLb-ikeo-Ankk-2xJ6-iHYf-D4E6-KFCFvr              1   506.50k  1020.00k        1
     Reloading config files
     Wiping internal VG cache
-""".strip()   # noqa: W291
+""".strip()  # noqa: W291
 
 VGS_HEADER_5 = {
-    'VG': 'rootvg',
-    'Attr': 'wz--n-',
-    'Ext': '4.00m',
-    '#PV': '1',
-    '#LV': '6',
-    '#SN': '0',
-    'VSize': '19.51g',
-    'VFree': '1.95g',
-    'VG_UUID': 'p4tLLb-ikeo-Ankk-2xJ6-iHYf-D4E6-KFCFvr',
-    'VProfile': '',
-    '#VMda': '1',
-    'VMdaFree': '506.50k',
-    'VMdaSize': '1020.00k',
-    '#VMdaUse': '1',
-    'VG_Tags': ''
+    "VG": "rootvg",
+    "Attr": "wz--n-",
+    "Ext": "4.00m",
+    "#PV": "1",
+    "#LV": "6",
+    "#SN": "0",
+    "VSize": "19.51g",
+    "VFree": "1.95g",
+    "VG_UUID": "p4tLLb-ikeo-Ankk-2xJ6-iHYf-D4E6-KFCFvr",
+    "VProfile": "",
+    "#VMda": "1",
+    "VMdaFree": "506.50k",
+    "VMdaSize": "1020.00k",
+    "#VMdaUse": "1",
+    "VG_Tags": "",
 }
 
 
@@ -80,7 +80,7 @@ def test_vgs():
     assert len(list(vgs_records)) == 2
     for k, v in VGS_INFO_FEDORA.items():
         assert vgs_records["fedora"][k] == v
-    assert vgs_records["fedora"]['LVM2_VG_SEQNO'] == '4'
+    assert vgs_records["fedora"]["LVM2_VG_SEQNO"] == "4"
 
 
 def test_vgs_headers():
@@ -89,4 +89,4 @@ def test_vgs_headers():
     assert len(vgs_info.data) == 6
     for k, v in VGS_HEADER_5.items():
         assert vgs_info[5][k] == v
-    assert vgs_info[5]['VPerms'] is None
+    assert vgs_info[5]["VPerms"] is None

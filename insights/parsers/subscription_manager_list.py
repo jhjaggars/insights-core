@@ -30,14 +30,15 @@ class SubscriptionManagerList(CommandParser):
     This should be subclassed to read the specific output - e.g. ``--consumed``
     or ``--installed``.
     """
+
     def parse_content(self, content):
         self.records = []
         current_record = {}
-        record_start_key = ''
-        key = ''  # The key currently in use
+        record_start_key = ""
+        key = ""  # The key currently in use
 
-        key_val_re = re.compile('^(?P<key>\w[\w\s]+\w):\s+(?P<value>\w.*)$')
-        cont_val_re = re.compile('^\s+(?P<value>\w.*)$')
+        key_val_re = re.compile("^(?P<key>\w[\w\s]+\w):\s+(?P<value>\w.*)$")
+        cont_val_re = re.compile("^\s+(?P<value>\w.*)$")
 
         # The first line that matches the key_val_re is treated as the start
         # of a record.  The header doesn't match because it doesn't have a
@@ -48,7 +49,7 @@ class SubscriptionManagerList(CommandParser):
             # Check for match of key/value line
             match = key_val_re.search(line)
             if match:
-                key, value = match.group('key', 'value')
+                key, value = match.group("key", "value")
                 if not record_start_key:
                     record_start_key = key
                 # Have we started a new record
@@ -59,12 +60,12 @@ class SubscriptionManagerList(CommandParser):
                     current_record = {}
                 current_record[key] = value
                 # Do some type conversions and add-ons
-                if key == 'Active' and value in ('True', 'False'):
-                    current_record[key] = (value == 'True')
-                elif key in ('Starts', 'Ends'):
+                if key == "Active" and value in ("True", "False"):
+                    current_record[key] = value == "True"
+                elif key in ("Starts", "Ends"):
                     try:
-                        current_record[key + ' timestamp'] = datetime.strptime(
-                            value, '%m/%d/%y'
+                        current_record[key + " timestamp"] = datetime.strptime(
+                            value, "%m/%d/%y"
                         )
                     except ValueError:
                         pass
@@ -77,11 +78,9 @@ class SubscriptionManagerList(CommandParser):
                 # Add this value to the current key:
                 if isinstance(current_record[key], six.string_types):
                     # Convert the single string into a list
-                    current_record[key] = [
-                        current_record[key], match.group('value')
-                    ]
+                    current_record[key] = [current_record[key], match.group("value")]
                 else:
-                    current_record[key].append(match.group('value'))
+                    current_record[key].append(match.group("value"))
 
         # Save the last read record if we had one.
         if current_record:
@@ -160,6 +159,7 @@ class SubscriptionManagerListConsumed(SubscriptionManagerList):
         >>> consumed.all_current  # Are all subscriptions listed as current?
         True
     """
+
     @property
     def all_current(self):
         """
@@ -167,8 +167,7 @@ class SubscriptionManagerListConsumed(SubscriptionManagerList):
         set to 'Subscription is current'?
         """
         return all(
-            sub['Status Details'] == 'Subscription is current'
-            for sub in self.records
+            sub["Status Details"] == "Subscription is current" for sub in self.records
         )
 
 
@@ -217,16 +216,14 @@ class SubscriptionManagerListInstalled(SubscriptionManagerList):
         True
 
     """
+
     @property
     def all_subscribed(self):
         """
         (bool) Does every product record have the Status value set to
         'Subscribed'?
         """
-        return all(
-            sub['Status'] == 'Subscribed'
-            for sub in self.records
-        )
+        return all(sub["Status"] == "Subscribed" for sub in self.records)
 
 
 @parser(Specs.subscription_manager_repos_list_enabled)
@@ -253,4 +250,5 @@ class SubscriptionManagerReposListEnabled(SubscriptionManagerList):
         >>> repolist.records[0]['Repo ID']
         'rhel-7-server-ansible-2-rpms'
     """
+
     pass

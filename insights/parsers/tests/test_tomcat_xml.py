@@ -1306,15 +1306,19 @@ def test_tomcat_server_xml():
     result = TomcatServerXml(context_wrap(server_xml_content))
     engines = result.get_elements(".//Service/Engine")
     assert len(engines) == 1
-    assert engines[0].get('name') == "Catalina"
+    assert engines[0].get("name") == "Catalina"
 
 
 def test_web_xml_doc_examples():
     env = {
-            'TomcatWebXml': TomcatWebXml,
-            'web_xml': TomcatWebXml(context_wrap(web_xml_content, path='/usr/share/tomcat/web.xml')),
-            'TomcatServerXml': TomcatServerXml,
-            'server_xml': TomcatServerXml(context_wrap(server_xml_content, path='/usr/share/tomcat/server.xml'))
-          }
+        "TomcatWebXml": TomcatWebXml,
+        "web_xml": TomcatWebXml(
+            context_wrap(web_xml_content, path="/usr/share/tomcat/web.xml")
+        ),
+        "TomcatServerXml": TomcatServerXml,
+        "server_xml": TomcatServerXml(
+            context_wrap(server_xml_content, path="/usr/share/tomcat/server.xml")
+        ),
+    }
     failed, total = doctest.testmod(tomcat_xml, globs=env)
     assert failed == 0

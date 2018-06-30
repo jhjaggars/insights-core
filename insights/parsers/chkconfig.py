@@ -50,7 +50,7 @@ class ChkConfig(CommandParser):
         set([])
     """
 
-    LevelState = namedtuple('LevelState', ['level', 'state'])
+    LevelState = namedtuple("LevelState", ["level", "state"])
     """namedtuple: Represents the state of a particular service level."""
 
     def __init__(self, *args, **kwargs):
@@ -76,16 +76,16 @@ class ChkConfig(CommandParser):
 
         # sysv services are in the form "service     0:off"
         # while xinetd services are "service:    off"
-        state_re = re.compile(r':\s*(?P<state>on|off)(?:\s+|$)')
+        state_re = re.compile(r":\s*(?P<state>on|off)(?:\s+|$)")
 
         for line in content:
             if state_re.search(line):
                 # xinetd service names have a trailing colon ("telnet:  on")
-                service = line.split()[0].strip(' \t:')
+                service = line.split()[0].strip(" \t:")
                 # Note that for regular services this assumes the ':on' occurs
                 # in the current run level.  It does not check the run level.
                 # enabled = on_state.search(line) is not None
-                enabled = ':on' in line or line.endswith('on')
+                enabled = ":on" in line or line.endswith("on")
                 self.services[service] = enabled
                 self.parsed_lines[service] = line
                 self.service_list.append(service)
@@ -96,26 +96,26 @@ class ChkConfig(CommandParser):
                 for level in line.split()[1:]:
                     # xinetd services have no runlevels, so set their states
                     # to those of xinetd if they are on, else all off
-                    if len(level.split(':')) < 2:
+                    if len(level.split(":")) < 2:
                         if enabled:
-                            if 'xinetd' in self.level_states:
+                            if "xinetd" in self.level_states:
                                 # A xinetd-based service is only on for the
                                 # SysV run states that xinetd itself is on.
-                                states = self.level_states['xinetd']
+                                states = self.level_states["xinetd"]
                             else:
                                 # RHEL 7.3 'chkconfig' is actually faked up
                                 # by systemd, and doesn't list xinetd as a
                                 # service.  Run levels are meaningless here,
                                 # so we list 'on' for all SysV run levels.
-                                states = [self.LevelState(str(x), 'on')
-                                          for x in range(7)]
+                                states = [
+                                    self.LevelState(str(x), "on") for x in range(7)
+                                ]
                         else:
                             # Disabled xinetd services are effectively
                             # off at every runlevel
-                            states = [self.LevelState(str(x), 'off')
-                                      for x in range(7)]
+                            states = [self.LevelState(str(x), "off") for x in range(7)]
                         continue
-                    num, state = level.split(':')
+                    num, state = level.split(":")
                     states.append(self.LevelState(num.strip(), state.strip()))
                 self.level_states[service] = states
 
@@ -133,9 +133,9 @@ class ChkConfig(CommandParser):
 
     def _level_check(self, service_name, state):
         if service_name in self.parsed_lines:
-            return set([l.level
-                        for l in self.level_states[service_name]
-                        if l.state == state])
+            return set(
+                [l.level for l in self.level_states[service_name] if l.state == state]
+            )
         else:
             raise KeyError("Service {0} not in Chkconfig".format(service_name))
 
@@ -145,7 +145,7 @@ class ChkConfig(CommandParser):
         Raises:
             KeyError: Raises exception if `service_name` is not in Chkconfig.
         """
-        return self._level_check(service_name, state='on')
+        return self._level_check(service_name, state="on")
 
     def levels_off(self, service_name):
         """set (str): Returns set of levels where `service_name` is `off`.
@@ -153,4 +153,4 @@ class ChkConfig(CommandParser):
         Raises:
             KeyError: Raises exception if `service_name` is not in Chkconfig.
         """
-        return self._level_check(service_name, state='off')
+        return self._level_check(service_name, state="off")

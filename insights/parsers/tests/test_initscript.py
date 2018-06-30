@@ -1,6 +1,10 @@
 import pytest
 
-from insights.parsers.initscript import InitScript, EmptyFileException, NotInitscriptException
+from insights.parsers.initscript import (
+    InitScript,
+    EmptyFileException,
+    NotInitscriptException,
+)
 from insights.tests import context_wrap
 
 

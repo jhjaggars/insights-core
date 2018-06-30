@@ -44,6 +44,7 @@ class Mlx4Port(CommandParser):
 
     ``find /sys/bus/pci/devices/*/mlx4_port[0-9] -print -exec cat {} \;``.
     """
+
     @property
     def port_val(self):
         """
@@ -55,8 +56,10 @@ class Mlx4Port(CommandParser):
         self._mapping = defaultdict(list)
         port_name = None
         for line in content:
-            if line.startswith('/sys/'):
-                port_name = line.split('/')[6]
+            if line.startswith("/sys/"):
+                port_name = line.split("/")[6]
             elif port_name:
                 self._mapping[port_name].append(line.strip())
-        self._mapping = dict([(port, "\n".join(values)) for port, values in self._mapping.items()])
+        self._mapping = dict(
+            [(port, "\n".join(values)) for port, values in self._mapping.items()]
+        )

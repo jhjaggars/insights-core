@@ -56,7 +56,7 @@ Examples:
 from .. import parser, LegacyItemAccess, CommandParser
 from insights.specs import Specs
 
-COMPOUND_FIELDS = ['Filesystem features', 'Filesystem flags', 'Default mount options']
+COMPOUND_FIELDS = ["Filesystem features", "Filesystem flags", "Default mount options"]
 
 
 @parser(Specs.dumpe2fs_h)
@@ -64,6 +64,7 @@ class DumpE2fs(CommandParser, LegacyItemAccess):
     """
     Parse each line in the output of the ``dumpe2fs`` command.
     """
+
     def parse_content(self, content):
         dumpe2fs_values_dict = {}
         for line in content:
@@ -73,5 +74,5 @@ class DumpE2fs(CommandParser, LegacyItemAccess):
                     dumpe2fs_values_dict[key] = list(value.strip().split())
                 else:
                     dumpe2fs_values_dict[key] = value.strip()
-        self.dev_name = self.file_name.split('dumpe2fs_-h_')[-1].replace('.', '/')
+        self.dev_name = self.file_name.split("dumpe2fs_-h_")[-1].replace(".", "/")
         self.data = dumpe2fs_values_dict

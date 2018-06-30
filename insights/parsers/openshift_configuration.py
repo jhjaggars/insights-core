@@ -31,10 +31,12 @@ from insights.specs import Specs
 @parser(Specs.ose_node_config)
 class OseNodeConfig(YAMLParser):
     """Class to parse ``/etc/origin/node/node-config.yaml``"""
+
     pass
 
 
 @parser(Specs.ose_master_config)
 class OseMasterConfig(YAMLParser):
     """Class to parse ``/etc/origin/master/master-config.yaml``"""
+
     pass

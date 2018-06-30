@@ -46,7 +46,7 @@ from insights.specs import Specs
 class CertificatesEnddate(LegacyItemAccess, CommandParser):
     """Class to parse the expiration dates."""
 
-    ExpirationDate = namedtuple('ExpirationDate', ['str', 'datetime'])
+    ExpirationDate = namedtuple("ExpirationDate", ["str", "datetime"])
     """namedtuple: contains the expiration date in string and datetime format."""
 
     def parse_content(self, content):
@@ -81,7 +81,7 @@ class CertificatesEnddate(LegacyItemAccess, CommandParser):
         path_date = self.data.get(path)
         if path_date:
             try:
-                path_datetime = datetime.strptime(path_date, '%b %d %H:%M:%S %Y')
+                path_datetime = datetime.strptime(path_date, "%b %d %H:%M:%S %Y")
                 return self.ExpirationDate(path_date, path_datetime)
             except:
                 return self.ExpirationDate(path_date, None)

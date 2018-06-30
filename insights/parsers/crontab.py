@@ -22,13 +22,18 @@ def _make_cron_re():
     range_ = r"{val}(?:-{val}(?:/\d+)?)?"
     template = r"(?P<{name}>" + "(?:\*(?:/\d+)?|{r}(?:,{r})*)".format(r=range_) + ")\s+"
     return (
-        r'^\s*' +
-        template.format(name='minute', val=r'(?:\d|[012345]\d)') +
-        template.format(name='hour', val=r'(?:\d|[01]\d|2[0123])') +
-        template.format(name='day_of_month', val=r'(?:0?[1-9]|[12]\d|3[01])') +
-        template.format(name='month', val=r'(?:0?[1-9]|1[012]|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)') +
-        template.format(name='day_of_week', val=r'(?:[0-7]|mon|tue|wed|thur|fri|sat|sun)') +
-        r'(?P<command>\S.*)$'
+        r"^\s*"
+        + template.format(name="minute", val=r"(?:\d|[012345]\d)")
+        + template.format(name="hour", val=r"(?:\d|[01]\d|2[0123])")
+        + template.format(name="day_of_month", val=r"(?:0?[1-9]|[12]\d|3[01])")
+        + template.format(
+            name="month",
+            val=r"(?:0?[1-9]|1[012]|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)",
+        )
+        + template.format(
+            name="day_of_week", val=r"(?:[0-7]|mon|tue|wed|thur|fri|sat|sun)"
+        )
+        + r"(?P<command>\S.*)$"
     )
 
 
@@ -113,33 +118,36 @@ class CrontabL(CommandParser):
         invalid_lines(list): Lines that could not be parsed as normal crontab
             entries.
     """
+
     def parse_content(self, content):
         self.data = []
         self.environment = {}
         self.invalid_lines = []
         # Crontabs can use 'nicknames' for common event frequencies:
         nicknames = {
-            '@yearly': '0 0 1 1 *',
-            '@annually': '0 0 1 1 *',
-            '@monthly': '0 0 1 * *',
-            '@weekly': '0 0 * * 0',
-            '@daily': '0 0 * * *',
-            '@hourly': '0 * * * *',
+            "@yearly": "0 0 1 1 *",
+            "@annually": "0 0 1 1 *",
+            "@monthly": "0 0 1 * *",
+            "@weekly": "0 0 * * 0",
+            "@daily": "0 0 * * *",
+            "@hourly": "0 * * * *",
         }
         cron_re = re.compile(_make_cron_re(), flags=re.IGNORECASE)
-        env_re = re.compile(r'^\s*(?P<key>\w+)\s*=\s*(?P<value>\S.*)$')
+        env_re = re.compile(r"^\s*(?P<key>\w+)\s*=\s*(?P<value>\S.*)$")
         for line in get_active_lines(content):
-            if line.startswith('@'):
+            if line.startswith("@"):
                 # Reboot is 'special':
-                if line.startswith('@reboot'):
+                if line.startswith("@reboot"):
                     parts = line.split(None, 2)
-                    self.data.append({'time': '@reboot', 'command': parts[1]})
+                    self.data.append({"time": "@reboot", "command": parts[1]})
                     continue
                 else:
                     parts = line.split(None, 2)
                     if parts[0] not in nicknames:
                         raise ParseException(
-                            "{n} not recognised as a time specification 'nickname'".format(n=parts[0])
+                            "{n} not recognised as a time specification 'nickname'".format(
+                                n=parts[0]
+                            )
                         )
                     # Otherwise, put the time spec nickname translation into
                     # the line
@@ -151,7 +159,7 @@ class CrontabL(CommandParser):
                 self.data.append(cron_match.groupdict())
             elif env_match:
                 # Environment variable - capture in dictionary
-                self.environment[env_match.group('key')] = env_match.group('value')
+                self.environment[env_match.group("key")] = env_match.group("value")
             else:
                 self.invalid_lines.append(line)
 
@@ -180,28 +188,32 @@ class CrontabL(CommandParser):
     def search(self, filter_str):
         """list: Returns list of dicts for lines that have `filter_str` in
         the command."""
-        return [r for r in self.data if filter_str in r['command']]
+        return [r for r in self.data if filter_str in r["command"]]
 
 
 @parser(Specs.heat_crontab)
 class HeatCrontab(CrontabL):
     """Parses output of the ``crontab -l -u heat`` command."""
+
     pass
 
 
 @parser(Specs.keystone_crontab)
 class KeystoneCrontab(CrontabL):
     """Parses output of the ``crontab -l -u keystone`` command."""
+
     pass
 
 
 @parser(Specs.nova_crontab)
 class NovaCrontab(CrontabL):
     """Parses output of the ``crontab -l -u nova`` command."""
+
     pass
 
 
 @parser(Specs.root_crontab)
 class RootCrontab(CrontabL):
     """Parses output of the ``crontab -l -u root`` command."""
+
     pass

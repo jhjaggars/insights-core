@@ -45,4 +45,5 @@ from insights.specs import Specs
 @parser(Specs.heat_conf)
 class HeatConf(IniConfigFile):
     """Parses content of "/etc/heat/heat.conf". """
+
     pass

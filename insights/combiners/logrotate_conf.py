@@ -85,6 +85,7 @@ class LogrotateConfAll(object):
             ``/etc/logrotate.conf``
         log_files(list): List of log files in all logrotate configuration files
     """
+
     def __init__(self, lrt_conf):
         self.data = {}
         self.global_options = []
@@ -99,8 +100,9 @@ class LogrotateConfAll(object):
             self._file_map[lrt.file_path] = lrt.log_files
 
     def __contains__(self, item):
-        return (item in self.global_options or
-                any(fnmatch(item, f) for f in self.log_files))
+        return item in self.global_options or any(
+            fnmatch(item, f) for f in self.log_files
+        )
 
     def __getitem__(self, item):
         if item in self.global_options:
@@ -143,13 +145,9 @@ class LogrotateConfAll(object):
 
 
 class LogRotateDocParser(DocParser):
-    script_words = set([
-        "prerotate",
-        "postrotate",
-        "firstaction",
-        "lastaction",
-        "preremove",
-    ])
+    script_words = set(
+        ["prerotate", "postrotate", "firstaction", "lastaction", "preremove"]
+    )
 
     def parse_attrs(self, pb):
         attrs = super(LogRotateDocParser, self).parse_attrs(pb)
@@ -209,6 +207,7 @@ class LogRotateConfTree(ConfigCombiner):
 
     See the :py:class:`insights.core.ConfigComponent` class for example usage.
     """
+
     def __init__(self, confs):
         include = eq("include")
         main_file = "logrotate.conf"
@@ -234,4 +233,5 @@ def get_tree(root=None):
     your local machine or an archive. It's for use in interactive sessions.
     """
     from insights import run
+
     return run(LogRotateConfTree, root=root).get(LogRotateConfTree)

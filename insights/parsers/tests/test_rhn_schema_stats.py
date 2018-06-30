@@ -113,28 +113,35 @@ NO_LOG = """
 def test_rhn_schema_stats_pgs():
 
     pg_log = DBStatsLog(context_wrap(POSTGRESQL_LOG))
-    assert 'rhnsnapshotPACKAGE' in pg_log
-    assert 'rhnsnapshotpackage_' not in pg_log
-    assert pg_log.get_table('chkpb_probe_type_ck') == []
-    assert pg_log.get_table('RHN_COMMAND_TARGET', ic=False) == []
-    assert pg_log.get_table('RHN_COMMAND_TARGET') == [
-        {'rows': '1009152', 'schema': 'public', 'table': 'rhn_command_target'},
-        {'name': 'cmdtg_target_type_ck',
-         'src': "((target_type)::text = ANY (ARRAY[('cluster')))",
-         'table': 'rhn_command_target', 'type': 'c'}
+    assert "rhnsnapshotPACKAGE" in pg_log
+    assert "rhnsnapshotpackage_" not in pg_log
+    assert pg_log.get_table("chkpb_probe_type_ck") == []
+    assert pg_log.get_table("RHN_COMMAND_TARGET", ic=False) == []
+    assert pg_log.get_table("RHN_COMMAND_TARGET") == [
+        {"rows": "1009152", "schema": "public", "table": "rhn_command_target"},
+        {
+            "name": "cmdtg_target_type_ck",
+            "src": "((target_type)::text = ANY (ARRAY[('cluster')))",
+            "table": "rhn_command_target",
+            "type": "c",
+        },
     ]
 
 
 def test_rhn_schema_stats_ora():
     ora_log = DBStatsLog(context_wrap(ORACLE_LOG))
-    assert 'rhnerratatmP' in ora_log
-    assert 'rhnerratatmP_' not in ora_log
-    assert ora_log.get_table('rhnerrataseverity', ic=False) == []
-    assert ora_log.get_table('rhnerrataseverity') == [
-        {'rows': 112, 'table': 'RHNERRATASEVERITY'},
-        {'CONSTRAINT NAME': 'SYS_C003263', 'REFERENCED CONSTRAINT': '',
-         'SEARCH CONDITION': '"LABEL" IS NOT NULL',
-         'TABLE NAME': 'RHNERRATASEVERITY', 'TYPE': 'C'}
+    assert "rhnerratatmP" in ora_log
+    assert "rhnerratatmP_" not in ora_log
+    assert ora_log.get_table("rhnerrataseverity", ic=False) == []
+    assert ora_log.get_table("rhnerrataseverity") == [
+        {"rows": 112, "table": "RHNERRATASEVERITY"},
+        {
+            "CONSTRAINT NAME": "SYS_C003263",
+            "REFERENCED CONSTRAINT": "",
+            "SEARCH CONDITION": '"LABEL" IS NOT NULL',
+            "TABLE NAME": "RHNERRATASEVERITY",
+            "TYPE": "C",
+        },
     ]
 
 

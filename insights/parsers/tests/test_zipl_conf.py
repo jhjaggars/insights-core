@@ -52,18 +52,21 @@ default=linux
 
 def test_zipl_conf():
     res = ZiplConf(context_wrap(ZIPL_CONF))
-    assert res.get('linux').get('image') == "/boot/vmlinuz-3.10.0-693.el7.s390x"
-    assert res['linux']['image'] == "/boot/vmlinuz-3.10.0-693.el7.s390x"
-    assert res[':menu1']['1'] == 'linux'
-    assert 'defaultauto' in res['defaultboot']
-    assert res['defaultboot']['defaultauto'] is True
-    assert res['other']['parameters'] == '"root=/dev/mapper/rhel_gss5-root crashkernel=auto rd.dasd=0.0.0100'
+    assert res.get("linux").get("image") == "/boot/vmlinuz-3.10.0-693.el7.s390x"
+    assert res["linux"]["image"] == "/boot/vmlinuz-3.10.0-693.el7.s390x"
+    assert res[":menu1"]["1"] == "linux"
+    assert "defaultauto" in res["defaultboot"]
+    assert res["defaultboot"]["defaultauto"] is True
+    assert (
+        res["other"]["parameters"]
+        == '"root=/dev/mapper/rhel_gss5-root crashkernel=auto rd.dasd=0.0.0100'
+    )
     assert res.images == {
-                            'linux': '/boot/vmlinuz-3.10.0-693.el7.s390x',
-                            'linux-0-rescue-a27932c8d57248e390cee3798bbd3709': '/boot/vmlinuz-0-rescue-a27932c8d57248e390cee3798bbd3709',
-                            'other': '/boot/vmlinuz'
-                        }
-    assert res.dumptofses == {'dumpscsi': '/dev/sda2'}
+        "linux": "/boot/vmlinuz-3.10.0-693.el7.s390x",
+        "linux-0-rescue-a27932c8d57248e390cee3798bbd3709": "/boot/vmlinuz-0-rescue-a27932c8d57248e390cee3798bbd3709",
+        "other": "/boot/vmlinuz",
+    }
+    assert res.dumptofses == {"dumpscsi": "/dev/sda2"}
 
 
 def test_zipl_conf_invalid():

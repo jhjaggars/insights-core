@@ -43,8 +43,9 @@ class UserNamespaces(object):
             bool: True if user namespaces are enabled, false if they aren't,
             or if user namespaces aren't supported by this kernel.
         """
-        return ('1' in self.cmdline.get('user_namespaces.enable', []) or
-                '1' in self.cmdline.get('user-namespaces.enable', []))
+        return "1" in self.cmdline.get(
+            "user_namespaces.enable", []
+        ) or "1" in self.cmdline.get("user-namespaces.enable", [])
 
     def enabled_configs(self):
         """Get boot configs for which user namespaces are enabled.
@@ -54,6 +55,9 @@ class UserNamespaces(object):
             enabled.  An empty list if user namespaces aren't supported or grub
             data isn't available.
         """
-        return [entry.name for entry in self.grub_cmdline
-                    if 'user_namespaces.enable=1' in entry.cmdline or
-                       'user-namespaces.enable=1' in entry.cmdline]
+        return [
+            entry.name
+            for entry in self.grub_cmdline
+            if "user_namespaces.enable=1" in entry.cmdline
+            or "user-namespaces.enable=1" in entry.cmdline
+        ]

@@ -24,20 +24,25 @@ def test_rsyslog_conf_0():
     assert len(m) == 5
     assert len(d) == 5
     # Test configuration item detection in dictionary
-    assert hasattr(m, 'config_items')
+    assert hasattr(m, "config_items")
     assert isinstance(m.config_items, dict)
-    assert 'ModLoad' in m.config_items
-    assert m.config_items['ModLoad'] == 'imtcp'
-    assert m.config_items['InputTCPServerRun'] == '10514'
-    assert m.config_items['template'] == 'SpiceTmpl,"%TIMESTAMP%.%TIMESTAMP:::date-subseconds% %syslogtag% %syslogseverity-text%:%msg:::sp-if-no-1st-sp%%msg:::drop-last-lf%\\n"'
-    assert 'ForwardSyslogHost' not in m.config_items
+    assert "ModLoad" in m.config_items
+    assert m.config_items["ModLoad"] == "imtcp"
+    assert m.config_items["InputTCPServerRun"] == "10514"
+    assert (
+        m.config_items["template"]
+        == 'SpiceTmpl,"%TIMESTAMP%.%TIMESTAMP:::date-subseconds% %syslogtag% %syslogseverity-text%:%msg:::sp-if-no-1st-sp%%msg:::drop-last-lf%\\n"'
+    )
+    assert "ForwardSyslogHost" not in m.config_items
     # configuration items should not include the comment.
-    assert 'WorkDirectory' in m.config_items
-    assert m.config_items['WorkDirectory'] == '/var/opt/rsyslog'
+    assert "WorkDirectory" in m.config_items
+    assert m.config_items["WorkDirectory"] == "/var/opt/rsyslog"
     # Test configuration item accessor
-    assert hasattr(m, 'config_val')
-    assert m.config_val('ModLoad') == 'imtcp'
-    assert m.config_val('ForwardSyslogHost', 'syslog.example.com') == 'syslog.example.com'
+    assert hasattr(m, "config_val")
+    assert m.config_val("ModLoad") == "imtcp"
+    assert (
+        m.config_val("ForwardSyslogHost", "syslog.example.com") == "syslog.example.com"
+    )
 
 
 def test_rsyslog_conf_1():
@@ -47,5 +52,5 @@ def test_rsyslog_conf_1():
     assert len(m) == 1
     assert len(d) == 1
     # Test that commented-out config items are not detected
-    assert 'ModLoad' not in m.config_items
-    assert 'InputTCPServerRun' not in m.config_items
+    assert "ModLoad" not in m.config_items
+    assert "InputTCPServerRun" not in m.config_items

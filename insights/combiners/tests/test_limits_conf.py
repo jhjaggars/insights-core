@@ -32,20 +32,68 @@ def test_all_limits_conf():
     all_data = AllLimitsConf([data1, data2])
 
     assert len(all_data.rules) == 7
-    assert all_data.rules[0] == {'domain': 'oracle', 'type': 'soft', 'item': 'nofile', 'value': 1024, 'file': LIMITS_CONF_PATH}
-    assert all_data.rules[1] == {'domain': 'oracle', 'type': 'hard', 'item': 'nofile', 'value': 65536, 'file': LIMITS_CONF_PATH}
-    assert all_data.rules[2] == {'domain': 'oracle', 'type': 'soft', 'item': 'stack', 'value': 10240, 'file': LIMITS_CONF_PATH}
-    assert all_data.rules[3] == {'domain': 'oracle', 'type': 'hard', 'item': 'stack', 'value': 3276, 'file': LIMITS_CONF_PATH}
-    assert all_data.rules[4] == {'domain': 'root', 'type': 'soft', 'item': 'nproc', 'value': -1, 'file': LIMITS_CONF_PATH}
-    assert all_data.rules[5] == {'domain': '@jackuser', 'type': '-', 'item': 'rtprio', 'value': 70, 'file': LIMITS_D_PATH}
-    assert all_data.rules[6] == {'domain': '@jackuser', 'type': '-', 'item': 'memlock', 'value': 4194304, 'file': LIMITS_D_PATH}
+    assert all_data.rules[0] == {
+        "domain": "oracle",
+        "type": "soft",
+        "item": "nofile",
+        "value": 1024,
+        "file": LIMITS_CONF_PATH,
+    }
+    assert all_data.rules[1] == {
+        "domain": "oracle",
+        "type": "hard",
+        "item": "nofile",
+        "value": 65536,
+        "file": LIMITS_CONF_PATH,
+    }
+    assert all_data.rules[2] == {
+        "domain": "oracle",
+        "type": "soft",
+        "item": "stack",
+        "value": 10240,
+        "file": LIMITS_CONF_PATH,
+    }
+    assert all_data.rules[3] == {
+        "domain": "oracle",
+        "type": "hard",
+        "item": "stack",
+        "value": 3276,
+        "file": LIMITS_CONF_PATH,
+    }
+    assert all_data.rules[4] == {
+        "domain": "root",
+        "type": "soft",
+        "item": "nproc",
+        "value": -1,
+        "file": LIMITS_CONF_PATH,
+    }
+    assert all_data.rules[5] == {
+        "domain": "@jackuser",
+        "type": "-",
+        "item": "rtprio",
+        "value": 70,
+        "file": LIMITS_D_PATH,
+    }
+    assert all_data.rules[6] == {
+        "domain": "@jackuser",
+        "type": "-",
+        "item": "memlock",
+        "value": 4194304,
+        "file": LIMITS_D_PATH,
+    }
 
-    assert all_data.domains == set(['oracle', 'root', '@jackuser'])
+    assert all_data.domains == set(["oracle", "root", "@jackuser"])
 
-    assert all_data.find_all(domain='root') == [all_data.rules[4]]
+    assert all_data.find_all(domain="root") == [all_data.rules[4]]
 
     data3 = LimitsConf(context_wrap(DUP_LIMITS_D_CONF, path=DUP_LIMITS_D_CONF_PATH))
     all_data = AllLimitsConf([data1, data3])
     # Check de-duplication of rules
     assert len(all_data.rules) == 5  # No extra rule
-    assert all_data.rules[3] == {'domain': 'oracle', 'type': 'hard', 'item': 'stack', 'value': 1926, 'file': DUP_LIMITS_D_CONF_PATH}
+    assert all_data.rules[3] == {
+        "domain": "oracle",
+        "type": "hard",
+        "item": "stack",
+        "value": 1926,
+        "file": DUP_LIMITS_D_CONF_PATH,
+    }

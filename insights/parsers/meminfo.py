@@ -126,11 +126,7 @@ class SubMemInfo(object):
 
 class SwapMemInfo(SubMemInfo):
 
-    sub_keys = [
-        ("swaptotal", "total"),
-        ("swapfree", "free"),
-        ("swapcached", "cached")
-    ]
+    sub_keys = [("swaptotal", "total"), ("swapfree", "free"), ("swapcached", "cached")]
 
     @property
     def used(self):
@@ -142,16 +138,13 @@ class AnonMemInfo(SubMemInfo):
     sub_keys = [
         ("active(anon)", "active"),
         ("inactive(anon)", "inactive"),
-        ("anonpages", "pages")
+        ("anonpages", "pages"),
     ]
 
 
 class FileMemInfo(SubMemInfo):
 
-    sub_keys = [
-        ("active(file)", "active"),
-        ("inactive(file)", "inactive")
-    ]
+    sub_keys = [("active(file)", "active"), ("inactive(file)", "inactive")]
 
 
 class SlabMemInfo(SubMemInfo):
@@ -159,7 +152,7 @@ class SlabMemInfo(SubMemInfo):
     sub_keys = [
         ("slab", "total"),
         ("sreclaimable", "reclaimable"),
-        ("sunreclaim", "unreclaimable")
+        ("sunreclaim", "unreclaimable"),
     ]
 
 
@@ -171,7 +164,7 @@ class HugePageMemInfo(SubMemInfo):
         ("hugepages_rsvd", "reserved"),
         ("hugepages_surp", "surplus"),
         ("hugepagesize", "size"),
-        ("anonhugepages", "anon")
+        ("anonhugepages", "anon"),
     ]
 
     @property
@@ -185,10 +178,7 @@ class HugePageMemInfo(SubMemInfo):
 
 class CommitMemInfo(SubMemInfo):
 
-    sub_keys = [
-        ("committed_as", "total"),
-        ("commitlimit", "limit")
-    ]
+    sub_keys = [("committed_as", "total"), ("commitlimit", "limit")]
 
 
 class VmallocMemInfo(SubMemInfo):
@@ -196,25 +186,18 @@ class VmallocMemInfo(SubMemInfo):
     sub_keys = [
         ("vmalloctotal", "total"),
         ("vmallocused", "used"),
-        ("vmallocchunk", "chunk")
+        ("vmallocchunk", "chunk"),
     ]
 
 
 class CmaMemInfo(SubMemInfo):
 
-    sub_keys = [
-        ("cmatotal", "total"),
-        ("cmafree", "free")
-    ]
+    sub_keys = [("cmatotal", "total"), ("cmafree", "free")]
 
 
 class DirectMapMemInfo(SubMemInfo):
 
-    sub_keys = [
-        ("directmap4k", "kb"),
-        ("directmap2m", "mb"),
-        ("directmap1g", "gb")
-    ]
+    sub_keys = [("directmap4k", "kb"), ("directmap2m", "mb"), ("directmap1g", "gb")]
 
 
 @parser(Specs.meminfo)
@@ -229,7 +212,10 @@ class MemInfo(Parser):
     """
 
     VALUE_IN_BYTES = [
-        "hugepages_total", "hugepages_free", "hugepages_rsvd", "hugepages_surp"
+        "hugepages_total",
+        "hugepages_free",
+        "hugepages_rsvd",
+        "hugepages_surp",
     ]
 
     mem_keys = [
@@ -265,7 +251,7 @@ class MemInfo(Parser):
             "commit": CommitMemInfo(self.data),
             "vmalloc": VmallocMemInfo(self.data),
             "cma": CmaMemInfo(self.data),
-            "direct_map": DirectMapMemInfo(self.data)
+            "direct_map": DirectMapMemInfo(self.data),
         }
         for name, cls in sub_classes.items():
             setattr(self, name, cls)
@@ -275,7 +261,7 @@ class MemInfo(Parser):
     def parse_content(self, content):
         self.data = {}
         for line in get_active_lines(content, comment_char="COMMAND>"):
-            (key, value) = line.split(':', 1)
+            (key, value) = line.split(":", 1)
             # Store values as byte count
             key = key.strip().lower()
             if key in MemInfo.VALUE_IN_BYTES:

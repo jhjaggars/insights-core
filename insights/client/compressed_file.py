@@ -19,20 +19,26 @@ class InsightsCompressedFile(object):
 
     def __init__(self, compressed_file_location=None):
         self.compressed_file_location = compressed_file_location
-        self.tmp_dir = tempfile.mkdtemp(prefix='/var/tmp/')
+        self.tmp_dir = tempfile.mkdtemp(prefix="/var/tmp/")
         self.is_file = os.path.isfile(self.compressed_file_location)
-        self.is_tarfile = (tarfile.is_tarfile(self.compressed_file_location)
-                            if self.is_file else False)
+        self.is_tarfile = (
+            tarfile.is_tarfile(self.compressed_file_location) if self.is_file else False
+        )
         if self.is_file and self.is_tarfile:
             try:
                 tar = tarfile.open(self.compressed_file_location)
                 tar.extractall(path=self.tmp_dir)
                 tar.close()
-                logger.debug("Compressed filesystem %s extracted to %s",
-                    self.compressed_file_location, self.tmp_dir)
+                logger.debug(
+                    "Compressed filesystem %s extracted to %s",
+                    self.compressed_file_location,
+                    self.tmp_dir,
+                )
             except:
-                logger.debug("Invalid compressed tar filesystem provided. "
-                    "Could not extract contents.")
+                logger.debug(
+                    "Invalid compressed tar filesystem provided. "
+                    "Could not extract contents."
+                )
         else:
             logger.debug("Invalid compressed tar filesystem provided.")
 

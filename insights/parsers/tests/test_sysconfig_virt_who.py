@@ -16,8 +16,8 @@ TEST_OPT="A TEST"
 
 def test_sysconfig_virt_who():
     result = VirtWhoSysconfig(context_wrap(VIRTWHO))
-    assert result["VIRTWHO_RHEVM"] == '1'
-    assert result["VIRTWHO_RHEVM_OWNER"] == ''
+    assert result["VIRTWHO_RHEVM"] == "1"
+    assert result["VIRTWHO_RHEVM_OWNER"] == ""
     assert result.get("NO_SUCH_OPTIONS") is None
     assert "NOSUCHOPTIONS" not in result
-    assert result.get("TEST_OPT") == 'A TEST'
+    assert result.get("TEST_OPT") == "A TEST"

@@ -13,8 +13,10 @@ Red Hat JBoss Enterprise Application Platform - Version 7.1.0.Beta1
 
 
 def test_jboss6():
-    release6 = JbossVersion(context_wrap(JBOSS_6, path='/home/test/jboss/jboss-eap-6.4/version.txt'))
-    assert release6.file_path == '/home/test/jboss/jboss-eap-6.4/version.txt'
+    release6 = JbossVersion(
+        context_wrap(JBOSS_6, path="/home/test/jboss/jboss-eap-6.4/version.txt")
+    )
+    assert release6.file_path == "/home/test/jboss/jboss-eap-6.4/version.txt"
     assert release6.raw == JBOSS_6
     assert release6.major == 6
     assert release6.minor == 4
@@ -24,8 +26,10 @@ def test_jboss6():
 
 
 def test_jboss7():
-    release7 = JbossVersion(context_wrap(JBOSS_7, path='/home/test/jboss/jboss-eap-7.1/version.txt'))
-    assert release7.file_path == '/home/test/jboss/jboss-eap-7.1/version.txt'
+    release7 = JbossVersion(
+        context_wrap(JBOSS_7, path="/home/test/jboss/jboss-eap-7.1/version.txt")
+    )
+    assert release7.file_path == "/home/test/jboss/jboss-eap-7.1/version.txt"
     assert release7.raw == JBOSS_7
     assert release7.major == 7
     assert release7.minor == 1
@@ -36,9 +40,10 @@ def test_jboss7():
 
 def test_jboss_version_doc_examples():
     env = {
-        'JbossVersion': JbossVersion,
-        'jboss_version': JbossVersion(context_wrap(JBOSS_6,
-                                                   path='/home/test/jboss/jboss-eap-6.4/version.txt'))
+        "JbossVersion": JbossVersion,
+        "jboss_version": JbossVersion(
+            context_wrap(JBOSS_6, path="/home/test/jboss/jboss-eap-6.4/version.txt")
+        ),
     }
     failed, total = doctest.testmod(jboss_version, globs=env)
     assert failed == 0

@@ -128,7 +128,7 @@ class CpuInfo(LegacyItemAccess, Parser):
             "cpu MHz": "clockspeeds",
             "cache size": "cache_sizes",
             "cpu cores": "cpu_cores",
-            "flags": "flags"
+            "flags": "flags",
         }
 
         for line in get_active_lines(content, comment_char="COMMAND>"):

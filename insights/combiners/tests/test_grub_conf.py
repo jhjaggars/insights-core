@@ -1,5 +1,10 @@
 from insights.combiners.grub_conf import GrubConf
-from insights.parsers.grub_conf import Grub1Config, Grub2Config, Grub2EFIConfig, Grub1EFIConfig
+from insights.parsers.grub_conf import (
+    Grub1Config,
+    Grub2Config,
+    Grub2EFIConfig,
+    Grub1EFIConfig,
+)
 from insights.parsers.ls_sys_firmware import LsSysFirmware
 from insights.parsers.installed_rpms import InstalledRpms
 from insights.parsers.cmdline import CmdLine
@@ -234,10 +239,13 @@ def test_grub1_only1():
     grub1 = Grub1Config(context_wrap(GRUB1_TEMPLATE))
     cmdline = CmdLine(context_wrap(CMDLINE_V1))
     result = GrubConf(grub1, None, None, None, None, cmdline, None)
-    assert result.kernel_initrds['grub_kernels'][0] == 'vmlinuz-2.6.32-642.el6.x86_64'
-    assert result.kernel_initrds['grub_initrds'][0] == 'initramfs-2.6.32-642.el6.x86_64.img'
+    assert result.kernel_initrds["grub_kernels"][0] == "vmlinuz-2.6.32-642.el6.x86_64"
+    assert (
+        result.kernel_initrds["grub_initrds"][0]
+        == "initramfs-2.6.32-642.el6.x86_64.img"
+    )
     assert result.is_kdump_iommu_enabled is True
-    assert result.get_grub_cmdlines() == result.get_grub_cmdlines('/vmlinuz')
+    assert result.get_grub_cmdlines() == result.get_grub_cmdlines("/vmlinuz")
     assert len(result.get_grub_cmdlines()) == 3
     assert result.version == 1
     assert result.is_efi is False
@@ -251,10 +259,13 @@ def test_grub1_cmdline():
     cmdline = CmdLine(context_wrap(CMDLINE_V1))
     sys_firmware = LsSysFirmware(context_wrap(SYS_FIRMWARE_DIR_NOEFI))
     result = GrubConf(grub1, grub2, grub1e, grub2e, None, cmdline, sys_firmware)
-    assert result.kernel_initrds['grub_kernels'][0] == 'vmlinuz-2.6.32-642.el6.x86_64'
-    assert result.kernel_initrds['grub_initrds'][0] == 'initramfs-2.6.32-642.el6.x86_64.img'
+    assert result.kernel_initrds["grub_kernels"][0] == "vmlinuz-2.6.32-642.el6.x86_64"
+    assert (
+        result.kernel_initrds["grub_initrds"][0]
+        == "initramfs-2.6.32-642.el6.x86_64.img"
+    )
     assert result.is_kdump_iommu_enabled is True
-    assert result.get_grub_cmdlines() == result.get_grub_cmdlines('/vmlinuz')
+    assert result.get_grub_cmdlines() == result.get_grub_cmdlines("/vmlinuz")
     assert len(result.get_grub_cmdlines()) == 3
     assert result.version == 1
     assert result.is_efi is False
@@ -268,8 +279,10 @@ def test_grub1_efi_cmdline():
     cmdline = CmdLine(context_wrap(CMDLINE_V1))
     sys_firmware = LsSysFirmware(context_wrap(SYS_FIRMWARE_DIR_EFI))
     result = GrubConf(grub1, grub2, grub1e, grub2e, None, cmdline, sys_firmware)
-    assert result.kernel_initrds['grub_kernels'][0] == 'vmlinuz-2.6.32-71.el6.x86_64'
-    assert result.kernel_initrds['grub_initrds'][0] == 'initramfs-2.6.32-71.el6.x86_64.img'
+    assert result.kernel_initrds["grub_kernels"][0] == "vmlinuz-2.6.32-71.el6.x86_64"
+    assert (
+        result.kernel_initrds["grub_initrds"][0] == "initramfs-2.6.32-71.el6.x86_64.img"
+    )
     assert result.is_kdump_iommu_enabled is False
     assert len(result.get_grub_cmdlines()) == 1
     assert result.version == 1
@@ -285,10 +298,13 @@ def test_grub1_rpms():
     cmdline = CmdLine(context_wrap(CMDLINE_V2))
     sys_firmware = LsSysFirmware(context_wrap(SYS_FIRMWARE_DIR_NOEFI))
     result = GrubConf(grub1, grub2, grub1e, grub2e, rpms, cmdline, sys_firmware)
-    assert result.kernel_initrds['grub_kernels'][0] == 'vmlinuz-2.6.32-642.el6.x86_64'
-    assert result.kernel_initrds['grub_initrds'][0] == 'initramfs-2.6.32-642.el6.x86_64.img'
+    assert result.kernel_initrds["grub_kernels"][0] == "vmlinuz-2.6.32-642.el6.x86_64"
+    assert (
+        result.kernel_initrds["grub_initrds"][0]
+        == "initramfs-2.6.32-642.el6.x86_64.img"
+    )
     assert result.is_kdump_iommu_enabled is True
-    assert result.get_grub_cmdlines() == result.get_grub_cmdlines('/vmlinuz')
+    assert result.get_grub_cmdlines() == result.get_grub_cmdlines("/vmlinuz")
     assert len(result.get_grub_cmdlines()) == 3
     assert result.version == 1
     assert result.is_efi is False
@@ -303,10 +319,12 @@ def test_grub1_efi_rpms():
     cmdline = CmdLine(context_wrap(CMDLINE_V2))
     sys_firmware = LsSysFirmware(context_wrap(SYS_FIRMWARE_DIR_EFI))
     result = GrubConf(grub1, grub2, grub1e, grub2e, rpms, cmdline, sys_firmware)
-    assert result.kernel_initrds['grub_kernels'][0] == 'vmlinuz-2.6.32-71.el6.x86_64'
-    assert result.kernel_initrds['grub_initrds'][0] == 'initramfs-2.6.32-71.el6.x86_64.img'
+    assert result.kernel_initrds["grub_kernels"][0] == "vmlinuz-2.6.32-71.el6.x86_64"
+    assert (
+        result.kernel_initrds["grub_initrds"][0] == "initramfs-2.6.32-71.el6.x86_64.img"
+    )
     assert result.is_kdump_iommu_enabled is False
-    assert result.get_grub_cmdlines() == result.get_grub_cmdlines('/vmlinuz')
+    assert result.get_grub_cmdlines() == result.get_grub_cmdlines("/vmlinuz")
     assert len(result.get_grub_cmdlines()) == 1
     assert result.version == 1
     assert result.is_efi is True
@@ -320,12 +338,18 @@ def test_grub2_cmdline():
     cmdline = CmdLine(context_wrap(CMDLINE_V2))
     sys_firmware = LsSysFirmware(context_wrap(SYS_FIRMWARE_DIR_NOEFI))
     result = GrubConf(grub1, grub2, grub1e, grub2e, None, cmdline, sys_firmware)
-    assert result.kernel_initrds['grub_kernels'][0] == 'vmlinuz-3.10.0-327.el7.x86_64'
-    assert result.kernel_initrds['grub_initrds'][0] == 'initramfs-3.10.0-327.el7.x86_64.img'
+    assert result.kernel_initrds["grub_kernels"][0] == "vmlinuz-3.10.0-327.el7.x86_64"
+    assert (
+        result.kernel_initrds["grub_initrds"][0]
+        == "initramfs-3.10.0-327.el7.x86_64.img"
+    )
     assert result.is_kdump_iommu_enabled is False
-    assert result.get_grub_cmdlines('/vmlinuz-3.10.0')[0].name == "'Red Hat Enterprise Linux Server (3.10.0-327.el7.x86_64) 7.2 (Maipo)' --class red --class gnu-linux --class gnu --class os --unrestricted $menuentry_id_option 'gnulinux-3.10.0-327.el7.x86_64-advanced-4f80b3d4-90ba-4545-869c-febdecc586ce'"
-    assert result.get_grub_cmdlines('test') == []
-    assert result.get_grub_cmdlines('') == []
+    assert (
+        result.get_grub_cmdlines("/vmlinuz-3.10.0")[0].name
+        == "'Red Hat Enterprise Linux Server (3.10.0-327.el7.x86_64) 7.2 (Maipo)' --class red --class gnu-linux --class gnu --class os --unrestricted $menuentry_id_option 'gnulinux-3.10.0-327.el7.x86_64-advanced-4f80b3d4-90ba-4545-869c-febdecc586ce'"
+    )
+    assert result.get_grub_cmdlines("test") == []
+    assert result.get_grub_cmdlines("") == []
     assert len(result.get_grub_cmdlines()) == 2
     assert result.version == 2
     assert result.is_efi is False
@@ -339,8 +363,10 @@ def test_grub2_efi_cmdline():
     cmdline = CmdLine(context_wrap(CMDLINE_V2))
     sys_firmware = LsSysFirmware(context_wrap(SYS_FIRMWARE_DIR_EFI))
     result = GrubConf(grub1, grub2, grub1e, grub2e, None, cmdline, sys_firmware)
-    assert result.get_grub_cmdlines() == result.get_grub_cmdlines('/vmlinuz')
-    assert result.get_grub_cmdlines('rescue')[0].name.startswith("'Red Hat Enterprise Linux Server (0-rescue")
+    assert result.get_grub_cmdlines() == result.get_grub_cmdlines("/vmlinuz")
+    assert result.get_grub_cmdlines("rescue")[0].name.startswith(
+        "'Red Hat Enterprise Linux Server (0-rescue"
+    )
     assert len(result.get_grub_cmdlines()) == 4
     assert result.version == 2
     assert result.is_efi is True
@@ -354,12 +380,18 @@ def test_grub2_rpms():
     rpms = InstalledRpms(context_wrap(INSTALLED_RPMS_V2))
     cmdline = CmdLine(context_wrap(CMDLINE_V1))
     result = GrubConf(grub1, grub2, grub1e, grub2e, rpms, cmdline, None)
-    assert result.kernel_initrds['grub_kernels'][0] == 'vmlinuz-3.10.0-327.el7.x86_64'
-    assert result.kernel_initrds['grub_initrds'][0] == 'initramfs-3.10.0-327.el7.x86_64.img'
+    assert result.kernel_initrds["grub_kernels"][0] == "vmlinuz-3.10.0-327.el7.x86_64"
+    assert (
+        result.kernel_initrds["grub_initrds"][0]
+        == "initramfs-3.10.0-327.el7.x86_64.img"
+    )
     assert result.is_kdump_iommu_enabled is False
-    assert result.get_grub_cmdlines('/vmlinuz-3.10.0')[0].name == "'Red Hat Enterprise Linux Server (3.10.0-327.el7.x86_64) 7.2 (Maipo)' --class red --class gnu-linux --class gnu --class os --unrestricted $menuentry_id_option 'gnulinux-3.10.0-327.el7.x86_64-advanced-4f80b3d4-90ba-4545-869c-febdecc586ce'"
-    assert result.get_grub_cmdlines('test') == []
-    assert result.get_grub_cmdlines('') == []
+    assert (
+        result.get_grub_cmdlines("/vmlinuz-3.10.0")[0].name
+        == "'Red Hat Enterprise Linux Server (3.10.0-327.el7.x86_64) 7.2 (Maipo)' --class red --class gnu-linux --class gnu --class os --unrestricted $menuentry_id_option 'gnulinux-3.10.0-327.el7.x86_64-advanced-4f80b3d4-90ba-4545-869c-febdecc586ce'"
+    )
+    assert result.get_grub_cmdlines("test") == []
+    assert result.get_grub_cmdlines("") == []
     assert len(result.get_grub_cmdlines()) == 2
     assert result.version == 2
     assert result.is_efi is False
@@ -374,9 +406,14 @@ def test_grub2_efi_rpms():
     cmdline = CmdLine(context_wrap(CMDLINE_V1))
     sys_firmware = LsSysFirmware(context_wrap(SYS_FIRMWARE_DIR_EFI))
     result = GrubConf(grub1, grub2, grub1e, grub2e, rpms, cmdline, sys_firmware)
-    assert result.kernel_initrds['grub_initrds'][0] == 'initramfs-3.10.0-514.16.1.el7.x86_64.img'
-    assert result.get_grub_cmdlines() == result.get_grub_cmdlines('/vmlinuz')
-    assert result.get_grub_cmdlines('rescue')[0].name.startswith("'Red Hat Enterprise Linux Server (0-rescue")
+    assert (
+        result.kernel_initrds["grub_initrds"][0]
+        == "initramfs-3.10.0-514.16.1.el7.x86_64.img"
+    )
+    assert result.get_grub_cmdlines() == result.get_grub_cmdlines("/vmlinuz")
+    assert result.get_grub_cmdlines("rescue")[0].name.startswith(
+        "'Red Hat Enterprise Linux Server (0-rescue"
+    )
     assert len(result.get_grub_cmdlines()) == 4
     assert result.version == 2
     assert result.is_efi is True

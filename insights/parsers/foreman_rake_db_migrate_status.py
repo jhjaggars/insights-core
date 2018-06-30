@@ -46,7 +46,7 @@ from insights.specs import Specs
 import re
 
 
-Migration = namedtuple("Migration", ('status', 'id', 'name'))
+Migration = namedtuple("Migration", ("status", "id", "name"))
 """namedtuple: Stores one migration record"""
 
 
@@ -63,20 +63,20 @@ class Sat6DBMigrateStatus(CommandParser):
     """
 
     def parse_content(self, content):
-        self.database = ''
+        self.database = ""
         self.migrations = {}
         self.up = []
         self.down = []
-        mig_re = re.compile(r'\s+(?P<status>\w+)\s+(?P<id>\d+)\s+(?P<name>\w.*)$')
+        mig_re = re.compile(r"\s+(?P<status>\w+)\s+(?P<id>\d+)\s+(?P<name>\w.*)$")
         for line in content:
-            if line.startswith('database: '):
-                self.database = line[len('database: '):]
+            if line.startswith("database: "):
+                self.database = line[len("database: ") :]
                 continue
             match = mig_re.search(line)
             if match:
-                migration = Migration(*match.group('status', 'id', 'name'))
-                self.migrations[match.group('id')] = migration
-                if match.group('status') == 'up':
+                migration = Migration(*match.group("status", "id", "name"))
+                self.migrations[match.group("id")] = migration
+                if match.group("status") == "up":
                     self.up.append(migration)
                 else:
                     self.down.append(migration)

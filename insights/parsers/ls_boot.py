@@ -47,4 +47,5 @@ class LsBoot(CommandParser, FileListing):
     """
     Parse the /boot directory listing using a standard FileListing parser.
     """
+
     pass

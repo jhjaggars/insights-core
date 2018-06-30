@@ -95,4 +95,4 @@ def test_ovs_vsctl_show():
     assert options.get("out_key") == "flow"
 
     bad = OVSvsctlshow(context_wrap(ovs_vsctl_show_missing_lines))
-    assert not hasattr(bad, 'data')
+    assert not hasattr(bad, "data")

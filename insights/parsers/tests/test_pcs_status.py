@@ -209,26 +209,30 @@ PCSD Status:
 
 def test_pcs_status():
     pcs = PCSStatus(context_wrap(CLUSTER_NORMAL))
-    assert pcs.nodes == ['myhost15', 'myhost17', 'myhost16']
-    assert pcs.get('Stack') == 'corosync'
-    assert pcs.get('Cluster name') == 'openstack'
-    assert pcs.get('Current DC') == 'myhost15 (1) - partition with quorum'
+    assert pcs.nodes == ["myhost15", "myhost17", "myhost16"]
+    assert pcs.get("Stack") == "corosync"
+    assert pcs.get("Cluster name") == "openstack"
+    assert pcs.get("Current DC") == "myhost15 (1) - partition with quorum"
     assert pcs.get("Nodes configured") == "3"
     assert pcs.get("Resources configured") == "143"
     assert pcs.get("Online") == "[ myhost15 myhost16 myhost17 ]"
-    assert pcs.get('Nonexistent key') is None
+    assert pcs.get("Nonexistent key") is None
 
 
 def test_pcs_nodes_and_resources():
     pcs = PCSStatus(context_wrap(CLUSTER_NODES_AND_RESOURCES))
-    assert pcs.nodes == ['overcloud-controller-0', 'overcloud-controller-1', 'overcloud-controller-2']
+    assert pcs.nodes == [
+        "overcloud-controller-0",
+        "overcloud-controller-1",
+        "overcloud-controller-2",
+    ]
     # 3 nodes and 112 resources configured
-    assert pcs.data['Nodes configured'] == '3'
-    assert pcs.data['Resources configured'] == '112'
-    assert pcs.data['Daemon Status'] == [
-        'corosync: active/enabled',
-        'pacemaker: active/enabled',
-        'pcsd: active/enabled',
+    assert pcs.data["Nodes configured"] == "3"
+    assert pcs.data["Resources configured"] == "112"
+    assert pcs.data["Daemon Status"] == [
+        "corosync: active/enabled",
+        "pacemaker: active/enabled",
+        "pcsd: active/enabled",
     ]
 
 
@@ -240,13 +244,13 @@ def test_cluster_not_running():
 def test_cluster_warning():
     pcs = PCSStatus(context_wrap(CLUSTER_WARNINGS))
     assert pcs.nodes == []
-    assert pcs.data['WARNING'] == [
+    assert pcs.data["WARNING"] == [
         "WARNING: We don't know where, but something awful is going to happen",
-        "WARNING: This is another made-up warning, please supply real ones"
+        "WARNING: This is another made-up warning, please supply real ones",
     ]
 
 
 def test_pcs_uncleannode():
     pcs = PCSStatus(context_wrap(CLUSTER_UNCLEANNODE))
-    assert pcs.nodes == ['control-0', 'control-1', 'control-2']
-    assert pcs.bad_nodes == [{'status': 'UNCLEAN (online)', 'name': 'control-2'}]
+    assert pcs.nodes == ["control-0", "control-1", "control-2"]
+    assert pcs.bad_nodes == [{"status": "UNCLEAN (online)", "name": "control-2"}]

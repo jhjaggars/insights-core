@@ -182,7 +182,7 @@ def parse_systemd_ini(content):
 
     Config = cp(dict_type=MultiOrderedDict)
     Config.optionxform = str
-    Config.readfp(StringIO('\n'.join(content)))
+    Config.readfp(StringIO("\n".join(content)))
 
     dict_all = {}
     for section in Config.sections():
@@ -191,7 +191,9 @@ def parse_systemd_ini(content):
             value = Config.get(section, option).splitlines()
             value = list(unsplit_lines(value))
             # If the len of value is 1, then set the value as string
-            dict_section[option] = value[0] if len(value) == 1 else value if len(value) > 1 else ''
+            dict_section[option] = (
+                value[0] if len(value) == 1 else value if len(value) > 1 else ""
+            )
         dict_all[section] = dict_section
 
     return dict_all

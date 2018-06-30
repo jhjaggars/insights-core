@@ -21,11 +21,14 @@ SEVERE: Failed to initialize end point associated with ProtocolHandler ["http-bi
 
 def test_catalina_server_log():
     ser_log = CatalinaServerLog(context_wrap(SERVER_LOG))
-    test_1 = ser_log.get('-Djava')
+    test_1 = ser_log.get("-Djava")
     assert 3 == len(test_1)
-    test_2 = ser_log.get('Failed to initialize')
+    test_2 = ser_log.get("Failed to initialize")
     assert 1 == len(test_2)
-    assert test_2[0]['raw_message'] == 'SEVERE: Failed to initialize end point associated with ProtocolHandler ["http-bio-18080"]'
+    assert (
+        test_2[0]["raw_message"]
+        == 'SEVERE: Failed to initialize end point associated with ProtocolHandler ["http-bio-18080"]'
+    )
     assert len(list(ser_log.get_after(datetime(2017, 11, 28, 14, 11, 21)))) == 4
     assert "/var/cache/tomcat/temp" in ser_log
 
@@ -157,9 +160,13 @@ INFO: Pausing Coyote HTTP/1.1 on http-8080
 
 def test_catalina_log_doc_examples():
     env = {
-            'CatalinaOut': CatalinaOut,
-            'out': CatalinaOut(context_wrap(CATALINA_OUT2, path='/var/log/tomcat/catalina.out')),
-            'log': CatalinaServerLog(context_wrap(SERVER_LOG, path='/var/log/tomcat/catalina.2017-11-28.log'))
-          }
+        "CatalinaOut": CatalinaOut,
+        "out": CatalinaOut(
+            context_wrap(CATALINA_OUT2, path="/var/log/tomcat/catalina.out")
+        ),
+        "log": CatalinaServerLog(
+            context_wrap(SERVER_LOG, path="/var/log/tomcat/catalina.2017-11-28.log")
+        ),
+    }
     failed, total = doctest.testmod(catalina_log, globs=env)
     assert failed == 0

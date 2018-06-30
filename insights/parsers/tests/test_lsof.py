@@ -37,7 +37,18 @@ JS         642  648        polkitd    1u      CHR                1,3       0t0  
 JS         642  648        polkitd    2u      CHR                1,3       0t0       4674 /dev/null
 """.strip()
 
-columns = ["COMMAND", "PID", "TID", "USER", "FD", "TYPE", "DEVICE", "SIZE/OFF", "NODE", "NAME"]
+columns = [
+    "COMMAND",
+    "PID",
+    "TID",
+    "USER",
+    "FD",
+    "TYPE",
+    "DEVICE",
+    "SIZE/OFF",
+    "NODE",
+    "NAME",
+]
 
 
 def test_lsof():
@@ -55,7 +66,7 @@ def test_lsof():
         "DEVICE": "253,1",
         "SIZE/OFF": "4096",
         "NODE": "128",
-        "NAME": "/"
+        "NAME": "/",
     }
 
     # Spot checks
@@ -74,7 +85,7 @@ def test_lsof():
         "DEVICE": "",
         "SIZE/OFF": "",
         "NODE": "",
-        "NAME": "/proc/611/exe"
+        "NAME": "/proc/611/exe",
     }
 
 
@@ -91,7 +102,7 @@ def test_lsof_good():
         "DEVICE": "13,64",
         "SIZE/OFF": "0t0",
         "NODE": "6406",
-        "NAME": "/dev/input/event0"
+        "NAME": "/dev/input/event0",
     }
 
     # Spot checks
@@ -112,43 +123,43 @@ def test_lsof_good():
         "DEVICE": "1,3",
         "SIZE/OFF": "0t0",
         "NODE": "4674",
-        "NAME": "/dev/null"
+        "NAME": "/dev/null",
     }
 
 
 def test_lsof_scan():
     ctx = context_wrap(LSOF_GOOD_V1)
     # Scannable provided `any` method
-    lsof.Lsof.any('systemd_commands', lambda x: 'systemd' in x['COMMAND'])
+    lsof.Lsof.any("systemd_commands", lambda x: "systemd" in x["COMMAND"])
     # Scannable provided `collect` method
-    lsof.Lsof.collect('polkitd_user', lambda x: x['USER'] == 'polkitd')
+    lsof.Lsof.collect("polkitd_user", lambda x: x["USER"] == "polkitd")
     # Lsof provided `collect_keys` method
-    lsof.Lsof.collect_keys('root_stdin', USER='root', FD='0r', SIZE_OFF='0t0')
+    lsof.Lsof.collect_keys("root_stdin", USER="root", FD="0r", SIZE_OFF="0t0")
     l = lsof.Lsof(ctx)
     assert l.systemd_commands
     assert len(l.polkitd_user) == 12
 
-    assert hasattr(l, 'root_stdin')
+    assert hasattr(l, "root_stdin")
     assert len(l.root_stdin) == 2
 
-    assert l.root_stdin[0]['COMMAND'] == 'abrt-watc'
-    assert l.root_stdin[0]['PID'] == '8619'
-    assert l.root_stdin[0]['TID'] == ''
-    assert l.root_stdin[0]['USER'] == 'root'
-    assert l.root_stdin[0]['FD'] == '0r'
-    assert l.root_stdin[0]['TYPE'] == 'CHR'
-    assert l.root_stdin[0]['DEVICE'] == '1,3'
-    assert l.root_stdin[0]['SIZE/OFF'] == '0t0'
-    assert l.root_stdin[0]['NODE'] == '4674'
-    assert l.root_stdin[0]['NAME'] == '/dev/null'
+    assert l.root_stdin[0]["COMMAND"] == "abrt-watc"
+    assert l.root_stdin[0]["PID"] == "8619"
+    assert l.root_stdin[0]["TID"] == ""
+    assert l.root_stdin[0]["USER"] == "root"
+    assert l.root_stdin[0]["FD"] == "0r"
+    assert l.root_stdin[0]["TYPE"] == "CHR"
+    assert l.root_stdin[0]["DEVICE"] == "1,3"
+    assert l.root_stdin[0]["SIZE/OFF"] == "0t0"
+    assert l.root_stdin[0]["NODE"] == "4674"
+    assert l.root_stdin[0]["NAME"] == "/dev/null"
 
-    assert l.root_stdin[1]['COMMAND'] == 'wpa_suppl'
-    assert l.root_stdin[1]['PID'] == '641'
-    assert l.root_stdin[1]['TID'] == ''
-    assert l.root_stdin[1]['USER'] == 'root'
-    assert l.root_stdin[1]['FD'] == '0r'
-    assert l.root_stdin[1]['TYPE'] == 'CHR'
-    assert l.root_stdin[1]['DEVICE'] == '1,3'
-    assert l.root_stdin[1]['SIZE/OFF'] == '0t0'
-    assert l.root_stdin[1]['NODE'] == '4674'
-    assert l.root_stdin[1]['NAME'] == '/dev/null'
+    assert l.root_stdin[1]["COMMAND"] == "wpa_suppl"
+    assert l.root_stdin[1]["PID"] == "641"
+    assert l.root_stdin[1]["TID"] == ""
+    assert l.root_stdin[1]["USER"] == "root"
+    assert l.root_stdin[1]["FD"] == "0r"
+    assert l.root_stdin[1]["TYPE"] == "CHR"
+    assert l.root_stdin[1]["DEVICE"] == "1,3"
+    assert l.root_stdin[1]["SIZE/OFF"] == "0t0"
+    assert l.root_stdin[1]["NODE"] == "4674"
+    assert l.root_stdin[1]["NAME"] == "/dev/null"

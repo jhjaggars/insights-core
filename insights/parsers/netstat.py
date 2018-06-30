@@ -29,13 +29,32 @@ from insights.parsers import keyword_search
 from insights.specs import Specs
 
 
-ACTIVE_INTERNET_CONNECTIONS = 'Active Internet connections (servers and established)'
+ACTIVE_INTERNET_CONNECTIONS = "Active Internet connections (servers and established)"
 "str: The key in Netstat data to internet connection information"
-ACTIVE_UNIX_DOMAIN_SOCKETS = 'Active UNIX domain sockets (servers and established)'
+ACTIVE_UNIX_DOMAIN_SOCKETS = "Active UNIX domain sockets (servers and established)"
 "str: The key in Netstat data  UNIX domain socket information"
 NETSTAT_SECTION_ID = {
-    ACTIVE_INTERNET_CONNECTIONS: ['Proto', 'Recv-Q', 'Send-Q', 'Local Address', 'Foreign Address', 'State', 'User', 'Inode', 'PID/Program name', 'Timer'],
-    ACTIVE_UNIX_DOMAIN_SOCKETS: ['RefCnt', 'Flags', 'Type', 'State', 'I-Node', 'PID/Program name', 'Path']
+    ACTIVE_INTERNET_CONNECTIONS: [
+        "Proto",
+        "Recv-Q",
+        "Send-Q",
+        "Local Address",
+        "Foreign Address",
+        "State",
+        "User",
+        "Inode",
+        "PID/Program name",
+        "Timer",
+    ],
+    ACTIVE_UNIX_DOMAIN_SOCKETS: [
+        "RefCnt",
+        "Flags",
+        "Type",
+        "State",
+        "I-Node",
+        "PID/Program name",
+        "Path",
+    ],
 }
 
 
@@ -116,11 +135,12 @@ class NetstatS(LegacyItemAccess, CommandParser):
         '254'
 
     """
+
     def parse_content(self, content):
         self.data = {}
         session = None
         first_layer = {}
-        layer_key = ''
+        layer_key = ""
         second_layer = {}
         has_scd_layer = False
 
@@ -175,7 +195,7 @@ class NetstatS(LegacyItemAccess, CommandParser):
                             second_layer = {}
 
                         # Some lines end with '.', trim that off
-                        if line.endswith('.'):
+                        if line.endswith("."):
                             line = line[:-1]
 
                         parts = line.split()
@@ -186,7 +206,7 @@ class NetstatS(LegacyItemAccess, CommandParser):
                                 found_val = val
                                 break
                         if found_val is not None:
-                            key = '_'.join(k.lower() for k in parts if k != found_val)
+                            key = "_".join(k.lower() for k in parts if k != found_val)
                             first_layer[key] = found_val
                 else:
                     if has_scd_layer:
@@ -198,7 +218,7 @@ class NetstatS(LegacyItemAccess, CommandParser):
                     session = None
             if not session:
                 session = line.split(":")[0].lower()
-                if session.startswith('error'):
+                if session.startswith("error"):
                     session = None
 
         # Assign to the last session
@@ -252,7 +272,13 @@ class NetstatAGN(CommandParser):
         """
         result = defaultdict(list)
         for entry in self.data:
-            result[entry["interface"]].append(dict((k.lower(), v) for (k, v) in entry.items() if k in ["refcnt", "group"]))
+            result[entry["interface"]].append(
+                dict(
+                    (k.lower(), v)
+                    for (k, v) in entry.items()
+                    if k in ["refcnt", "group"]
+                )
+            )
         return dict(result)
 
     def parse_content(self, content):
@@ -263,7 +289,6 @@ class NetstatAGN(CommandParser):
 
 
 class NetstatSection(object):
-
     def __init__(self, name):
         self.name = name.strip()
         assert self.name in NETSTAT_SECTION_ID
@@ -295,32 +320,39 @@ class NetstatSection(object):
         i = 1
         from_index = 0
         while i < len(indexes):
-            self.data[i - 1].append(line[from_index: indexes[i]].strip())
+            self.data[i - 1].append(line[from_index : indexes[i]].strip())
             from_index = indexes[i]
             i += 1
-        self.data[i - 1].append(line[indexes[i - 1]:])
+        self.data[i - 1].append(line[indexes[i - 1] :])
 
-        self.datalist.append(dict((m, d) for m, d in zip(
-            NETSTAT_SECTION_ID[self.name], [r[-1] for r in self.data]
-        )))
+        self.datalist.append(
+            dict(
+                (m, d)
+                for m, d in zip(
+                    NETSTAT_SECTION_ID[self.name], [r[-1] for r in self.data]
+                )
+            )
+        )
         # For convenience, unpack 'PID/Program name' into 'PID' and 'Program name'
         # This field must exist because of NETSTAT_SECTION_ID and the
         # exception in add_meta_data
-        pidprogram = self.datalist[-1]['PID/Program name']
-        if '/' in pidprogram:
-            pid, program = pidprogram.split('/', 1)
-            self.datalist[-1]['PID'] = pid
-            self.datalist[-1]['Program name'] = program
+        pidprogram = self.datalist[-1]["PID/Program name"]
+        if "/" in pidprogram:
+            pid, program = pidprogram.split("/", 1)
+            self.datalist[-1]["PID"] = pid
+            self.datalist[-1]["Program name"] = program
         # For convenience, unpack 'Local Address' into 'Local IP' and 'Port'
-        if 'Local Address' in self.datalist[-1]:
-            local_addr = self.datalist[-1]['Local Address']
-            if ':' not in local_addr:
-                raise ParseException('Local Address is expected to have a colon separating address and port')
+        if "Local Address" in self.datalist[-1]:
+            local_addr = self.datalist[-1]["Local Address"]
+            if ":" not in local_addr:
+                raise ParseException(
+                    "Local Address is expected to have a colon separating address and port"
+                )
             # Remember, IPv6 addresses have colons in them.  The port
             # is the last part.
-            parts = local_addr.split(':')
-            self.datalist[-1]['Local IP'] = ':'.join(parts[:-1])
-            self.datalist[-1]['Port'] = parts[-1]
+            parts = local_addr.split(":")
+            self.datalist[-1]["Local IP"] = ":".join(parts[:-1])
+            self.datalist[-1]["Port"] = parts[-1]
         # Unix socket information doesn't have Local Address.
 
     def _merge_data_index(self):
@@ -443,7 +475,9 @@ class Netstat(CommandParser):
             raise ParseException("Input content is empty")
 
         if len(content) < 3:
-            raise ParseException("Input content is not empty but there is no useful parsed data.")
+            raise ParseException(
+                "Input content is not empty but there is no useful parsed data."
+            )
 
         sections = []
         cur_section = None
@@ -485,9 +519,9 @@ class Netstat(CommandParser):
         if ACTIVE_INTERNET_CONNECTIONS not in self.data:
             return set()
         return set(
-            pg.split('/', 1)[1].strip()
-            for pg in self.data[ACTIVE_INTERNET_CONNECTIONS]['PID/Program name']
-            if '/' in pg
+            pg.split("/", 1)[1].strip()
+            for pg in self.data[ACTIVE_INTERNET_CONNECTIONS]["PID/Program name"]
+            if "/" in pg
         )
 
     @property
@@ -507,13 +541,13 @@ class Netstat(CommandParser):
             return pids
         connlist = self.datalist[ACTIVE_INTERNET_CONNECTIONS]
         for line in connlist:
-            if line['State'] != 'LISTEN':
+            if line["State"] != "LISTEN":
                 continue
-            if not (':' in line['Local Address'] and '/' in line['PID/Program name']):
+            if not (":" in line["Local Address"] and "/" in line["PID/Program name"]):
                 continue
-            addr, port = line['Local Address'].strip().split(":", 1)
-            pid, name = line['PID/Program name'].strip().split('/', 1)
-            pids[pid] = {'addr': addr, 'port': port, 'name': name}
+            addr, port = line["Local Address"].strip().split(":", 1)
+            pid, name = line["PID/Program name"].strip().split("/", 1)
+            pids[pid] = {"addr": addr, "port": port, "name": name}
         return pids
 
     def get_original_line(self, section_id, index):
@@ -550,19 +584,20 @@ class Netstat(CommandParser):
         function - see its documentation for a complete description of its
         keyword recognition capabilities.
         """
-        if 'search_list' in kwargs:
+        if "search_list" in kwargs:
             search_list = []
-            if isinstance(kwargs['search_list'], list):
+            if isinstance(kwargs["search_list"], list):
                 # Compile a list from matching strings
                 search_list = [
-                    l
-                    for l in kwargs['search_list']
-                    if l in NETSTAT_SECTION_ID
+                    l for l in kwargs["search_list"] if l in NETSTAT_SECTION_ID
                 ]
-            elif isinstance(kwargs['search_list'], str) and kwargs['search_list'] in NETSTAT_SECTION_ID:
+            elif (
+                isinstance(kwargs["search_list"], str)
+                and kwargs["search_list"] in NETSTAT_SECTION_ID
+            ):
                 # Just use this string
-                search_list = [kwargs['search_list']]
-            del kwargs['search_list']
+                search_list = [kwargs["search_list"]]
+            del kwargs["search_list"]
         else:
             search_list = [ACTIVE_INTERNET_CONNECTIONS, ACTIVE_UNIX_DOMAIN_SOCKETS]
         if not search_list:
@@ -617,11 +652,12 @@ class Netstat_I(CommandParser):
     def parse_content(self, content):
         self._group_by_iface = {}
         # heading_ignore is first line we _don't_ want to ignore...
-        table = parse_delimited_table(content, heading_ignore=['Iface'])
+        table = parse_delimited_table(content, heading_ignore=["Iface"])
         self.data = [dict((k, v) for (k, v) in item.items()) for item in table]
         for entry in self.data:
-            self._group_by_iface[entry["Iface"]] = \
-                dict((k, v) for (k, v) in entry.items() if k != 'Iface')
+            self._group_by_iface[entry["Iface"]] = dict(
+                (k, v) for (k, v) in entry.items() if k != "Iface"
+            )
         return
 
 
@@ -674,19 +710,29 @@ class SsTULPN(CommandParser):
 
     def parse_content(self, content):
         # Use headings without spaces and colons
-        SSTULPN_TABLE_HEADER = ["Netid  State  Recv-Q  Send-Q  Local-Address-Port Peer-Address-Port  Process"]
+        SSTULPN_TABLE_HEADER = [
+            "Netid  State  Recv-Q  Send-Q  Local-Address-Port Peer-Address-Port  Process"
+        ]
         self.data = parse_delimited_table(SSTULPN_TABLE_HEADER + content[1:])
 
     def get_service(self, service):
-        return [l for l in self.data if l.get("Process", None) and service in l["Process"]]
+        return [
+            l for l in self.data if l.get("Process", None) and service in l["Process"]
+        ]
 
     def get_localport(self, port):
-        return [l for l in self.data if l.get("Local-Address-Port") and
-                port in l["Local-Address-Port"]]
+        return [
+            l
+            for l in self.data
+            if l.get("Local-Address-Port") and port in l["Local-Address-Port"]
+        ]
 
     def get_peerport(self, port):
-        return [l for l in self.data if l.get("Peer-Address-Port") and
-                port in l["Peer-Address-Port"]]
+        return [
+            l
+            for l in self.data
+            if l.get("Peer-Address-Port") and port in l["Peer-Address-Port"]
+        ]
 
     def get_port(self, port):
         return self.get_localport(port) + self.get_peerport(port)

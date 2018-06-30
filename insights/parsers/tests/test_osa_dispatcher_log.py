@@ -19,40 +19,40 @@ OSA_DISPATCHER_TRUNC = r"""
 
 
 def test_get_osa_dispatcher_log():
-    log = osa_dispatcher_log.OSADispatcherLog(context_wrap(
-        OSA_DISPATCHER_LOG, path='var/log/rhn/osa-dispatcher.log'
-    ))
+    log = osa_dispatcher_log.OSADispatcherLog(
+        context_wrap(OSA_DISPATCHER_LOG, path="var/log/rhn/osa-dispatcher.log")
+    )
 
     # Check the fields in a typical full line
-    line = log.get('setup_connection')[0]
-    assert line['timestamp'] == '2015/12/23 04:40:58 -04:00'
-    assert line['pid'] == '28307'
-    assert line['client_ip'] == '0.0.0.0'
-    assert line['module'] == 'osad'
-    assert line['function'] == 'jabber_lib.setup_connection'
-    assert line['info'] == "'Connected to jabber server', u'example.com'"
+    line = log.get("setup_connection")[0]
+    assert line["timestamp"] == "2015/12/23 04:40:58 -04:00"
+    assert line["pid"] == "28307"
+    assert line["client_ip"] == "0.0.0.0"
+    assert line["module"] == "osad"
+    assert line["function"] == "jabber_lib.setup_connection"
+    assert line["info"] == "'Connected to jabber server', u'example.com'"
 
     # Check lines that don't have an info field
-    line = log.get('process_forever')[0]
-    assert line['info'] is None
+    line = log.get("process_forever")[0]
+    assert line["info"] is None
 
     last = log.last()
-    assert last['timestamp'] == '2015/12/27 22:48:50 -04:00'
-    assert last['pid'] == '28307'
-    assert last['client_ip'] == '0.0.0.0'
-    assert last['module'] == 'osad'
-    assert last['function'] == 'jabber_lib.main'
+    assert last["timestamp"] == "2015/12/27 22:48:50 -04:00"
+    assert last["pid"] == "28307"
+    assert last["client_ip"] == "0.0.0.0"
+    assert last["module"] == "osad"
+    assert last["function"] == "jabber_lib.main"
     # Problems with literal '\n' in line for comparison, so fall back...
-    assert last['info'].startswith("""'ERROR', 'Traceback (most recent call last):""")
+    assert last["info"].startswith("""'ERROR', 'Traceback (most recent call last):""")
 
     # Test get_after functionality with different inputs
     assert len(list(log.get_after(datetime(2015, 12, 27, 22, 48, 40)))) == 2
-    assert len(list(log.get_after(datetime(2015, 12, 23, 4, 40, 0), 'connection'))) == 2
+    assert len(list(log.get_after(datetime(2015, 12, 23, 4, 40, 0), "connection"))) == 2
 
-    trunc = osa_dispatcher_log.OSADispatcherLog(context_wrap(
-        OSA_DISPATCHER_TRUNC, path='var/log/rhn/osa-dispatcher.log'
-    ))
+    trunc = osa_dispatcher_log.OSADispatcherLog(
+        context_wrap(OSA_DISPATCHER_TRUNC, path="var/log/rhn/osa-dispatcher.log")
+    )
     last = trunc.last()
-    assert last['raw_message'] == '2015/12/27 22:48:50 -04:00 28307 0.0.0'
-    for k in ['timestamp', 'pid', 'client_ip', 'module', 'function', 'info']:
+    assert last["raw_message"] == "2015/12/27 22:48:50 -04:00 28307 0.0.0"
+    for k in ["timestamp", "pid", "client_ip", "module", "function", "info"]:
         assert k not in last

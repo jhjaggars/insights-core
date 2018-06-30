@@ -6,7 +6,7 @@ from insights.combiners.httpd_conf import in_network, is_private
 from insights.tests import context_wrap
 
 
-HTTPD_CONF_1 = '''
+HTTPD_CONF_1 = """
 JustFotTest_NoSec "/var/www/cgi"
 # prefork MPM
 <IfModule prefork.c>
@@ -17,9 +17,9 @@ MaxClients       256
 </IfModule>
 
 IncludeOptional conf.d/*.conf
-'''.strip()
+""".strip()
 
-HTTPD_CONF_2 = '''
+HTTPD_CONF_2 = """
 JustForTest_NoSec "/var/www/cgi"
 # prefork MPM
 <IfModule prefork.c>
@@ -27,17 +27,17 @@ ServerLimit      1024
 JustForTest      "ABC"
 MaxClients       1024
 </IfModule>
-'''.strip()
+""".strip()
 
-HTTPD_CONF_3 = '''
+HTTPD_CONF_3 = """
 # prefork MPM
 <IfModule prefork.c>
 ServerLimit      256
 MaxClients       512
 </IfModule>
-'''.strip()
+""".strip()
 
-HTTPD_CONF_SHADOWTEST_1 = '''
+HTTPD_CONF_SHADOWTEST_1 = """
 Foo 1A
 Foo 1B
 Foo 1C
@@ -51,9 +51,9 @@ Bar 1C
 </IfModule>
 
 IncludeOptional conf.d/*.conf
-'''.strip()
+""".strip()
 
-HTTPD_CONF_SHADOWTEST_2 = '''
+HTTPD_CONF_SHADOWTEST_2 = """
 Foo 2A
 Foo 2B
 Foo 2C
@@ -65,9 +65,9 @@ Bar 2A
 Bar 2B
 Bar 2C
 </IfModule>
-'''.strip()
+""".strip()
 
-HTTPD_CONF_SHADOWTEST_3 = '''
+HTTPD_CONF_SHADOWTEST_3 = """
 Foo 3A
 Foo 3B
 Foo 3C
@@ -79,46 +79,46 @@ Bar 3A
 Bar 3B
 Bar 3C
 </IfModule>
-'''.strip()
+""".strip()
 
-HTTPD_CONF_MAIN_1 = '''
+HTTPD_CONF_MAIN_1 = """
 ServerRoot "/etc/httpd"
 Listen 80
 
 # Load config files in the "/etc/httpd/conf.d" directory, if any.
 IncludeOptional conf.d/*.conf
-'''.strip()
+""".strip()
 
-HTTPD_CONF_MAIN_2 = '''
+HTTPD_CONF_MAIN_2 = """
 # Load config files in the "/etc/httpd/conf.d" directory, if any.
 IncludeOptional conf.d/*.conf
 
 ServerRoot "/etc/httpd"
 Listen 80
-'''.strip()
+""".strip()
 
-HTTPD_CONF_MAIN_3 = '''
+HTTPD_CONF_MAIN_3 = """
 ServerRoot "/etc/httpd"
 
 # Load config files in the "/etc/httpd/conf.d" directory, if any.
 IncludeOptional conf.d/*.conf
 
 Listen 80
-'''.strip()
+""".strip()
 
-HTTPD_CONF_FILE_1 = '''
+HTTPD_CONF_FILE_1 = """
 ServerRoot "/home/skontar/httpd"
 Listen 8080
-'''.strip()
+""".strip()
 
-HTTPD_CONF_FILE_2 = '''
+HTTPD_CONF_FILE_2 = """
 ServerRoot "/home/skontar/www"
-'''.strip()
+""".strip()
 
-HTTPD_CONF_MORE = '''
+HTTPD_CONF_MORE = """
 UserDir disable
 UserDir enable bob
-'''.strip()
+""".strip()
 
 HTTPD_CONF_NEST_1 = """
 <VirtualHost 128.39.140.28>
@@ -329,7 +329,9 @@ def test_greater_than_equals():
 
 
 def test_simple_queries():
-    httpd1 = _HttpdConf(context_wrap(HTTPD_CONF_NEST_1, path='/etc/httpd/conf/httpd.conf'))
+    httpd1 = _HttpdConf(
+        context_wrap(HTTPD_CONF_NEST_1, path="/etc/httpd/conf/httpd.conf")
+    )
     result = HttpdConfTree([httpd1])
     assert result["EnableSendfile"][first].value
     assert len(result["VirtualHost"]) == 1
@@ -340,9 +342,15 @@ def test_simple_queries():
 
 
 def test_complex_queries():
-    httpd1 = _HttpdConf(context_wrap(HTTPD_CONF_NEST_1, path='/etc/httpd/conf/httpd.conf'))
-    httpd2 = _HttpdConf(context_wrap(HTTPD_CONF_NEST_3, path='/etc/httpd/conf.d/00-a.conf'))
-    httpd3 = _HttpdConf(context_wrap(HTTPD_CONF_NEST_4, path='/etc/httpd/conf.d/01-b.conf'))
+    httpd1 = _HttpdConf(
+        context_wrap(HTTPD_CONF_NEST_1, path="/etc/httpd/conf/httpd.conf")
+    )
+    httpd2 = _HttpdConf(
+        context_wrap(HTTPD_CONF_NEST_3, path="/etc/httpd/conf.d/00-a.conf")
+    )
+    httpd3 = _HttpdConf(
+        context_wrap(HTTPD_CONF_NEST_4, path="/etc/httpd/conf.d/01-b.conf")
+    )
     result = HttpdConfTree([httpd1, httpd2, httpd3])
     assert len(result.select("VirtualHost")) == 3
     assert len(result.select(("VirtualHost", "128.39.140.28"))) == 2
@@ -358,10 +366,15 @@ def test_complex_queries():
     assert len(result.select(("IfModule", "!php5_module"), deep=True, roots=False)) == 6
 
     # find all IfModule !php5_module stanzas immediately beneath a VirtualHost
-    assert len(result.select("VirtualHost", ("IfModule", "!php5_module"), roots=False)) == 3
+    assert (
+        len(result.select("VirtualHost", ("IfModule", "!php5_module"), roots=False))
+        == 3
+    )
 
     # find all IfModule !php4_module stanzas anywhere beneath a top level VirtualHost
-    res = result.select("VirtualHost").select(("IfModule", "!php4_module"), deep=True, roots=False)
+    res = result.select("VirtualHost").select(
+        ("IfModule", "!php4_module"), deep=True, roots=False
+    )
     assert len(res) == 3
 
     assert len(result.select(("VirtualHost", ~is_private))) == 3
@@ -374,9 +387,15 @@ def test_complex_queries():
 
 
 def test_directives_and_sections():
-    httpd1 = _HttpdConf(context_wrap(HTTPD_CONF_NEST_1, path='/etc/httpd/conf/httpd.conf'))
-    httpd2 = _HttpdConf(context_wrap(HTTPD_CONF_NEST_3, path='/etc/httpd/conf.d/00-a.conf'))
-    httpd3 = _HttpdConf(context_wrap(HTTPD_CONF_NEST_4, path='/etc/httpd/conf.d/01-b.conf'))
+    httpd1 = _HttpdConf(
+        context_wrap(HTTPD_CONF_NEST_1, path="/etc/httpd/conf/httpd.conf")
+    )
+    httpd2 = _HttpdConf(
+        context_wrap(HTTPD_CONF_NEST_3, path="/etc/httpd/conf.d/00-a.conf")
+    )
+    httpd3 = _HttpdConf(
+        context_wrap(HTTPD_CONF_NEST_4, path="/etc/httpd/conf.d/01-b.conf")
+    )
     result = HttpdConfTree([httpd1, httpd2, httpd3])
     assert len(result.directives) == 3
     assert len(result.sections) == 7

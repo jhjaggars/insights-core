@@ -34,4 +34,5 @@ class EngineLog(LogFileOutput):
     """
     Provide access to ovirt engine logs using the LogFileOutput parser class.
     """
+
     pass

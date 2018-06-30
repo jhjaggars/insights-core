@@ -30,9 +30,9 @@ conf_content = """
 
 def test_settings_yml():
     result = ForemanProxyConf(context_wrap(conf_content))
-    assert result.data[':settings_directory'] == '/etc/foreman-proxy/settings.d'
-    assert result.data[':ssl_ca_file'] == '/etc/foreman-proxy/ssl_ca.pem'
-    assert result.data[':ssl_private_key'] == '/etc/foreman-proxy/ssl_key.pem'
-    assert result.data[':foreman_url'] == 'https://xxx-eopv.xxx.com'
-    assert result.data[':trusted_hosts'] == ['xxx-eopv.xxx.com', 'xxx-eopv.xxx.com']
-    assert "xxx-eopv.xxx.com" in result.data[':trusted_hosts']
+    assert result.data[":settings_directory"] == "/etc/foreman-proxy/settings.d"
+    assert result.data[":ssl_ca_file"] == "/etc/foreman-proxy/ssl_ca.pem"
+    assert result.data[":ssl_private_key"] == "/etc/foreman-proxy/ssl_key.pem"
+    assert result.data[":foreman_url"] == "https://xxx-eopv.xxx.com"
+    assert result.data[":trusted_hosts"] == ["xxx-eopv.xxx.com", "xxx-eopv.xxx.com"]
+    assert "xxx-eopv.xxx.com" in result.data[":trusted_hosts"]

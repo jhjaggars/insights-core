@@ -1,5 +1,6 @@
 from __future__ import print_function
 from __future__ import absolute_import
+
 # Copyright (C) 2016 Red Hat, All rights reserved.
 # AUTHORS: William Temple <wtemple@redhat.com>
 #          Brent Baude    <bbaude@redhat.com>
@@ -15,7 +16,9 @@ from .constants import InsightsConstants as constants
 try:
     import docker
 except ImportError:
-    print("The docker-py Python libraries do not appear to be installed. Please install the python-docker-py RPM package.")
+    print(
+        "The docker-py Python libraries do not appear to be installed. Please install the python-docker-py RPM package."
+    )
     sys.exit(constants.sig_kill_bad)
 from fnmatch import fnmatch as matches
 
@@ -43,8 +46,10 @@ class SelectionMatchError(MountError):
     """Input identifier matched multiple mount candidates."""
 
     def __init__(self, i, matches):
-        self.val = ('"{0}" matched multiple items. Try one of the following:\n'
-                    '{1}'.format(i, '\n'.join(['\t' + m for m in matches])))
+        self.val = (
+            '"{0}" matched multiple items. Try one of the following:\n'
+            "{1}".format(i, "\n".join(["\t" + m for m in matches]))
+        )
 
 
 class Mount:
@@ -62,12 +67,14 @@ class Mount:
         self.mountpoint = mountpoint
 
     def mount(self, identifier, options=[]):
-        raise NotImplementedError('Mount subclass does not implement mount() '
-                                  'method.')
+        raise NotImplementedError(
+            "Mount subclass does not implement mount() " "method."
+        )
 
     def unmount(self):
-        raise NotImplementedError('Mount subclass does not implement unmount()'
-                                  ' method.')
+        raise NotImplementedError(
+            "Mount subclass does not implement unmount()" " method."
+        )
 
     # LVM DeviceMapper Utility Methods
     @staticmethod
@@ -76,35 +83,39 @@ class Mount:
         Provisions an LVM device-mapper thin device reflecting,
         DM device id 'dm_id' in the docker pool.
         """
-        table = '0 %d thin /dev/mapper/%s %s' % (int(size) // 512, pool, dm_id)
-        cmd = ['dmsetup', 'create', name, '--table', table]
+        table = "0 %d thin /dev/mapper/%s %s" % (int(size) // 512, pool, dm_id)
+        cmd = ["dmsetup", "create", name, "--table", table]
         r = util.subp(cmd)
         if r.return_code != 0:
-            raise MountError('Failed to create thin device: %s' %
-                             r.stderr.decode(sys.getdefaultencoding()))
+            raise MountError(
+                "Failed to create thin device: %s"
+                % r.stderr.decode(sys.getdefaultencoding())
+            )
 
     @staticmethod
     def remove_thin_device(name, force=False):
         """
         Destroys a thin device via subprocess call.
         """
-        cmd = ['dmsetup', 'remove', '--retry', name]
+        cmd = ["dmsetup", "remove", "--retry", name]
         r = util.subp(cmd)
         if not force:
             if r.return_code != 0:
-                raise MountError('Could not remove thin device:\n%s' %
-                                 r.stderr.decode(sys.getdefaultencoding()).split("\n")[0])
+                raise MountError(
+                    "Could not remove thin device:\n%s"
+                    % r.stderr.decode(sys.getdefaultencoding()).split("\n")[0]
+                )
 
     @staticmethod
     def _is_device_active(device):
         """
         Checks dmsetup to see if a device is already active
         """
-        cmd = ['dmsetup', 'info', device]
+        cmd = ["dmsetup", "info", device]
         dmsetup_info = util.subp(cmd)
         for dm_line in dmsetup_info.stdout.split("\n"):
-            line = dm_line.split(':')
-            if ('State' in line[0].strip()) and ('ACTIVE' in line[1].strip()):
+            line = dm_line.split(":")
+            if ("State" in line[0].strip()) and ("ACTIVE" in line[1].strip()):
                 return True
         return False
 
@@ -113,7 +124,7 @@ class Mount:
         """
         Returns the file system type (xfs, ext4) of a given device
         """
-        cmd = ['lsblk', '-o', 'FSTYPE', '-n', thin_pathname]
+        cmd = ["lsblk", "-o", "FSTYPE", "-n", thin_pathname]
         fs_return = util.subp(cmd)
         return fs_return.stdout.strip()
 
@@ -122,16 +133,18 @@ class Mount:
         """
         Subprocess call to mount dev at path.
         """
-        cmd = ['mount']
+        cmd = ["mount"]
         if bind:
-            cmd.append('--bind')
+            cmd.append("--bind")
         cmd.append(source)
         cmd.append(target)
         r = util.subp(cmd)
         if r.return_code != 0:
-            raise MountError('Could not mount docker container:\n' +
-                             ' '.join(cmd) + '\n%s' %
-                             r.stderr.decode(sys.getdefaultencoding()))
+            raise MountError(
+                "Could not mount docker container:\n"
+                + " ".join(cmd)
+                + "\n%s" % r.stderr.decode(sys.getdefaultencoding())
+            )
 
     @staticmethod
     def get_dev_at_mountpoint(mntpoint):
@@ -139,19 +152,19 @@ class Mount:
         Retrieves the device mounted at mntpoint, or raises
         MountError if none.
         """
-        results = util.subp(['findmnt', '-o', 'SOURCE', mntpoint])
+        results = util.subp(["findmnt", "-o", "SOURCE", mntpoint])
         if results.return_code != 0:
-            raise MountError('No device mounted at %s' % mntpoint)
+            raise MountError("No device mounted at %s" % mntpoint)
 
         stdout = results.stdout.decode(sys.getdefaultencoding())
-        return stdout.replace('SOURCE\n', '').strip().split('\n')[-1]
+        return stdout.replace("SOURCE\n", "").strip().split("\n")[-1]
 
     @staticmethod
     def unmount_path(path, force=False):
         """
         Unmounts the directory specified by path.
         """
-        r = util.subp(['umount', path])
+        r = util.subp(["umount", path])
         if not force:
             if r.return_code != 0:
                 raise ValueError(r.stderr)
@@ -182,11 +195,14 @@ class DockerMount(Mount):
         """
         try:
             return self.client.create_container(
-                image=iid, command='/bin/true',
-                environment=['_ATOMIC_TEMP_CONTAINER'],
-                detach=True, network_disabled=True)['Id']
+                image=iid,
+                command="/bin/true",
+                environment=["_ATOMIC_TEMP_CONTAINER"],
+                detach=True,
+                network_disabled=True,
+            )["Id"]
         except docker.errors.APIError as ex:
-            raise MountError('Error creating temporary container:\n%s' % str(ex))
+            raise MountError("Error creating temporary container:\n%s" % str(ex))
 
     def _clone(self, cid):
         """
@@ -197,13 +213,8 @@ class DockerMount(Mount):
         """
         try:
             iid = self.client.commit(
-                container=cid,
-                conf={
-                    'Labels': {
-                        'io.projectatomic.Temporary': 'true'
-                    }
-                }
-            )['Id']
+                container=cid, conf={"Labels": {"io.projectatomic.Temporary": "true"}}
+            )["Id"]
         except docker.errors.APIError as ex:
             raise MountError(str(ex))
         self.tmp_image = iid
@@ -211,7 +222,7 @@ class DockerMount(Mount):
 
     def _is_container_running(self, cid):
         cinfo = self.client.inspect_container(cid)
-        return cinfo['State']['Running']
+        return cinfo["State"]["Running"]
 
     def _identifier_as_cid(self, identifier):
         """
@@ -220,14 +231,18 @@ class DockerMount(Mount):
         If identifier is an image UUID or image tag, create a temporary
         container and return its uuid.
         """
+
         def __cname_matches(container, identifier):
-            return any([n for n in (container['Names'] or [])
-                        if matches(n, '/' + identifier)])
+            return any(
+                [n for n in (container["Names"] or []) if matches(n, "/" + identifier)]
+            )
 
         # Determine if identifier is a container
-        containers = [c['Id'] for c in self.client.containers(all=True)
-                      if (__cname_matches(c, identifier) or
-                          matches(c['Id'], identifier + '*'))]
+        containers = [
+            c["Id"]
+            for c in self.client.containers(all=True)
+            if (__cname_matches(c, identifier) or matches(c["Id"], identifier + "*"))
+        ]
 
         if len(containers) > 1:
             raise SelectionMatchError(identifier, containers)
@@ -236,8 +251,11 @@ class DockerMount(Mount):
             return self._clone(c)
 
         # Determine if identifier is an image UUID
-        images = [i for i in set(self.client.images(all=True, quiet=True))
-                  if i.startswith(identifier)]
+        images = [
+            i
+            for i in set(self.client.images(all=True, quiet=True))
+            if i.startswith(identifier)
+        ]
 
         if len(images) > 1:
             raise SelectionMatchError(identifier, images)
@@ -247,29 +265,33 @@ class DockerMount(Mount):
         # Match image tag.
         images = util.image_by_name(identifier)
         if len(images) > 1:
-            tags = [t for i in images for t in i['RepoTags']]
+            tags = [t for i in images for t in i["RepoTags"]]
             raise SelectionMatchError(identifier, tags)
         elif len(images) == 1:
-            return self._create_temp_container(images[0]['Id'].replace("sha256:", ""))
+            return self._create_temp_container(images[0]["Id"].replace("sha256:", ""))
 
-        raise MountError('{} did not match any image or container.'
-                         ''.format(identifier))
+        raise MountError(
+            "{} did not match any image or container." "".format(identifier)
+        )
 
     @staticmethod
     def _no_gd_api_dm(cid):
         # TODO: Deprecated
-        desc_file = os.path.join('/var/lib/docker/devicemapper/metadata', cid)
+        desc_file = os.path.join("/var/lib/docker/devicemapper/metadata", cid)
         desc = json.loads(open(desc_file).read())
-        return desc['device_id'], desc['size']
+        return desc["device_id"], desc["size"]
 
     @staticmethod
     def _no_gd_api_overlay(cid):
         # TODO: Deprecated
-        prefix = os.path.join('/var/lib/docker/overlay/', cid)
-        ld_metafile = open(os.path.join(prefix, 'lower-id'))
-        ld_loc = os.path.join('/var/lib/docker/overlay/', ld_metafile.read())
-        return (os.path.join(ld_loc, 'root'), os.path.join(prefix, 'upper'),
-                os.path.join(prefix, 'work'))
+        prefix = os.path.join("/var/lib/docker/overlay/", cid)
+        ld_metafile = open(os.path.join(prefix, "lower-id"))
+        ld_loc = os.path.join("/var/lib/docker/overlay/", ld_metafile.read())
+        return (
+            os.path.join(ld_loc, "root"),
+            os.path.join(prefix, "upper"),
+            os.path.join(prefix, "work"),
+        )
 
     def mount(self, identifier):
         """
@@ -277,18 +299,19 @@ class DockerMount(Mount):
         the host filesystem.
         """
 
-        driver = self.client.info()['Driver']
-        driver_mount_fn = getattr(self, "_mount_" + driver,
-                                  self._unsupported_backend)
+        driver = self.client.info()["Driver"]
+        driver_mount_fn = getattr(self, "_mount_" + driver, self._unsupported_backend)
         cid = driver_mount_fn(identifier)
 
         # Return mount path so it can be later unmounted by path
         return self.mountpoint, cid
 
-    def _unsupported_backend(self, identifier=''):
-        raise MountError('Insights cannot be used with the {} docker '
-                         'storage backend.'
-                         ''.format(self.client.info()['Driver']))
+    def _unsupported_backend(self, identifier=""):
+        raise MountError(
+            "Insights cannot be used with the {} docker "
+            "storage backend."
+            "".format(self.client.info()["Driver"])
+        )
 
     def _mount_devicemapper(self, identifier):
         """
@@ -302,32 +325,31 @@ class DockerMount(Mount):
 
         cinfo = self.client.inspect_container(cid)
 
-        dm_dev_name, dm_dev_id, dm_dev_size = '', '', ''
-        dm_pool = info['DriverStatus'][0][1]
+        dm_dev_name, dm_dev_id, dm_dev_size = "", "", ""
+        dm_pool = info["DriverStatus"][0][1]
 
         try:
-            dm_dev_name = cinfo['GraphDriver']['Data']['DeviceName']
-            dm_dev_id = cinfo['GraphDriver']['Data']['DeviceId']
-            dm_dev_size = cinfo['GraphDriver']['Data']['DeviceSize']
+            dm_dev_name = cinfo["GraphDriver"]["Data"]["DeviceName"]
+            dm_dev_id = cinfo["GraphDriver"]["Data"]["DeviceId"]
+            dm_dev_size = cinfo["GraphDriver"]["Data"]["DeviceSize"]
         except:
             # TODO: deprecated when GraphDriver patch makes it upstream
             dm_dev_id, dm_dev_size = DockerMount._no_gd_api_dm(cid)
-            dm_dev_name = dm_pool.replace('pool', cid)
+            dm_dev_name = dm_pool.replace("pool", cid)
 
         # grab list of devces
         dmsetupLs = dmsetupWrap.getDmsetupLs()
         if dmsetupLs == -1:
-            raise MountError('Error: dmsetup returned non zero error ')
+            raise MountError("Error: dmsetup returned non zero error ")
 
         # ENSURE device exists!
         if dm_dev_name not in dmsetupLs:
             # IF device doesn't exist yet we create it!
-            Mount._activate_thin_device(dm_dev_name, dm_dev_id, dm_dev_size,
-                                        dm_pool)
+            Mount._activate_thin_device(dm_dev_name, dm_dev_id, dm_dev_size, dm_pool)
 
         # check that device is shown in /dev/mapper, if not we can use the
         # major minor numbers in /dev/block
-        mapperDir = os.path.join('/dev/mapper', dm_dev_name)
+        mapperDir = os.path.join("/dev/mapper", dm_dev_name)
         if os.path.exists(mapperDir):
             dm_dev_path = mapperDir
         else:
@@ -335,26 +357,29 @@ class DockerMount(Mount):
             dmsetupLs = dmsetupWrap.getDmsetupLs()
             # test if device exists in dmsetupls, if so, get its majorminor found in /dev/block
             majorMinor = dmsetupWrap.getMajorMinor(dm_dev_name, dmsetupLs)
-            blockDir = os.path.join('/dev/block', majorMinor)
+            blockDir = os.path.join("/dev/block", majorMinor)
 
             # FIXME, coudl be due to Virtual box, but occasionally the block device
             # will not be created by the time we check it exists below, so we
             # can wait a half a second to let it be created up
             import time
+
             time.sleep(0.1)
 
             if os.path.exists(blockDir):
                 dm_dev_path = blockDir
             else:
-                raise MountError('Error: Block device found in dmsetup ls '
-                                 'but not in /dev/mapper/ or /dev/block')
+                raise MountError(
+                    "Error: Block device found in dmsetup ls "
+                    "but not in /dev/mapper/ or /dev/block"
+                )
 
-        options = ['ro', 'nosuid', 'nodev']
+        options = ["ro", "nosuid", "nodev"]
         # XFS should get nouuid
         fstype = Mount._get_fs(dm_dev_path).decode(sys.getdefaultencoding())
-        if fstype.upper() == 'XFS' and 'nouuid' not in options:
-            if 'nouuid' not in options:
-                options.append('nouuid')
+        if fstype.upper() == "XFS" and "nouuid" not in options:
+            if "nouuid" not in options:
+                options.append("nouuid")
         try:
             Mount.mount_path(dm_dev_path, self.mountpoint)
         except MountError as de:
@@ -373,23 +398,24 @@ class DockerMount(Mount):
         cid = self._identifier_as_cid(identifier)
         cinfo = self.client.inspect_container(cid)
 
-        ld, ud, wd = '', '', ''
+        ld, ud, wd = "", "", ""
         try:
-            ld = cinfo['GraphDriver']['Data']['lowerDir']
-            ud = cinfo['GraphDriver']['Data']['upperDir']
-            wd = cinfo['GraphDriver']['Data']['workDir']
+            ld = cinfo["GraphDriver"]["Data"]["lowerDir"]
+            ud = cinfo["GraphDriver"]["Data"]["upperDir"]
+            wd = cinfo["GraphDriver"]["Data"]["workDir"]
         except:
             ld, ud, wd = DockerMount._no_gd_api_overlay(cid)
 
-        options = ['ro', 'lowerdir=' + ld, 'upperdir=' + ud, 'workdir=' + wd]
-        optstring = ','.join(options)
-        cmd = ['mount', '-t', 'overlay', '-o', optstring, 'overlay',
-               self.mountpoint]
+        options = ["ro", "lowerdir=" + ld, "upperdir=" + ud, "workdir=" + wd]
+        optstring = ",".join(options)
+        cmd = ["mount", "-t", "overlay", "-o", optstring, "overlay", self.mountpoint]
         status = util.subp(cmd)
         if status.return_code != 0:
             self._cleanup_container(cinfo)
-            raise MountError('Failed to mount OverlayFS device.\n%s' %
-                             status.stderr.decode(sys.getdefaultencoding()))
+            raise MountError(
+                "Failed to mount OverlayFS device.\n%s"
+                % status.stderr.decode(sys.getdefaultencoding())
+            )
 
         return cid
 
@@ -398,18 +424,18 @@ class DockerMount(Mount):
         Remove a container and clean up its image if necessary.
         """
         # I'm not a fan of doing this again here.
-        env = cinfo['Config']['Env']
-        if (env and '_ATOMIC_TEMP_CONTAINER' not in env) or not env:
+        env = cinfo["Config"]["Env"]
+        if (env and "_ATOMIC_TEMP_CONTAINER" not in env) or not env:
             return
 
-        iid = cinfo['Image']
-        self.client.remove_container(cinfo['Id'])
+        iid = cinfo["Image"]
+        self.client.remove_container(cinfo["Id"])
         try:
-            labels = self.client.inspect_image(iid)['Config']['Labels']
+            labels = self.client.inspect_image(iid)["Config"]["Labels"]
         except TypeError:
             labels = {}
-        if labels and 'io.projectatomic.Temporary' in labels:
-            if labels['io.projectatomic.Temporary'] == 'true':
+        if labels and "io.projectatomic.Temporary" in labels:
+            if labels["io.projectatomic.Temporary"] == "true":
                 self.client.remove_image(iid)
 
     def _clean_tmp_image(self):
@@ -422,9 +448,10 @@ class DockerMount(Mount):
         """
         Unmounts and cleans-up after a previous mount().
         """
-        driver = self.client.info()['Driver']
-        driver_unmount_fn = getattr(self, "_unmount_" + driver,
-                                    self._unsupported_backend)
+        driver = self.client.info()["Driver"]
+        driver_unmount_fn = getattr(
+            self, "_unmount_" + driver, self._unsupported_backend
+        )
         driver_unmount_fn(cid)
 
     def _unmount_devicemapper(self, cid):
@@ -435,7 +462,7 @@ class DockerMount(Mount):
         Mount.unmount_path(mountpoint)
 
         cinfo = self.client.inspect_container(cid)
-        dev_name = cinfo['GraphDriver']['Data']['DeviceName']
+        dev_name = cinfo["GraphDriver"]["Data"]["DeviceName"]
 
         Mount.remove_thin_device(dev_name)
         self._cleanup_container(cinfo)

@@ -68,7 +68,9 @@ class ChronycSources(CommandParser):
         for row in content[3:]:
             if row.strip():
                 values = row.split(" ", 2)
-                self.data.append({"source": values[1], "mode": values[0][0], "state": values[0][1]})
+                self.data.append(
+                    {"source": values[1], "mode": values[0][0], "state": values[0][1]}
+                )
 
 
 @parser(Specs.ntpq_leap)
@@ -93,13 +95,13 @@ class NtpqLeap(CommandParser):
             raise SkipComponent("NTP service is down and connection refused")
         self.data = {}
         for line in content:
-            m = re.search(r'leap=(\d*)', line)
+            m = re.search(r"leap=(\d*)", line)
             if m:
                 self.data["leap"] = m.group(1)
 
     @property
     def leap(self):
-        return self.data.get('leap')
+        return self.data.get("leap")
 
 
 @parser(Specs.ntpq_pn)

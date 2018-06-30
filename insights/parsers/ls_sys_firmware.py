@@ -45,4 +45,5 @@ from insights.specs import Specs
 @parser(Specs.ls_sys_firmware)
 class LsSysFirmware(CommandParser, FileListing):
     """Parses output of ``ls -lanR /sys/firmware`` command."""
+
     pass

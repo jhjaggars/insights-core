@@ -53,19 +53,24 @@ def test_rabbitmq_queues():
     assert queues is not None
     assert len(queues.data) == 5
     assert queues.data[0] == RabbitMQQueues.QueueInfo(
-        name="cinder-scheduler",
-        messages=0,
-        consumers=3,
-        auto_delete=False)
+        name="cinder-scheduler", messages=0, consumers=3, auto_delete=False
+    )
     assert queues.data[3] == RabbitMQQueues.QueueInfo(
         name="cinder-scheduler_fanout_9aed9fbc3d4249289f2cb5ea04c062ab",
         messages=8145,
         consumers=0,
-        auto_delete=True)
-    assert queues.data[3].name == "cinder-scheduler_fanout_9aed9fbc3d4249289f2cb5ea04c062ab"
+        auto_delete=True,
+    )
+    assert (
+        queues.data[3].name
+        == "cinder-scheduler_fanout_9aed9fbc3d4249289f2cb5ea04c062ab"
+    )
 
     many_queues = RabbitMQQueues(context_wrap(MORE_QUEUES))
-    assert many_queues.data[1].name == "dhcp_agent.undercloud-per720xd.default.redhat.local"
+    assert (
+        many_queues.data[1].name
+        == "dhcp_agent.undercloud-per720xd.default.redhat.local"
+    )
     assert many_queues.data[1].auto_delete is False
 
     with pytest.raises(ParseException):

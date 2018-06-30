@@ -52,6 +52,7 @@ class VsftpdPamConf(PamDConf):
         >>> vs_pam[0].module_args
         'force revoke'
     """
+
     pass
 
 
@@ -84,5 +85,6 @@ class VsftpdConf(Parser, LegacyItemAccess):
         >>> conf['anonymous_enable']
         'NO'
     """
+
     def parse_content(self, content):
         self.data = split_kv_pairs(content, ordered=True)

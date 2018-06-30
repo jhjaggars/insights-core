@@ -90,13 +90,17 @@ def test_hammer_ping_ok():
 
     assert status.are_all_ok
     assert status.service_list == [
-        'candlepin', 'candlepin_auth', 'pulp', 'pulp_auth',
-        'elasticsearch', 'foreman_tasks'
+        "candlepin",
+        "candlepin_auth",
+        "pulp",
+        "pulp_auth",
+        "elasticsearch",
+        "foreman_tasks",
     ]
-    assert status.services_of_status('FAIL') == []
-    assert 'nonexistent' not in status.service_list
-    assert 'nonexistent' not in status.status_of_service
-    assert 'nonexistent' not in status.response_of_service
+    assert status.services_of_status("FAIL") == []
+    assert "nonexistent" not in status.service_list
+    assert "nonexistent" not in status.status_of_service
+    assert "nonexistent" not in status.response_of_service
 
 
 def test_hammer_ping():
@@ -104,22 +108,25 @@ def test_hammer_ping():
 
     assert not status.are_all_ok
     assert status.service_list == [
-        'candlepin', 'candlepin_auth', 'pulp', 'pulp_auth',
-        'elasticsearch', 'foreman_tasks'
+        "candlepin",
+        "candlepin_auth",
+        "pulp",
+        "pulp_auth",
+        "elasticsearch",
+        "foreman_tasks",
     ]
-    assert status.services_of_status('OK') == [
-        'pulp', 'elasticsearch', 'foreman_tasks'
-    ]
-    assert status.services_of_status('FAIL') == [
-        'candlepin', 'candlepin_auth'
-    ]
-    assert status.status_of_service['pulp_auth'] == ''
-    assert status.status_of_service['candlepin'] == 'fail'
-    assert status.status_of_service['elasticsearch'] == 'ok'
-    assert status.response_of_service['pulp_auth'] == ''
-    assert status.response_of_service['candlepin_auth'] == 'Message: Katello::Resources::Candlepin::CandlepinPing: 404 Resource Not Found'
-    assert status.response_of_service['elasticsearch'] == 'Duration: 35ms'
+    assert status.services_of_status("OK") == ["pulp", "elasticsearch", "foreman_tasks"]
+    assert status.services_of_status("FAIL") == ["candlepin", "candlepin_auth"]
+    assert status.status_of_service["pulp_auth"] == ""
+    assert status.status_of_service["candlepin"] == "fail"
+    assert status.status_of_service["elasticsearch"] == "ok"
+    assert status.response_of_service["pulp_auth"] == ""
+    assert (
+        status.response_of_service["candlepin_auth"]
+        == "Message: Katello::Resources::Candlepin::CandlepinPing: 404 Resource Not Found"
+    )
+    assert status.response_of_service["elasticsearch"] == "Duration: 35ms"
 
-    assert 'nonexistent' not in status.service_list
-    assert 'nonexistent' not in status.status_of_service
-    assert 'nonexistent' not in status.response_of_service
+    assert "nonexistent" not in status.service_list
+    assert "nonexistent" not in status.status_of_service
+    assert "nonexistent" not in status.response_of_service

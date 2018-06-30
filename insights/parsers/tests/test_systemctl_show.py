@@ -94,15 +94,33 @@ def test_systemctl_show_smartpdc():
 
 def test_systemctl_show_doc_examples():
     env = {
-        'systemctl_show_cinder_volume': SystemctlShowCinderVolume(context_wrap(SYSTEMCTL_SHOW_EXAMPLES)),
-        'systemctl_show_mariadb': SystemctlShowMariaDB(context_wrap(SYSTEMCTL_SHOW_EXAMPLES)),
-        'systemctl_show_pulp_workers': SystemctlShowPulpWorkers(context_wrap(SYSTEMCTL_SHOW_EXAMPLES)),
-        'systemctl_show_pulp_resource_manager': SystemctlShowPulpResourceManager(context_wrap(SYSTEMCTL_SHOW_EXAMPLES)),
-        'systemctl_show_pulp_celerybeat': SystemctlShowPulpCelerybeat(context_wrap(SYSTEMCTL_SHOW_EXAMPLES)),
-        'systemctl_show_httpd': SystemctlShowHttpd(context_wrap(SYSTEMCTL_SHOW_EXAMPLES)),
-        'systemctl_show_qpidd': SystemctlShowQpidd(context_wrap(SYSTEMCTL_SHOW_EXAMPLES)),
-        'systemctl_show_qdrouterd': SystemctlShowQdrouterd(context_wrap(SYSTEMCTL_SHOW_EXAMPLES)),
-        'systemctl_show_smartpdc': SystemctlShowSmartpdc(context_wrap(SYSTEMCTL_SHOW_EXAMPLES))
+        "systemctl_show_cinder_volume": SystemctlShowCinderVolume(
+            context_wrap(SYSTEMCTL_SHOW_EXAMPLES)
+        ),
+        "systemctl_show_mariadb": SystemctlShowMariaDB(
+            context_wrap(SYSTEMCTL_SHOW_EXAMPLES)
+        ),
+        "systemctl_show_pulp_workers": SystemctlShowPulpWorkers(
+            context_wrap(SYSTEMCTL_SHOW_EXAMPLES)
+        ),
+        "systemctl_show_pulp_resource_manager": SystemctlShowPulpResourceManager(
+            context_wrap(SYSTEMCTL_SHOW_EXAMPLES)
+        ),
+        "systemctl_show_pulp_celerybeat": SystemctlShowPulpCelerybeat(
+            context_wrap(SYSTEMCTL_SHOW_EXAMPLES)
+        ),
+        "systemctl_show_httpd": SystemctlShowHttpd(
+            context_wrap(SYSTEMCTL_SHOW_EXAMPLES)
+        ),
+        "systemctl_show_qpidd": SystemctlShowQpidd(
+            context_wrap(SYSTEMCTL_SHOW_EXAMPLES)
+        ),
+        "systemctl_show_qdrouterd": SystemctlShowQdrouterd(
+            context_wrap(SYSTEMCTL_SHOW_EXAMPLES)
+        ),
+        "systemctl_show_smartpdc": SystemctlShowSmartpdc(
+            context_wrap(SYSTEMCTL_SHOW_EXAMPLES)
+        ),
     }
     failed, total = doctest.testmod(systemctl_show, globs=env)
     assert failed == 0

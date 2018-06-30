@@ -87,11 +87,11 @@ class IPv6(object):
     def __init__(self, uname, mod_probe, lsmod, cmdline, sysctl):
         self.disablers = set()
 
-        if uname.rhel_release[0] == '7':
+        if uname.rhel_release[0] == "7":
             self.rhelver = 7
-        elif uname.rhel_release[0] == '6':
+        elif uname.rhel_release[0] == "6":
             self.rhelver = 6
-        elif uname.rhel_release[0] == '5':
+        elif uname.rhel_release[0] == "5":
             self.rhelver = 5
         else:
             self.rhelver = RHEL_UNSUPPORTED_VERSION
@@ -104,22 +104,22 @@ class IPv6(object):
 
         # A dict of loaded modules if lsmod data was provided, or None,
         # because it's worth distinguishing whether the data was provided.
-        self.lsmod = getattr(lsmod, 'data', None)
+        self.lsmod = getattr(lsmod, "data", None)
 
         # Nothing depends on command line data being provided, so default
         # to an empty dict
-        self.cmdline = getattr(cmdline, 'data', {})
+        self.cmdline = getattr(cmdline, "data", {})
 
         # Likewise for sysctl data
-        self.sysctl = getattr(sysctl, 'data', {})
+        self.sysctl = getattr(sysctl, "data", {})
 
         self._check_ipv6()
 
     def _check_ipv6(self):
         # Whether IPv6 is provided as a module or built in, it can be disabled
         # with the kernel command line
-        if self.cmdline.get('ipv6.disable') == ['1']:
-            self.disablers.add('cmdline')
+        if self.cmdline.get("ipv6.disable") == ["1"]:
+            self.disablers.add("cmdline")
 
         # IPv6 can also be disabled via sysctl. Though it may be disabled on a
         # per-interface basis, this combiner only reports if it's turned off
@@ -129,24 +129,24 @@ class IPv6(object):
         # may be missed by this combiner.
         # Also not reported is whether it's disabled in sysctl.conf and so
         # would persist between reboots.
-        if self.sysctl.get('net.ipv6.conf.all.disable_ipv6') == '1':
-            self.disablers.add('sysctl')
+        if self.sysctl.get("net.ipv6.conf.all.disable_ipv6") == "1":
+            self.disablers.add("sysctl")
 
         # Pre-EL7 requires modprobe to state definitively whether the module
         # is disabled or not
-        if (self.rhelver < 7 and len(self.modprobe) > 0):
+        if self.rhelver < 7 and len(self.modprobe) > 0:
             # Iterate over one or more sources of modprobe data
             for it in self.modprobe:
                 # Whether or not the module is loaded, it may be disabled by
                 # module options
-                if it.get('options', {}).get('ipv6') == ['disable=1']:
-                    self.disablers.add('modprobe_disable')
+                if it.get("options", {}).get("ipv6") == ["disable=1"]:
+                    self.disablers.add("modprobe_disable")
 
                 # If the module is not currently loaded, a fake install will
                 # prevent it from loading
-                if self.lsmod is not None and 'ipv6' not in self.lsmod:
-                    if it.get('install', {}).get('ipv6') == ['/bin/true']:
-                        self.disablers.add('fake_install')
+                if self.lsmod is not None and "ipv6" not in self.lsmod:
+                    if it.get("install", {}).get("ipv6") == ["/bin/true"]:
+                        self.disablers.add("fake_install")
 
     def disabled(self):
         """Determine whether IPv6 has been disabled on this system.

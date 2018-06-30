@@ -66,16 +66,17 @@ from insights.specs import Specs
 @parser(Specs.yum_conf)
 class YumConf(IniConfigFile):
     """Parse contents of file ``/etc/yum.conf``."""
+
     def parse_content(self, content):
         super(YumConf, self).parse_content(content)
         # File /etc/yum.conf may contain repos definitions.
         # Keywords 'gpgkey' and 'baseurl' might contain multiple
         # values separated by comma. Convert those values into a list.
         for section in self.sections():
-            for key in ('gpgkey', 'baseurl'):
+            for key in ("gpgkey", "baseurl"):
                 try:
                     value = self.get(section, key)
                     if value and isinstance(value, six.string_types):
-                        self.data.set(section, key, value.split(','))
+                        self.data.set(section, key, value.split(","))
                 except NoOptionError:
                     pass

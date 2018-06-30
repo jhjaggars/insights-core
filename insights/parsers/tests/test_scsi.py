@@ -62,7 +62,7 @@ def test_parse():
     assert len(result) == 5
     r = result[0]
     assert r.host == "scsi0"
-    assert r.get('host') == 'scsi0'
+    assert r.get("host") == "scsi0"
     assert r.channel == "03"
     assert r.id == "00"
     assert r.lun == "00"
@@ -78,7 +78,7 @@ def test_parse():
     r = result[4]
     assert r.type == "Direct-Access"
 
-    assert [disc.vendor for disc in result] == ['HP'] * 5
+    assert [disc.vendor for disc in result] == ["HP"] * 5
 
 
 def test_single_spaced_ansi_scsi():
@@ -90,18 +90,18 @@ def test_missing_header():
     with pytest.raises(ParseException) as excinfo:
         result = SCSI(context_wrap(SCSI_OUTPUT_MISSING_HEADER))
         assert result is None
-    assert 'Expected Header: Attached devices:' in str(excinfo.value)
+    assert "Expected Header: Attached devices:" in str(excinfo.value)
 
 
 def test_missing_innormal_rev():
     with pytest.raises(ParseException) as excinfo:
         result = SCSI(context_wrap(SCSI_OUTPUT_INNORMAL_VEMDOR_LINE))
         assert result is None
-    assert 'Parse error for current line:' in str(excinfo.value)
+    assert "Parse error for current line:" in str(excinfo.value)
 
 
 def test_empty():
     with pytest.raises(ParseException) as excinfo:
         result = SCSI(context_wrap(SCSI_OUTPUT_EMPTY))
         assert result is None
-    assert 'Empty content of file /proc/scsi/scsi' in str(excinfo.value)
+    assert "Empty content of file /proc/scsi/scsi" in str(excinfo.value)

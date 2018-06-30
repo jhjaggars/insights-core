@@ -45,38 +45,42 @@ gpgkey =
 """
 
 
-CONF_PATH = '/etc/yum.conf'
+CONF_PATH = "/etc/yum.conf"
 
 
 def test_get_yum_conf():
     yum_conf = YumConf(context_wrap(YUM_CONF, path=CONF_PATH))
 
-    assert yum_conf.items('main') == {
-        'plugins': '1',
-        'keepcache': '0',
-        'cachedir': '/var/cache/yum/$basearch/$releasever',
-        'exactarch': '1',
-        'obsoletes': '1',
-        'installonly_limit': '3',
-        'debuglevel': '2',
-        'gpgcheck': '1',
-        'logfile': '/var/log/yum.log'
+    assert yum_conf.items("main") == {
+        "plugins": "1",
+        "keepcache": "0",
+        "cachedir": "/var/cache/yum/$basearch/$releasever",
+        "exactarch": "1",
+        "obsoletes": "1",
+        "installonly_limit": "3",
+        "debuglevel": "2",
+        "gpgcheck": "1",
+        "logfile": "/var/log/yum.log",
     }
 
-    assert yum_conf.items('rhel-7-server-rhn-tools-beta-debug-rpms') == {
-        u'ui_repoid_vars': u'basearch',
-        u'sslverify': u'1',
-        u'name': u'RHN Tools for Red Hat Enterprise Linux 7 Server Beta (Debug RPMs)',
-        u'sslclientkey': u'/etc/pki/entitlement/1234-key.pem',
-        u'enabled': u'0',
-        u'gpgkey': [u'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-beta',
-                    u'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release'],
-        u'sslclientcert': u'/etc/pki/entitlement/1234.pem',
-        u'baseurl': [u'https://cdn.redhat.com/content/beta/rhel/server/7/$basearch/rhn-tools/debug'],
-        u'sslcacert': u'/etc/rhsm/ca/redhat-uep.pem',
-        u'gpgcheck': u'1',
-        u'metadata_expire': u'86400'
+    assert yum_conf.items("rhel-7-server-rhn-tools-beta-debug-rpms") == {
+        u"ui_repoid_vars": u"basearch",
+        u"sslverify": u"1",
+        u"name": u"RHN Tools for Red Hat Enterprise Linux 7 Server Beta (Debug RPMs)",
+        u"sslclientkey": u"/etc/pki/entitlement/1234-key.pem",
+        u"enabled": u"0",
+        u"gpgkey": [
+            u"file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-beta",
+            u"file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release",
+        ],
+        u"sslclientcert": u"/etc/pki/entitlement/1234.pem",
+        u"baseurl": [
+            u"https://cdn.redhat.com/content/beta/rhel/server/7/$basearch/rhn-tools/debug"
+        ],
+        u"sslcacert": u"/etc/rhsm/ca/redhat-uep.pem",
+        u"gpgcheck": u"1",
+        u"metadata_expire": u"86400",
     }
 
-    assert yum_conf.file_name == 'yum.conf'
-    assert yum_conf.file_path == '/etc/yum.conf'
+    assert yum_conf.file_name == "yum.conf"
+    assert yum_conf.file_path == "/etc/yum.conf"

@@ -46,15 +46,16 @@ class OpenVSwitchLog(LogFileOutput):
         Please refer to its super-class :class:`insights.core.LogFileOutput` for
         more usage information.
     """
-    time_format = '%Y-%m-%dT%H:%M:%S'
-    _fieldnames = ['timestamp', 'sequence', 'module', 'level', 'message']
+
+    time_format = "%Y-%m-%dT%H:%M:%S"
+    _fieldnames = ["timestamp", "sequence", "module", "level", "message"]
 
     def _parse_line(self, line):
         """
         Parse line into fields.
         """
-        fields = line.split('|', 4)  # stop splitting after fourth | found
-        line_info = {'raw_message': line}
+        fields = line.split("|", 4)  # stop splitting after fourth | found
+        line_info = {"raw_message": line}
         if len(fields) == 5:
             line_info.update(dict(zip(self._fieldnames, fields)))
         return line_info
@@ -69,6 +70,7 @@ class OVSDB_Server_Log(OpenVSwitchLog):
     Parser for the ``ovsdb_server.log`` file, based on the OpenVSwitchLog
     class.
     """
+
     pass
 
 
@@ -78,4 +80,5 @@ class OVS_VSwitchd_Log(OpenVSwitchLog):
     Parser for the ``ovs-vswitchd.log`` file, based on the OpenVSwitchLog
     class.
     """
+
     pass

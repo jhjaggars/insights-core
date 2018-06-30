@@ -144,24 +144,41 @@ Parameters on /:
 
 
 def test_rabbitmq_report():
-    result = RabbitMQReport(context_wrap(RABBITMQCTL_REPORT_0,
-            hostname="controller_1", osp=osp_controller)).result
+    result = RabbitMQReport(
+        context_wrap(RABBITMQCTL_REPORT_0, hostname="controller_1", osp=osp_controller)
+    ).result
     assert result is None
 
-    result = RabbitMQReport(context_wrap(RABBITMQCTL_REPORT_1,
-            hostname="controller_1", osp=osp_controller)).result
-    assert result.get("nstat").get("rabbit@rabbitmq0").\
-            get("file_descriptors").get("total_limit") == "924"
-    permissions = {'/': {'redhat1': ['redhat.*', '.*', '.*'],
-                        'guest': ['.*', '.*', '.*'],
-                        'redhat': ['redhat.*', '.*', '.*']},
-                   'test_vhost': ''}
+    result = RabbitMQReport(
+        context_wrap(RABBITMQCTL_REPORT_1, hostname="controller_1", osp=osp_controller)
+    ).result
+    assert (
+        result.get("nstat")
+        .get("rabbit@rabbitmq0")
+        .get("file_descriptors")
+        .get("total_limit")
+        == "924"
+    )
+    permissions = {
+        "/": {
+            "redhat1": ["redhat.*", ".*", ".*"],
+            "guest": [".*", ".*", ".*"],
+            "redhat": ["redhat.*", ".*", ".*"],
+        },
+        "test_vhost": "",
+    }
     assert result.get("perm") == permissions
 
-    result = RabbitMQReport(context_wrap(RABBITMQCTL_REPORT_2,
-            hostname="controller_1", osp=osp_controller)).result
-    assert result.get("nstat").get("'rabbit@overcloud-controller-2'").\
-            get("file_descriptors").get("total_limit") == '3996'
+    result = RabbitMQReport(
+        context_wrap(RABBITMQCTL_REPORT_2, hostname="controller_1", osp=osp_controller)
+    ).result
+    assert (
+        result.get("nstat")
+        .get("'rabbit@overcloud-controller-2'")
+        .get("file_descriptors")
+        .get("total_limit")
+        == "3996"
+    )
     assert len(result.get("nstat")) == 3
-    permissions = {'/': {'guest': ['.*', '.*', '.*']}}
+    permissions = {"/": {"guest": [".*", ".*", ".*"]}}
     assert result.get("perm") == permissions

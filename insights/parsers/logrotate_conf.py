@@ -14,12 +14,7 @@ See: http://www.linuxmanpages.org/8/logrotate
 from .. import parser, Parser, get_active_lines, LegacyItemAccess
 from insights.specs import Specs
 
-PAIRED_OPTS = (
-        'prerotate',
-        'postrotate',
-        'firstaction',
-        'lastaction',
-)
+PAIRED_OPTS = ("prerotate", "postrotate", "firstaction", "lastaction")
 
 
 @parser(Specs.logrotate_conf)
@@ -85,10 +80,9 @@ class LogrotateConf(Parser, LegacyItemAccess):
     """
 
     def parse_content(self, content):
-
         def _parse_opts(line):
-            if '=' in line:
-                l_sp = line.split('=', 1)
+            if "=" in line:
+                l_sp = line.split("=", 1)
             else:
                 l_sp = line.split(None, 1)
             # return a (key, value) tuple
@@ -103,10 +97,12 @@ class LogrotateConf(Parser, LegacyItemAccess):
         for line in get_active_lines(content):
             if log_opts is None:
                 # not in log_file section
-                if line.lstrip(' \t\'"').startswith('/'):
+                if line.lstrip(" \t'\"").startswith("/"):
                     # log_file line
-                    log_files.extend([l.strip(' \t\'"') for l in line.rstrip('{').split()])
-                if line.endswith('{'):
+                    log_files.extend(
+                        [l.strip(" \t'\"") for l in line.rstrip("{").split()]
+                    )
+                if line.endswith("{"):
                     # start of the section
                     log_opts = {}  # empty dict indicates in a log_file section
                 elif not log_files:
@@ -116,7 +112,7 @@ class LogrotateConf(Parser, LegacyItemAccess):
                     self.options.append(key1)
             else:
                 # in log_file section
-                if line.endswith('}'):
+                if line.endswith("}"):
                     # end of the section,
                     # save options for each log_file individually
                     for lf in log_files:
@@ -132,7 +128,7 @@ class LogrotateConf(Parser, LegacyItemAccess):
                     script = line
                     log_opts[script] = []
                     continue
-                if line == 'endscript':
+                if line == "endscript":
                     # end of script section
                     script = None
                     continue

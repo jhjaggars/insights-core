@@ -51,6 +51,7 @@ class TomcatVirtualDirContextBase(CommandParser):
     Generic parser which finds whether there is a VirtualDirContext option used in TomCat
     configuration file.
     """
+
     def __init__(self, *args, **kwargs):
         self.data = {}
         super(TomcatVirtualDirContextBase, self).__init__(*args, **kwargs)
@@ -58,17 +59,19 @@ class TomcatVirtualDirContextBase(CommandParser):
     def parse_content(self, content):
         for line in content:
             try:
-                file_name, file_line = line.split(':', 1)  # Hoping that : is not part of the path
+                file_name, file_line = line.split(
+                    ":", 1
+                )  # Hoping that : is not part of the path
             except ValueError:
                 continue  # skip this line
-            if file_name.endswith('.xml'):  # Make sure that nothing else is stored
+            if file_name.endswith(".xml"):  # Make sure that nothing else is stored
                 if file_name in self.data:
                     self.data[file_name].append(file_line)
                 else:
                     self.data[file_name] = [file_line]
 
         if self.data == {}:
-            raise SkipException('VirtualDirContext not used.')
+            raise SkipException("VirtualDirContext not used.")
 
 
 @parser(Specs.tomcat_vdc_fallback)
@@ -77,6 +80,7 @@ class TomcatVirtualDirContextFallback(TomcatVirtualDirContextBase):
     Reports whether there is a VirtualDirContext option used in TomCat configuration file. Looks
     for the configuration files in default location.
     """
+
     pass
 
 
@@ -86,4 +90,5 @@ class TomcatVirtualDirContextTargeted(TomcatVirtualDirContextBase):
     Reports whether there is a VirtualDirContext option used in TomCat configuration file. Looks
     for the configuration files in location derived from running Tomcat command.
     """
+
     pass

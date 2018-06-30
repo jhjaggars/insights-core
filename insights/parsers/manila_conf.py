@@ -61,4 +61,5 @@ class ManilaConf(IniConfigFile):
     """
     Manila configuration parser class, based on the ``IniConfigFile`` class.
     """
+
     pass

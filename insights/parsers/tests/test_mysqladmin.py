@@ -29,20 +29,20 @@ def test_mysqladmin_vars():
     res = MysqladminVars(context_wrap(INPUT_NORMAL))
     d = res.data
     assert len(list(d)) == 14
-    assert d['version_comment'] == 'MariaDB Server'
-    assert d['datadir'] == '/var/lib/mysql/'
-    assert d['auto_increment_increment'] == '1'
-    assert d.get('abc') is None
-    assert res.get('abc', '233') == '233'
-    assert res.get('init_file') == ''
-    assert res.get('wait_what') is None
-    assert res.get('wait_timeout') == '28800'
-    assert res.getint('wait_timeout') == 28800
-    assert res.getint('version_compile_machine') is None
-    assert res.get('binlog_stmt_cache_size', '666') == '32768'
+    assert d["version_comment"] == "MariaDB Server"
+    assert d["datadir"] == "/var/lib/mysql/"
+    assert d["auto_increment_increment"] == "1"
+    assert d.get("abc") is None
+    assert res.get("abc", "233") == "233"
+    assert res.get("init_file") == ""
+    assert res.get("wait_what") is None
+    assert res.get("wait_timeout") == "28800"
+    assert res.getint("wait_timeout") == 28800
+    assert res.getint("version_compile_machine") is None
+    assert res.get("binlog_stmt_cache_size", "666") == "32768"
 
     with pytest.raises(TypeError) as e_info:
-        res.getint('binlog_stmt_cache_size', '666')
+        res.getint("binlog_stmt_cache_size", "666")
     assert "Default value should be int type." in str(e_info.value)
 
 

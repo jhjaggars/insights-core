@@ -6,24 +6,24 @@ from insights.specs import Specs
 
 from insights.plugins import vulnerable_kernel
 
-ERROR_KEY = 'VULNERABLE_KERNEL'
+ERROR_KEY = "VULNERABLE_KERNEL"
 
 UNAME_TEMPLATE = "Linux testhost1 %s #1 SMP Tue Jan 29 11:47:41 EST 2013 x86_64 x86_64 x86_64 GNU/Linux"
 
 NOT_VULNERABLE = [
-    '2.4.32-100.el6.x86_64',
-    '2.6.32-430.el6.x86_64',
-    '2.6.32-431.11.2.el6.x86_64',
-    '2.6.32-431.11.3.el6.x86_64',
-    '2.6.32-432.el6.x86_64',
-    '2.7.12-200.el6.x86_64',
+    "2.4.32-100.el6.x86_64",
+    "2.6.32-430.el6.x86_64",
+    "2.6.32-431.11.2.el6.x86_64",
+    "2.6.32-431.11.3.el6.x86_64",
+    "2.6.32-432.el6.x86_64",
+    "2.7.12-200.el6.x86_64",
 ]
 
 
 VULNERABLE = [
-    '2.6.32-431.el6.x86_64',
-    '2.6.32-431.10.1.el6.x86_64',
-    '2.6.32-431.11.1.el6.x86_64',
+    "2.6.32-431.el6.x86_64",
+    "2.6.32-431.10.1.el6.x86_64",
+    "2.6.32-431.11.1.el6.x86_64",
 ]
 
 

@@ -17,20 +17,20 @@ from ..parsers.installed_rpms import InstalledRpms
 # But, there are some mistakes in the KCS, the versions in below map
 # are corrected according to the corresponding ERRATA pages.
 sat6_ver_map = {
-        # Sat     foreman     candlepin   katello
-        '6.0.8': ('1.6.0.53', '0.9.23', '1.5.0'),
-        '6.1.1': ('1.7.2.33', '0.9.49.3', '2.2.0.14'),
-        '6.1.2': ('1.7.2.36', '0.9.49.6', '2.2.0.16'),
-        '6.1.3': ('1.7.2.43', '0.9.49.8', '2.2.0.16'),
-        '6.1.4': ('1.7.2.46', '0.9.49.9', '2.2.0.16'),
-        '6.1.5': ('1.7.2.49', '0.9.49.9', '2.2.0.16'),
-        '6.1.6': ('1.7.2.50', '0.9.49.9', '2.2.0.17'),
-        '6.1.7': ('1.7.2.53', '0.9.49.11', '2.2.0.17'),
-        '6.1.8': ('1.7.2.55', '0.9.49.12', '2.2.0.19'),
-        '6.1.9': ('1.7.2.56', '0.9.49.12', '2.2.0.19'),
-        '6.1.10': ('1.7.2.61', '0.9.49.16', '2.2.0'),
-        '6.1.11': ('1.7.2.62', '0.9.49.19', '2.2.0'),
-        '6.1.12': ('1.7.2.63', '0.9.49.23', '2.2.0'),
+    # Sat     foreman     candlepin   katello
+    "6.0.8": ("1.6.0.53", "0.9.23", "1.5.0"),
+    "6.1.1": ("1.7.2.33", "0.9.49.3", "2.2.0.14"),
+    "6.1.2": ("1.7.2.36", "0.9.49.6", "2.2.0.16"),
+    "6.1.3": ("1.7.2.43", "0.9.49.8", "2.2.0.16"),
+    "6.1.4": ("1.7.2.46", "0.9.49.9", "2.2.0.16"),
+    "6.1.5": ("1.7.2.49", "0.9.49.9", "2.2.0.16"),
+    "6.1.6": ("1.7.2.50", "0.9.49.9", "2.2.0.17"),
+    "6.1.7": ("1.7.2.53", "0.9.49.11", "2.2.0.17"),
+    "6.1.8": ("1.7.2.55", "0.9.49.12", "2.2.0.19"),
+    "6.1.9": ("1.7.2.56", "0.9.49.12", "2.2.0.19"),
+    "6.1.10": ("1.7.2.61", "0.9.49.16", "2.2.0"),
+    "6.1.11": ("1.7.2.62", "0.9.49.19", "2.2.0"),
+    "6.1.12": ("1.7.2.63", "0.9.49.23", "2.2.0"),
 }
 
 
@@ -116,6 +116,7 @@ class SatelliteVersion(object):
         '1.0.el7sat'
 
     """
+
     def __init__(self, sat6_ver, rpms):
         self.full = None
         self.version = None
@@ -133,7 +134,7 @@ class SatelliteVersion(object):
             return
         if rpms:
             # For Satellite 6.2.x, check the ``satellite`` package directly
-            sat62_pkg = rpms.get_max('satellite')
+            sat62_pkg = rpms.get_max("satellite")
             if sat62_pkg:
                 self.full = sat62_pkg.package
                 self.version = sat62_pkg.version
@@ -142,22 +143,26 @@ class SatelliteVersion(object):
                 return
             # For Satellite 6.0.x/6.1.x, check the version of:
             # - foreman, candlepin and katello
-            fman = rpms.get_max('foreman')
-            cndp = rpms.get_max('candlepin')
-            ktlo = rpms.get_max('katello')
+            fman = rpms.get_max("foreman")
+            cndp = rpms.get_max("candlepin")
+            ktlo = rpms.get_max("katello")
             if fman and cndp and ktlo:
                 for sat_ver, map_ver in sat6_ver_map.items():
-                    if all(pkg.version.startswith(mv) for pkg, mv
-                            in zip([fman, cndp, ktlo], map_ver)):
+                    if all(
+                        pkg.version.startswith(mv)
+                        for pkg, mv in zip([fman, cndp, ktlo], map_ver)
+                    ):
                         # no 'release' in this situation
                         self.major, self.minor = _parse_sat_version(sat_ver)
                         self.full = self.version = sat_ver
                         return
                 # satellite packages conflict
-                raise SkipComponent("RPMs conflict, unable to determine Satellite version")
+                raise SkipComponent(
+                    "RPMs conflict, unable to determine Satellite version"
+                )
             # For Satellite 5.x
-            sat5_pkg = rpms.get_max('satellite-schema')
-            sat5_pkg = sat5_pkg if sat5_pkg else rpms.get_max('rhn-satellite-schema')
+            sat5_pkg = rpms.get_max("satellite-schema")
+            sat5_pkg = sat5_pkg if sat5_pkg else rpms.get_max("rhn-satellite-schema")
             if sat5_pkg:
                 self.full = sat5_pkg.package
                 self.version = sat5_pkg.version

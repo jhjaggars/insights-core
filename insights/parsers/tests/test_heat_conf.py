@@ -47,7 +47,9 @@ workers = 0
 
 def test_heat_conf():
     h_conf = HeatConf(context_wrap(HEAT_CONFIG))
-    assert h_conf.get('DEFAULT', 'heat_metadata_server_url') == 'http://172.16.0.11:8000'
-    assert h_conf.get('DEFAULT', 'stack_user_domain_name') == 'heat_stack'
-    assert h_conf.get('clients_keystone', 'auth_uri') == 'http://192.0.2.18:35357'
-    assert h_conf.get('heat_api_cloudwatch', 'bind_host') == '172.16.0.15'
+    assert (
+        h_conf.get("DEFAULT", "heat_metadata_server_url") == "http://172.16.0.11:8000"
+    )
+    assert h_conf.get("DEFAULT", "stack_user_domain_name") == "heat_stack"
+    assert h_conf.get("clients_keystone", "auth_uri") == "http://192.0.2.18:35357"
+    assert h_conf.get("heat_api_cloudwatch", "bind_host") == "172.16.0.15"

@@ -2,7 +2,7 @@ from insights.parsers.up2date import Up2Date
 from insights.tests import context_wrap
 
 
-UP2DATE = '''
+UP2DATE = """
 # Automatically generated Red Hat Update Agent config file, do not edit.
 # Format: 1.0
 retrieveOnly[comment]=Retrieve packages only
@@ -77,31 +77,34 @@ noReboot=0
 serverURL=http://192.168.160.23/XMLRPC
 noSSLServerURL=http://192.168.160.23/XMLRPC
 sslCACert=/usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT
-'''
+"""
 
 
 def test_get_up2date():
     up2date_info = Up2Date(context_wrap(UP2DATE)).data
 
-    assert up2date_info['retrieveOnly'] == '0'
-    assert up2date_info['writeChangesToLog'] == '0'
-    assert up2date_info['stagingContentWindow'] == '24'
-    assert up2date_info['networkRetries'] == '5'
-    assert up2date_info['enableProxy'] == '0'
-    assert up2date_info['proxyPassword'] is ''
-    assert up2date_info['systemIdPath'] == '/etc/sysconfig/rhn/systemid'
-    assert up2date_info['useNoSSLForPackages'] == '0'
-    assert up2date_info['tmpDir'] == '/tmp'
-    assert up2date_info['skipNetwork'] == '0'
-    assert up2date_info['disallowConfChanges'] == 'noReboot;sslCACert;useNoSSLForPackages;noSSLServerURL;serverURL;disallowConfChanges;'
-    assert up2date_info['enableProxyAuth'] == '0'
-    assert up2date_info['versionOverride'] is ''
-    assert up2date_info['stagingContent'] == '1'
-    assert up2date_info['proxyUser'] is ''
-    assert up2date_info['hostedWhitelist'] is ''
-    assert up2date_info['debug'] == '0'
-    assert up2date_info['httpProxy'] is ''
-    assert up2date_info['noReboot'] == '0'
-    assert up2date_info['serverURL'] == 'http://192.168.160.23/XMLRPC'
-    assert up2date_info['noSSLServerURL'] == 'http://192.168.160.23/XMLRPC'
-    assert up2date_info['sslCACert'] == '/usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT'
+    assert up2date_info["retrieveOnly"] == "0"
+    assert up2date_info["writeChangesToLog"] == "0"
+    assert up2date_info["stagingContentWindow"] == "24"
+    assert up2date_info["networkRetries"] == "5"
+    assert up2date_info["enableProxy"] == "0"
+    assert up2date_info["proxyPassword"] is ""
+    assert up2date_info["systemIdPath"] == "/etc/sysconfig/rhn/systemid"
+    assert up2date_info["useNoSSLForPackages"] == "0"
+    assert up2date_info["tmpDir"] == "/tmp"
+    assert up2date_info["skipNetwork"] == "0"
+    assert (
+        up2date_info["disallowConfChanges"]
+        == "noReboot;sslCACert;useNoSSLForPackages;noSSLServerURL;serverURL;disallowConfChanges;"
+    )
+    assert up2date_info["enableProxyAuth"] == "0"
+    assert up2date_info["versionOverride"] is ""
+    assert up2date_info["stagingContent"] == "1"
+    assert up2date_info["proxyUser"] is ""
+    assert up2date_info["hostedWhitelist"] is ""
+    assert up2date_info["debug"] == "0"
+    assert up2date_info["httpProxy"] is ""
+    assert up2date_info["noReboot"] == "0"
+    assert up2date_info["serverURL"] == "http://192.168.160.23/XMLRPC"
+    assert up2date_info["noSSLServerURL"] == "http://192.168.160.23/XMLRPC"
+    assert up2date_info["sslCACert"] == "/usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT"

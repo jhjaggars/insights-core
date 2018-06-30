@@ -78,7 +78,7 @@ from insights.specs import Specs
 
 
 def metadata_name_items(data):
-    return dict((item['metadata']['name'], item) for item in data['items'])
+    return dict((item["metadata"]["name"], item) for item in data["items"])
 
 
 @parser(Specs.oc_get_bc)

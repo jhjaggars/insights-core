@@ -38,4 +38,5 @@ class CobblerModulesConf(IniConfigFile):
     """
     This uses the standard ``IniConfigFile`` parser class.
     """
+
     pass

@@ -1,10 +1,10 @@
-'''
+"""
 NeutronPlugin - file ``/etc/neutron/plugin.ini``
 ================================================
 
 The ``NeutronPlugin`` class parses the Neutron plugin configuration file.
 See the ``IniConfigFile`` class for more usage information.
-'''
+"""
 
 from .. import parser, LegacyItemAccess, IniConfigFile
 from insights.specs import Specs
@@ -61,4 +61,5 @@ class NeutronPlugin(LegacyItemAccess, IniConfigFile):
         {'vni_ranges': '10:100',
          'vxlan_group': '224.0.0.1'}
     """
+
     pass

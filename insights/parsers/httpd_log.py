@@ -29,22 +29,26 @@ from insights.specs import Specs
 @parser(Specs.httpd_ssl_error_log)
 class HttpdSSLErrorLog(LogFileOutput):
     """Class for parsing httpd ``ssl_error_log`` file."""
-    time_format = '%b %d %H:%M:%S.%f %Y'
+
+    time_format = "%b %d %H:%M:%S.%f %Y"
 
 
 @parser(Specs.httpd_error_log)
 class HttpdErrorLog(LogFileOutput):
     """Class for parsing httpd ``error_log`` file."""
-    time_format = '%b %d %H:%M:%S.%f %Y'
+
+    time_format = "%b %d %H:%M:%S.%f %Y"
 
 
 @parser(Specs.httpd_ssl_access_log)
 class HttpdSSLAccessLog(LogFileOutput):
     """Class for parsing httpd ``ssl_access_log`` file."""
-    time_format = '%d/%b/%Y:%H:%M:%S'
+
+    time_format = "%d/%b/%Y:%H:%M:%S"
 
 
 @parser(Specs.httpd_access_log)
 class HttpdAccessLog(LogFileOutput):
     """Class for parsing httpd ``access_log`` file."""
-    time_format = '%d/%b/%Y:%H:%M:%S'
+
+    time_format = "%d/%b/%Y:%H:%M:%S"

@@ -38,22 +38,25 @@ LOG2 = """
 
 def test_up2date_log():
     ulog = Up2dateLog(context_wrap(LOG1))
-    ern_list = ulog.get('ERROR')
+    ern_list = ulog.get("ERROR")
     assert 3 == len(ern_list)
-    assert ern_list[2]['raw_message'] == "<class 'up2date_client.up2dateErrors.SSLCertificateFileNotFound'>: ERROR: can not find RHNS CA file: /usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT"
+    assert (
+        ern_list[2]["raw_message"]
+        == "<class 'up2date_client.up2dateErrors.SSLCertificateFileNotFound'>: ERROR: can not find RHNS CA file: /usr/share/rhn/RHN-ORG-TRUSTED-SSL-CERT"
+    )
     assert len(list(ulog.get_after(datetime(2018, 2, 1, 10, 40, 22)))) == 18
 
     ulog = Up2dateLog(context_wrap(LOG2))
-    ern_list = ulog.get('Temporary failure in name resolution')
+    ern_list = ulog.get("Temporary failure in name resolution")
     assert 5 == len(ern_list)
-    assert ern_list[0]['raw_message'] == "[Thu Feb  1 02:46:35 2018] rhn_register A socket error occurred: (-3, 'Temporary failure in name resolution'), attempt #1"
+    assert (
+        ern_list[0]["raw_message"]
+        == "[Thu Feb  1 02:46:35 2018] rhn_register A socket error occurred: (-3, 'Temporary failure in name resolution'), attempt #1"
+    )
     assert len(list(ulog.get_after(datetime(2018, 2, 1, 2, 46, 45)))) == 3
 
 
 def test_up2date_log_doc_examples():
-    env = {
-        'Up2dateLog': Up2dateLog,
-        'ulog': Up2dateLog(context_wrap(LOG2)),
-    }
+    env = {"Up2dateLog": Up2dateLog, "ulog": Up2dateLog(context_wrap(LOG2))}
     failed, total = doctest.testmod(up2date_log, globs=env)
     assert failed == 0

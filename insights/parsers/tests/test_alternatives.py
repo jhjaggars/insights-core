@@ -31,26 +31,26 @@ Current `best' version is /usr/sbin/sendmail.postfix.
 def test_mta_alternatives():
     mtas = AlternativesOutput(context_wrap(ALT_MTA))
 
-    assert hasattr(mtas, 'program')
-    assert mtas.program == 'mta'
-    assert hasattr(mtas, 'status')
-    assert mtas.status == 'auto'
-    assert hasattr(mtas, 'link')
-    assert mtas.link == '/usr/sbin/sendmail.postfix'
-    assert hasattr(mtas, 'best')
-    assert mtas.best == '/usr/sbin/sendmail.postfix'
+    assert hasattr(mtas, "program")
+    assert mtas.program == "mta"
+    assert hasattr(mtas, "status")
+    assert mtas.status == "auto"
+    assert hasattr(mtas, "link")
+    assert mtas.link == "/usr/sbin/sendmail.postfix"
+    assert hasattr(mtas, "best")
+    assert mtas.best == "/usr/sbin/sendmail.postfix"
 
-    assert hasattr(mtas, 'paths')
+    assert hasattr(mtas, "paths")
     assert isinstance(mtas.paths, list)
     assert len(mtas.paths) == 1
 
-    for i in ('path', 'priority', 'slave'):
+    for i in ("path", "priority", "slave"):
         assert i in mtas.paths[0]
 
 
 def test_failure_modes():
     # Duplicate status line raises ParseException
-    with pytest.raises(ParseException, match='Program line for mta'):
+    with pytest.raises(ParseException, match="Program line for mta"):
         alts = AlternativesOutput(context_wrap(DUPLICATED_STATUS_LINE))
         assert alts.program is None
 
@@ -122,34 +122,53 @@ def test_class_no_java():
 def test_class_has_java():
     java = JavaAlternatives(context_wrap(alter_java))
 
-    assert java.program == 'java'
-    assert java.status == 'auto'
-    assert java.link == '/usr/lib/jvm/jre-1.6.0-ibm.x86_64/bin/java'
-    assert java.best == '/usr/lib/jvm/jre-1.6.0-ibm.x86_64/bin/java'
+    assert java.program == "java"
+    assert java.status == "auto"
+    assert java.link == "/usr/lib/jvm/jre-1.6.0-ibm.x86_64/bin/java"
+    assert java.best == "/usr/lib/jvm/jre-1.6.0-ibm.x86_64/bin/java"
 
     assert isinstance(java.paths, list)
     assert len(java.paths) == 2
 
-    for i in ('path', 'priority', 'slave'):
+    for i in ("path", "priority", "slave"):
         assert i in java.paths[0]
 
-    assert java.paths[0]['path'] == '/usr/lib/jvm/jre-1.6.0-ibm.x86_64/bin/java'
-    assert java.paths[0]['priority'] == 16091
-    assert isinstance(java.paths[0]['slave'], dict)
-    assert sorted(java.paths[0]['slave'].keys()) == sorted([
-        'ControlPanel', 'keytool', 'policytool', 'rmid', 'rmiregistry',
-        'tnameserv', 'jre_exports', 'jre'
-    ])
-    assert java.paths[0]['slave']['ControlPanel'] == '/usr/lib/jvm/jre-1.6.0-ibm.x86_64/bin/ControlPanel'
+    assert java.paths[0]["path"] == "/usr/lib/jvm/jre-1.6.0-ibm.x86_64/bin/java"
+    assert java.paths[0]["priority"] == 16091
+    assert isinstance(java.paths[0]["slave"], dict)
+    assert sorted(java.paths[0]["slave"].keys()) == sorted(
+        [
+            "ControlPanel",
+            "keytool",
+            "policytool",
+            "rmid",
+            "rmiregistry",
+            "tnameserv",
+            "jre_exports",
+            "jre",
+        ]
+    )
+    assert (
+        java.paths[0]["slave"]["ControlPanel"]
+        == "/usr/lib/jvm/jre-1.6.0-ibm.x86_64/bin/ControlPanel"
+    )
 
-    for i in ('path', 'priority', 'slave'):
+    for i in ("path", "priority", "slave"):
         assert i in java.paths[1]
 
-    assert java.paths[1]['path'] == '/usr/lib/jvm/jre-1.4.2-gcj/bin/java'
-    assert java.paths[1]['priority'] == 1420
-    assert isinstance(java.paths[1]['slave'], dict)
-    assert sorted(java.paths[1]['slave'].keys()) == sorted([
-        'ControlPanel', 'keytool', 'policytool', 'rmid', 'rmiregistry',
-        'tnameserv', 'jre_exports', 'jre'
-    ])
-    assert java.paths[1]['slave']['ControlPanel'] == '(null)'
+    assert java.paths[1]["path"] == "/usr/lib/jvm/jre-1.4.2-gcj/bin/java"
+    assert java.paths[1]["priority"] == 1420
+    assert isinstance(java.paths[1]["slave"], dict)
+    assert sorted(java.paths[1]["slave"].keys()) == sorted(
+        [
+            "ControlPanel",
+            "keytool",
+            "policytool",
+            "rmid",
+            "rmiregistry",
+            "tnameserv",
+            "jre_exports",
+            "jre",
+        ]
+    )
+    assert java.paths[1]["slave"]["ControlPanel"] == "(null)"

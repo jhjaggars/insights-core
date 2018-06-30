@@ -45,7 +45,9 @@ for spec in chain.from_iterable(uploader_json[i] for i in ("commands", "files"))
 uploader_json["version"] = datetime.now().isoformat()
 
 pattern = re.compile(", $")
-output = "\n".join(pattern.sub(",", l) for l in json.dumps(uploader_json, indent=4).splitlines())
+output = "\n".join(
+    pattern.sub(",", l) for l in json.dumps(uploader_json, indent=4).splitlines()
+)
 
 with open(json_path, "w") as fp:
     fp.write(output)

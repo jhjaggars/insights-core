@@ -14,13 +14,17 @@ AGENT_LOG = """
 
 def test_metrics_log():
     log = NeutronL3AgentLog(context_wrap(AGENT_LOG))
-    assert len(log.get('INFO')) == 1
-    assert 'Duplicate iptables rule detected' in log
-    assert len(log.get('Duplicate iptables rule detected')) == 2
+    assert len(log.get("INFO")) == 1
+    assert "Duplicate iptables rule detected" in log
+    assert len(log.get("Duplicate iptables rule detected")) == 2
     assert len(list(log.get_after(datetime(2017, 2, 17, 19, 36, 38)))) == 3
 
 
 def test_doc():
-    env = {'agent_log': NeutronL3AgentLog(context_wrap(AGENT_LOG, path='/var/log/neutron/l3-agent.log'))}
+    env = {
+        "agent_log": NeutronL3AgentLog(
+            context_wrap(AGENT_LOG, path="/var/log/neutron/l3-agent.log")
+        )
+    }
     failed, total = doctest.testmod(neutron_l3_agent_log, globs=env)
     assert failed == 0

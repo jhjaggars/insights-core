@@ -96,47 +96,53 @@ root   75  0.0  0.0      0     0 ?   S    Mar09   0:00 [kthreadd]
 
 def test_httpd_V_RHEL6():
     hv1 = HV(context_wrap(HTTPDV1))
-    hv2 = HWV(context_wrap(HTTPDV2, path='httpd.worker_-V'))
-    hv3 = HEV(context_wrap(HTTPDV3, path='httpd.event_-V'))
+    hv2 = HWV(context_wrap(HTTPDV2, path="httpd.worker_-V"))
+    hv3 = HEV(context_wrap(HTTPDV3, path="httpd.event_-V"))
     ps = PsAuxww(context_wrap(PS_WORKER))
     rh = RedhatRelease(context_wrap(RHEL6))
     result = HttpdV(rh, ps, hv1, hv3, hv2)
     assert result["Server MPM"] == "worker"
     assert result["Server version"] == "apache/2.4.6 (red hat enterprise linux)"
     assert result["forked"] == "yes (variable process count)"
-    assert "APR_HAVE_IPV6" in result['Server compiled with']
-    assert result['Server compiled with']['APR_HAS_MMAP'] is True
-    assert result['Server compiled with']['APR_HAVE_IPV6'] == "IPv4-mapped addresses enabled"
-    assert result['Server compiled with']['DEFAULT_PIDLOG'] == "/run/httpd/httpd.pid"
+    assert "APR_HAVE_IPV6" in result["Server compiled with"]
+    assert result["Server compiled with"]["APR_HAS_MMAP"] is True
+    assert (
+        result["Server compiled with"]["APR_HAVE_IPV6"]
+        == "IPv4-mapped addresses enabled"
+    )
+    assert result["Server compiled with"]["DEFAULT_PIDLOG"] == "/run/httpd/httpd.pid"
 
     ps = PsAuxww(context_wrap(PS_EVENT))
     result = HttpdV(rh, ps, hv1, hv3, hv2)
     assert result["Server MPM"] == "event"
     assert result["Server version"] == "apache/2.4.6 (red hat enterprise linux)"
     assert result["forked"] == "yes (variable process count)"
-    assert "APR_HAVE_IPV6" not in result['Server compiled with']
-    assert result['Server compiled with']['APR_HAS_MMAP'] is True
+    assert "APR_HAVE_IPV6" not in result["Server compiled with"]
+    assert result["Server compiled with"]["APR_HAS_MMAP"] is True
 
 
 def test_httpd_V_RHEL7():
     hv1 = HV(context_wrap(HTTPDV1))
-    hv2 = HWV(context_wrap(HTTPDV2, path='httpd.worker_-V'))
-    hv3 = HEV(context_wrap(HTTPDV3, path='httpd.event_-V'))
+    hv2 = HWV(context_wrap(HTTPDV2, path="httpd.worker_-V"))
+    hv3 = HEV(context_wrap(HTTPDV3, path="httpd.event_-V"))
     ps = PsAuxww(context_wrap(PS_WORKER))
     rh = RedhatRelease(context_wrap(RHEL7))
     result = HttpdV(rh, ps, hv1, hv3, hv2)
     assert result["Server MPM"] == "prefork"
     assert result["Server version"] == "apache/2.2.15 (unix)"
     assert result["forked"] == "yes (variable process count)"
-    assert "APR_HAVE_IPV6" in result['Server compiled with']
-    assert result['Server compiled with']['APR_HAS_MMAP'] is True
-    assert result['Server compiled with']['APR_HAVE_IPV6'] == "IPv4-mapped addresses enabled"
-    assert result['Server compiled with']['DEFAULT_PIDLOG'] == "run/httpd.pid"
+    assert "APR_HAVE_IPV6" in result["Server compiled with"]
+    assert result["Server compiled with"]["APR_HAS_MMAP"] is True
+    assert (
+        result["Server compiled with"]["APR_HAVE_IPV6"]
+        == "IPv4-mapped addresses enabled"
+    )
+    assert result["Server compiled with"]["DEFAULT_PIDLOG"] == "run/httpd.pid"
 
 
 def test_httpd_V_failed():
     hv1 = HV(context_wrap(HTTPDV1))
-    hv2 = HWV(context_wrap(HTTPDV2, path='httpd.worker_-V'))
+    hv2 = HWV(context_wrap(HTTPDV2, path="httpd.worker_-V"))
     ps = PsAuxww(context_wrap(PS_EVENT))
     rh = RedhatRelease(context_wrap(RHEL6))
     with pytest.raises(SkipComponent) as sc:

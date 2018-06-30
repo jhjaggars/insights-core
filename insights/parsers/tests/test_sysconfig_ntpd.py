@@ -9,5 +9,5 @@ OPTIONS="-x -g"
 
 def test_sysconfig_ntpd():
     result = NtpdSysconfig(context_wrap(NTPD))
-    assert result['OPTIONS'] == '-x -g'
-    assert result.get('HIDE') is None
+    assert result["OPTIONS"] == "-x -g"
+    assert result.get("HIDE") is None

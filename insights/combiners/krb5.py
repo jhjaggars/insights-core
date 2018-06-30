@@ -67,6 +67,7 @@ class AllKrb5Conf(LegacyItemAccess):
             directive
 
     """
+
     def __init__(self, krb5configs):
         self.data = {}
         main_data = {}

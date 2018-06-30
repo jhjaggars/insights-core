@@ -112,7 +112,7 @@ class Krb5Configuration(Parser, LegacyItemAccess):
             if is_squ:
                 # If in {} sub_section, get the key_value pair
                 if "=" in line:
-                    key, value = [i.strip() for i in line.split('=', 1)]
+                    key, value = [i.strip() for i in line.split("=", 1)]
                     squ_value[key] = _handle_key_value(squ_value, key, value)
                     if line.endswith("*"):
                         section_value[squ_section_name] = squ_value
@@ -138,7 +138,7 @@ class Krb5Configuration(Parser, LegacyItemAccess):
                     section_value = {}
                 # key value format is XXX = YYY, store as dict
                 elif "=" in line and not line.endswith("{"):
-                    key, value = [i.strip() for i in line.split('=', 1)]
+                    key, value = [i.strip() for i in line.split("=", 1)]
                     section_value[key] = _handle_key_value(section_value, key, value)
                     if line.endswith("*"):
                         break

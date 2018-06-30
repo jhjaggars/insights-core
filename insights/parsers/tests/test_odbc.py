@@ -23,16 +23,16 @@ def test_odbc_ini():
     res = ODBCIni(context_wrap(ODBC_INI))
     assert res.data.get("mysqlDSN", "Driver") == "/usr/lib64/libmyodbc5.so"
     assert res.data.get("mysqlDSN", "SERVER") == "localhost"
-    assert not res.has_option("mysqlDSN", 'NO_SSPS')
+    assert not res.has_option("mysqlDSN", "NO_SSPS")
 
     assert len(res.items("myodbc5w")) == 4
-    assert res.getint("myodbc5w", 'NO_SSPS') == 1
-    assert res.getint("myodbc5w", 'No_Ssps') == 1
-    assert res.getint("myodbc5w", 'NO_SSPS'.lower()) == 1
+    assert res.getint("myodbc5w", "NO_SSPS") == 1
+    assert res.getint("myodbc5w", "No_Ssps") == 1
+    assert res.getint("myodbc5w", "NO_SSPS".lower()) == 1
 
-    assert 'myodbc' in res
+    assert "myodbc" in res
     assert res.data.get("myodbc", "Driver") == "MySQL"
-    assert not res.has_option("myodbc", 'NO_SSPS')
+    assert not res.has_option("myodbc", "NO_SSPS")
 
 
 ODBCINST_INI = """
@@ -63,7 +63,7 @@ FileUsage	= 1
 
 def test_odbcinst_ini():
     res = ODBCinstIni(context_wrap(ODBCINST_INI))
-    assert 'PostgreSQL' in res
-    assert 'MySQL' in res
-    assert 'XXSQL' not in res
+    assert "PostgreSQL" in res
+    assert "MySQL" in res
+    assert "XXSQL" not in res
     assert res.data.get("MySQL", "Driver64") == "/usr/lib64/libmyodbc5.so"

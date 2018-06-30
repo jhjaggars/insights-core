@@ -21,10 +21,9 @@ REPO_PATH = "./repository"
 
 
 class TempMaker(object):
-
-    def __init__(self, cleanup=True, path='/tmp'):
+    def __init__(self, cleanup=True, path="/tmp"):
         self.cleanup = cleanup
-        self.path = tempfile.mkdtemp(suffix='_insights_archive', dir=path)
+        self.path = tempfile.mkdtemp(suffix="_insights_archive", dir=path)
         self.temps = set()
 
     def get_temp(self):
@@ -59,9 +58,11 @@ class BaseArchive(object):
 
     def __init__(self, name, validate=True):
         self.name = name
-        root_prefix = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                      REPO_PATH,
-                                      self.root_prefix))
+        root_prefix = os.path.abspath(
+            os.path.join(
+                os.path.dirname(os.path.abspath(__file__)), REPO_PATH, self.root_prefix
+            )
+        )
         if not os.path.exists(root_prefix):
             os.makedirs(root_prefix)
         self.root_dir = os.path.join(root_prefix, name)
@@ -72,7 +73,9 @@ class BaseArchive(object):
         if not self.name:
             raise ValueError("Name not valid")
         if not os.path.exists(self.root_dir):
-            raise IOError("{0} {1} can not be found".format(self.__class__.__name__, self.name))
+            raise IOError(
+                "{0} {1} can not be found".format(self.__class__.__name__, self.name)
+            )
 
     def files(self, absolute=False):
         prefix_len = 0 if absolute else len(self.root_dir) + 1
@@ -89,7 +92,6 @@ def strip_slash(path):
 
 
 class TempOverlay(BaseArchive):
-
     def __init__(self, files):
         self.name = "TempOverlay"
         self.cached_files = files if files else []
@@ -123,7 +125,6 @@ class Overlay(BaseArchive):
 
 
 class Transform(object):
-
     def __init__(self, path, force_create=True):
         self.path = path
         self.ops = []
@@ -144,7 +145,9 @@ class Transform(object):
             if self.force_create:
                 primary_value = specs[0]
                 if isinstance(primary_value, CommandSpec):
-                    new_path = os.path.join(archive.root_dir, "insights_commands", primary_value.get_path())
+                    new_path = os.path.join(
+                        archive.root_dir, "insights_commands", primary_value.get_path()
+                    )
                 else:
                     new_path = os.path.join(archive.root_dir, primary_value.get_path())
                 self.paths.append(new_path)
@@ -156,15 +159,17 @@ class Transform(object):
             parent_dir = os.path.dirname(path)
             if not os.path.exists(parent_dir):
                 os.makedirs(parent_dir)
-            with open(path, 'w') as fp:
+            with open(path, "w") as fp:
                 fp.write(content.encode("utf-8") + "\n")
+
         self.ops.append(_replace)
         return self
 
     def append(self, content):
         def _append(path):
-            with open(path, 'a') as fp:
+            with open(path, "a") as fp:
                 fp.write(content.encode("utf-8") + "\n")
+
         self.ops.append(_append)
         return self
 
@@ -207,12 +212,26 @@ class TestArchive(BaseArchive):
 
     root_prefix = "test_archives"
 
-    def __init__(self, name, base_archive="rhel7", overlays=None, transforms=None, machine_id=None, removals=None, compression="gz", hostname=None, **kwargs):
+    def __init__(
+        self,
+        name,
+        base_archive="rhel7",
+        overlays=None,
+        transforms=None,
+        machine_id=None,
+        removals=None,
+        compression="gz",
+        hostname=None,
+        **kwargs
+    ):
         super(TestArchive, self).__init__(name, validate=False)
         if not os.path.exists(self.root_dir):
             os.mkdir(self.root_dir)
         self.base_archive = (
-            base_archive if isinstance(base_archive, BaseArchive) else BaseArchive(base_archive))
+            base_archive
+            if isinstance(base_archive, BaseArchive)
+            else BaseArchive(base_archive)
+        )
         self.overlays = [Overlay(o) for o in overlays] if overlays else []
         self.transforms = transforms if transforms else []
         self.machine_id = machine_id if machine_id else self.generate_machine_id()
@@ -250,7 +269,11 @@ class TestArchive(BaseArchive):
             os.makedirs(machine_id_path)
 
         with open(os.path.join(machine_id_path, "machine-id"), "w") as f:
-            f.write(self.machine_id if self.machine_id_override else self.generate_machine_id())
+            f.write(
+                self.machine_id
+                if self.machine_id_override
+                else self.generate_machine_id()
+            )
         with open(os.path.join(self.root_dir, "branch_info"), "w") as f:
             f.write(self.generate_branch_info())
 
@@ -270,9 +293,9 @@ class TestArchive(BaseArchive):
         return self
 
     def get_context(self):
-        return ctx.Context(hostname=self.hostname,
-                           machine_id=self.machine_id,
-                           **self.extra)
+        return ctx.Context(
+            hostname=self.hostname, machine_id=self.machine_id, **self.extra
+        )
 
     def generate_machine_id(self):
         h = hashlib.sha224(self.name)
@@ -312,15 +335,16 @@ class TestArchive(BaseArchive):
             dir_root = self.root_dir
             root_name = "."
         subprocess.check_call(
-            shlex.split("tar {0} {1}.{2} -C {3} {4}".format(
-                options, os.path.join(dest, self.name),
-                ext, dir_root, root_name)))
+            shlex.split(
+                "tar {0} {1}.{2} -C {3} {4}".format(
+                    options, os.path.join(dest, self.name), ext, dir_root, root_name
+                )
+            )
+        )
         return self.output_path(dest)
 
     def output_path(self, dest):
-        return os.path.join(dest, "{0}.{1}".format(
-            self.name,
-            self.export_options()[1]))
+        return os.path.join(dest, "{0}.{1}".format(self.name, self.export_options()[1]))
 
     def clean(self):
         fs.remove(self.root_dir)
@@ -341,14 +365,19 @@ class TestArchive(BaseArchive):
         self.machine_id = input_data.machine_id
         self.machine_id_override = True
         if input_data.release != "default-release":
-            self.transforms.append(Transform("redhat-release").replace(input_data.release))
-        if (input_data.version != ["-1", "-1"] and
-                not [t.path for t in self.transforms if t.path == "uname"]):
+            self.transforms.append(
+                Transform("redhat-release").replace(input_data.release)
+            )
+        if input_data.version != ["-1", "-1"] and not [
+            t.path for t in self.transforms if t.path == "uname"
+        ]:
             rhel_version = ".".join(input_data.version)
             for kernel, rhel in rhel_release_map.items():
                 if rhel_version == rhel:
                     nvr_regex = " \d*\.\d*\.\d*-\d*"
-                    self.transforms.append(Transform("uname").sub(nvr_regex, " " + kernel))
+                    self.transforms.append(
+                        Transform("uname").sub(nvr_regex, " " + kernel)
+                    )
 
     def _apply_input_data_removals(self, input_data):
         for symbolic_name in input_data.to_remove:
@@ -368,8 +397,9 @@ class TestArchive(BaseArchive):
 
 
 class MultiArchive(TestArchive):
-
-    def __init__(self, name, archives=None, machine_id=None, display_name=None, **kwargs):
+    def __init__(
+        self, name, archives=None, machine_id=None, display_name=None, **kwargs
+    ):
         super(MultiArchive, self).__init__(name, machine_id=machine_id, **kwargs)
         self.archives = archives if archives else []
         self.metadata = None
@@ -408,19 +438,21 @@ class MultiArchive(TestArchive):
         systems = []
         for system in sub_archives:
             sys_ctx = system.get_context()
-            systems.append({
-                "product": product.name,
-                "display_name": sys_ctx.hostname,
-                "system_id": sys_ctx.machine_id,
-                "type": sys_ctx.product().role,
-                "links": build_links(system, sub_archives, parent)
-            })
+            systems.append(
+                {
+                    "product": product.name,
+                    "display_name": sys_ctx.hostname,
+                    "system_id": sys_ctx.machine_id,
+                    "type": sys_ctx.product().role,
+                    "links": build_links(system, sub_archives, parent),
+                }
+            )
         metadata = {
             "product": product.name,
             "display_name": self.display_name if self.display_name else parent.hostname,
             "rhel_version": first_ctx.release,
             "system_id": self.machine_id if self.machine_id else first_ctx.machine_id,
-            "systems": systems
+            "systems": systems,
         }
         metadata.update(self.extra_metadata)
         return Transform("metadata.json").replace(json.dumps(metadata))
@@ -439,16 +471,10 @@ def build_links(target_archive, all_archives, parent):
     if is_parent:
         for archive in all_archives:
             ctx = archive.get_context()
-            links.append({
-                "system_id": ctx.machine_id,
-                "type": ctx.product().role
-            })
+            links.append({"system_id": ctx.machine_id, "type": ctx.product().role})
     else:
         ctx = parent.get_context()
-        links.append({
-            "system_id": ctx.machine_id,
-            "type": ctx.product().role
-        })
+        links.append({"system_id": ctx.machine_id, "type": ctx.product().role})
     return links
 
 
@@ -460,7 +486,7 @@ def get_parent(sub_archives):
 
 @contextmanager
 def file_replacer(path):
-    with open(path, 'r') as fp:
+    with open(path, "r") as fp:
         with tempfile.NamedTemporaryFile(delete=False) as tf:
             yield fp, tf
             tf.flush()
@@ -469,6 +495,6 @@ def file_replacer(path):
 
 
 def make_regexp(pattern):
-    if not hasattr(pattern, 'match'):
+    if not hasattr(pattern, "match"):
         pattern = re.compile(pattern)
     return pattern

@@ -33,7 +33,7 @@ IRQBALANCE_ARGS="-d"
 
 def test_irqbalance_conf():
     ret = IrqbalanceSysconfig(context_wrap(IRQBALANCE_SYSCONF_TEST))
-    assert ret['IRQBALANCE_BANNED_CPUS'] == 'f8'
-    assert 'IRQBALANCE_ARGS' in ret
-    assert ret.get('IRQBALANCE_ARGS') == '-d'
-    assert 'IRQBALANCE_ONESHOT' not in ret
+    assert ret["IRQBALANCE_BANNED_CPUS"] == "f8"
+    assert "IRQBALANCE_ARGS" in ret
+    assert ret.get("IRQBALANCE_ARGS") == "-d"
+    assert "IRQBALANCE_ONESHOT" not in ret

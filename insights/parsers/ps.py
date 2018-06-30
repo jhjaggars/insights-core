@@ -30,21 +30,22 @@ class Ps(CommandParser):
             each command.
 
     """
+
     command_name = "COMMAND_TEMPLATE"
-    '''
+    """
     ``command_name`` is the name of the last column from the header of ps output,
     the subclass must override it correspondingly
-    '''
+    """
     user_name = "USER_TEMPLATE"
-    '''
+    """
     ``user_name`` is the name of the first column from the header of ps output,
     the subclass must override it correspondingly
-    '''
+    """
     max_splits = 0
-    '''
+    """
     ``max_splits`` is the split number for the columns from the ps output,
     the subclass must override it correspondingly
-    '''
+    """
 
     def __init__(self, *args, **kwargs):
         self.data = []
@@ -55,14 +56,20 @@ class Ps(CommandParser):
 
     def parse_content(self, content):
         raw_line_key = "_line"
-        if any(line.lstrip().startswith(self.user_name) and line.rstrip().endswith(self.command_name) for line in content):
+        if any(
+            line.lstrip().startswith(self.user_name)
+            and line.rstrip().endswith(self.command_name)
+            for line in content
+        ):
             # parse_delimited_table allows short lines, but we specifically
             # want to ignore them.
             self.data = [
                 row
                 for row in parse_delimited_table(
-                    content, heading_ignore=[self.user_name], max_splits=self.max_splits,
-                    raw_line_key=raw_line_key
+                    content,
+                    heading_ignore=[self.user_name],
+                    max_splits=self.max_splits,
+                    raw_line_key=raw_line_key,
                 )
                 if self.command_name in row
             ]
@@ -71,17 +78,20 @@ class Ps(CommandParser):
                 cmd = proc[self.command_name]
                 self.running.add(cmd)
                 cmd_name = cmd
-                if cmd.startswith('/'):
+                if cmd.startswith("/"):
                     cmd_name = cmd.split(" ")[0].split("/")[-1]
                 proc["COMMAND_NAME"] = cmd_name
                 self.cmd_names.add(cmd_name)
                 proc["ARGS"] = cmd.split(" ", 1)[1] if " " in cmd else ""
-                self.services.append((cmd_name, proc[self.user_name], proc[raw_line_key]))
+                self.services.append(
+                    (cmd_name, proc[self.user_name], proc[raw_line_key])
+                )
                 del proc[raw_line_key]
         else:
             raise ParseException(
                 "{0}: Cannot find ps header line in output".format(
-                    self.__class__.__name__)
+                    self.__class__.__name__
+                )
             )
 
     def __contains__(self, proc):
@@ -191,6 +201,7 @@ class PsAuxww(Ps):
         >>> sum(int(p['VSZ']) for p in ps_auxww)
         333252
     """
+
     command_name = "COMMAND"
     user_name = "USER"
     max_splits = 10
@@ -245,6 +256,7 @@ class PsEf(Ps):
         >>> ps_ef.fuzzy_match('kthreadd')
         True
     """
+
     command_name = "CMD"
     user_name = "UID"
     max_splits = 7

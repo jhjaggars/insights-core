@@ -1385,127 +1385,170 @@ metadata:
 
 def test_oc_get_pod_yml():
     result = openshift_get.OcGetPod(context_wrap(OC_GET_POD))
-    assert result.data['items'][0]['metadata']['annotations']['openshift.io/scc'] == 'anyuid'
-    assert result.data['items'][0]['metadata']['creationTimestamp'] == datetime.datetime(2017, 2, 10, 16, 33, 46)
-    assert result.data['items'][0]['spec']['host'] == 'node2.ose.com'
-    assert result.get("items")[0]['spec']['host'] == 'node2.ose.com'
-    assert result.pods["router-1-1-w27o2"]["metadata"]["labels"]["deploymentconfig"] == "router-1"
+    assert (
+        result.data["items"][0]["metadata"]["annotations"]["openshift.io/scc"]
+        == "anyuid"
+    )
+    assert result.data["items"][0]["metadata"][
+        "creationTimestamp"
+    ] == datetime.datetime(2017, 2, 10, 16, 33, 46)
+    assert result.data["items"][0]["spec"]["host"] == "node2.ose.com"
+    assert result.get("items")[0]["spec"]["host"] == "node2.ose.com"
+    assert (
+        result.pods["router-1-1-w27o2"]["metadata"]["labels"]["deploymentconfig"]
+        == "router-1"
+    )
 
 
 def test_oc_get_service_yml():
     result = openshift_get.OcGetService(context_wrap(OC_GET_SERVICE))
-    assert result.data['items'][0]['kind'] == 'Service'
-    assert result.data['items'][0]['spec']['clusterIP'] == '172.30.0.1'
-    assert result.data['items'][0]['metadata']['name'] == 'kubernetes'
-    assert result.data['items'][1]['metadata']['name'] == 'router-1'
-    assert result.data['items'][1]['spec']['ports'][0]['port'] == 80
-    assert result.data['kind'] == 'List'
-    assert result.data['metadata'] == {}
-    assert result.get("items")[0]['spec']['clusterIP'] == '172.30.0.1'
-    assert "zjj-project" in result.data['items'][1]['metadata']['namespace']
+    assert result.data["items"][0]["kind"] == "Service"
+    assert result.data["items"][0]["spec"]["clusterIP"] == "172.30.0.1"
+    assert result.data["items"][0]["metadata"]["name"] == "kubernetes"
+    assert result.data["items"][1]["metadata"]["name"] == "router-1"
+    assert result.data["items"][1]["spec"]["ports"][0]["port"] == 80
+    assert result.data["kind"] == "List"
+    assert result.data["metadata"] == {}
+    assert result.get("items")[0]["spec"]["clusterIP"] == "172.30.0.1"
+    assert "zjj-project" in result.data["items"][1]["metadata"]["namespace"]
     assert result.services["router-1"]["metadata"]["resourceVersion"] == "1638401"
 
 
 def test_oc_get_bc_yml():
     result = openshift_get.OcGetBc(context_wrap(OC_GET_BC))
-    assert result['items'][0]['kind'] == 'BuildConfig'
-    assert result['items'][1]['metadata']['name'] == 'mybank'
-    assert result.build_configs['mybank']['status']['lastVersion'] == 11
-    assert result.build_configs['tom']['metadata']['namespace'] == 'ci'
+    assert result["items"][0]["kind"] == "BuildConfig"
+    assert result["items"][1]["metadata"]["name"] == "mybank"
+    assert result.build_configs["mybank"]["status"]["lastVersion"] == 11
+    assert result.build_configs["tom"]["metadata"]["namespace"] == "ci"
 
 
 def test_oc_get_dc_yml():
     result = openshift_get.OcGetDc(context_wrap(OC_GET_DC))
-    assert result.data['items'][0]['kind'] == 'DeploymentConfig'
-    assert result.data['items'][0]['metadata']['generation'] == 3
-    assert result.get("items")[0]['metadata']['generation'] == 3
-    assert result.deployment_configs["router-1"]["metadata"]["namespace"] == "zjj-project"
+    assert result.data["items"][0]["kind"] == "DeploymentConfig"
+    assert result.data["items"][0]["metadata"]["generation"] == 3
+    assert result.get("items")[0]["metadata"]["generation"] == 3
+    assert (
+        result.deployment_configs["router-1"]["metadata"]["namespace"] == "zjj-project"
+    )
 
 
 def test_oc_get_rolebinding_yml():
     result = openshift_get.OcGetRolebinding(context_wrap(OC_GET_ROLEBINDING))
-    assert result.data['items'][0]['kind'] == 'RoleBinding'
-    assert result.data['items'][0]['metadata']['resourceVersion'] == "11803596"
-    assert result.get("items")[0]['metadata']['resourceVersion'] == "11803596"
+    assert result.data["items"][0]["kind"] == "RoleBinding"
+    assert result.data["items"][0]["metadata"]["resourceVersion"] == "11803596"
+    assert result.get("items")[0]["metadata"]["resourceVersion"] == "11803596"
     assert result.rolebindings["myrole"]["roleRef"]["namespace"] == "foo"
 
 
 def test_oc_get_project_yml():
     result = openshift_get.OcGetProject(context_wrap(OC_GET_PROJECT))
-    assert result.data['items'][0]['kind'] == 'Project'
-    assert result.data['items'][0]['metadata']['resourceVersion'] == "11040756"
-    assert result.get('items')[0]['metadata']['resourceVersion'] == "11040756"
+    assert result.data["items"][0]["kind"] == "Project"
+    assert result.data["items"][0]["metadata"]["resourceVersion"] == "11040756"
+    assert result.get("items")[0]["metadata"]["resourceVersion"] == "11040756"
     assert result.projects["test"]["status"]["phase"] == "Active"
 
 
 def test_oc_get_role_yml():
     result = openshift_get.OcGetRole(context_wrap(OC_GET_ROLE))
-    assert result.data['items'][0]['kind'] == 'Role'
-    assert result.data['items'][0]['metadata']['resourceVersion'] == "94"
-    assert result.get('items')[0]['metadata']['resourceVersion'] == "94"
-    assert result.roles["shared-resource-viewer"]["metadata"]["uid"] == "a10c3f88-6ecc-11e6-83c6-001a4a0101f0"
+    assert result.data["items"][0]["kind"] == "Role"
+    assert result.data["items"][0]["metadata"]["resourceVersion"] == "94"
+    assert result.get("items")[0]["metadata"]["resourceVersion"] == "94"
+    assert (
+        result.roles["shared-resource-viewer"]["metadata"]["uid"]
+        == "a10c3f88-6ecc-11e6-83c6-001a4a0101f0"
+    )
 
 
 def test_oc_get_pv_yml():
     result = openshift_get.OcGetPv(context_wrap(OC_GET_PV))
-    assert result.data['items'][0]['kind'] == 'PersistentVolume'
-    assert result.data['items'][0]['metadata']['name'] == 'registry-volume'
-    assert result.get('items')[0]['metadata']['name'] == 'registry-volume'
-    assert result.persistent_volumes['registry-volume-zjj']['spec']['capacity']['storage'] == '10Gi'
+    assert result.data["items"][0]["kind"] == "PersistentVolume"
+    assert result.data["items"][0]["metadata"]["name"] == "registry-volume"
+    assert result.get("items")[0]["metadata"]["name"] == "registry-volume"
+    assert (
+        result.persistent_volumes["registry-volume-zjj"]["spec"]["capacity"]["storage"]
+        == "10Gi"
+    )
 
 
 def test_oc_get_pvc_yml():
     result = openshift_get.OcGetPvc(context_wrap(OC_GET_PVC))
-    assert result.data['items'][0]['kind'] == 'PersistentVolumeClaim'
-    assert result.data['items'][0]['metadata']['name'] == 'registry-claim'
-    assert result.get('items')[0]['metadata']['name'] == 'registry-claim'
-    assert result.persistent_volume_claims['registry-claim-test1']['spec']['volumeName'] == 'registry-volume-zjj'
+    assert result.data["items"][0]["kind"] == "PersistentVolumeClaim"
+    assert result.data["items"][0]["metadata"]["name"] == "registry-claim"
+    assert result.get("items")[0]["metadata"]["name"] == "registry-claim"
+    assert (
+        result.persistent_volume_claims["registry-claim-test1"]["spec"]["volumeName"]
+        == "registry-volume-zjj"
+    )
 
 
 def test_oc_get_endpoints_yml():
     result = openshift_get.OcGetEndPoints(context_wrap(OC_GET_ENDPOINTS))
-    assert result.data['items'][0]['kind'] == 'Endpoints'
-    assert result.data['items'][0]['metadata']['name'] == 'gluster-cluster'
-    assert result.get('items')[0]['metadata']['name'] == 'gluster-cluster'
-    assert result.endpoints['kubernetes']['subsets'][0]["addresses"][0]["ip"] == '10.66.219.113'
+    assert result.data["items"][0]["kind"] == "Endpoints"
+    assert result.data["items"][0]["metadata"]["name"] == "gluster-cluster"
+    assert result.get("items")[0]["metadata"]["name"] == "gluster-cluster"
+    assert (
+        result.endpoints["kubernetes"]["subsets"][0]["addresses"][0]["ip"]
+        == "10.66.219.113"
+    )
 
 
 def test_oc_get_node():
     result = openshift_get.OcGetNode(context_wrap(OC_GET_NODE))
-    assert result.data['items'][0]['kind'] == 'Node'
-    assert result.data['items'][0]['metadata']['name'] == 'master37'
-    assert result.get('items')[0]['metadata']['uid'] == '64ce06a1-f4e1-11e7-aa53-001a4a0102af'
-    assert result.nodes['master37']['spec']['unschedulable'] is True
+    assert result.data["items"][0]["kind"] == "Node"
+    assert result.data["items"][0]["metadata"]["name"] == "master37"
+    assert (
+        result.get("items")[0]["metadata"]["uid"]
+        == "64ce06a1-f4e1-11e7-aa53-001a4a0102af"
+    )
+    assert result.nodes["master37"]["spec"]["unschedulable"] is True
 
 
 def test_oc_get_rc():
     result = openshift_get.OcGetRc(context_wrap(OC_GET_RC))
-    assert result.data['items'][0]['kind'] == 'ReplicationController'
-    assert result.data['items'][0]['metadata']['selfLink'] == '/api/v1/namespaces/ci/replicationcontrollers/jenkins-1'
-    assert result.get('items')[0]['spec']['replicas'] == 1
-    assert result.replication_controllers['jenkins-1']['spec']['selector']['deployment'] == 'jenkins-1'
+    assert result.data["items"][0]["kind"] == "ReplicationController"
+    assert (
+        result.data["items"][0]["metadata"]["selfLink"]
+        == "/api/v1/namespaces/ci/replicationcontrollers/jenkins-1"
+    )
+    assert result.get("items")[0]["spec"]["replicas"] == 1
+    assert (
+        result.replication_controllers["jenkins-1"]["spec"]["selector"]["deployment"]
+        == "jenkins-1"
+    )
 
 
 def test_oc_get_event():
     result = openshift_get.OcGetEvent(context_wrap(OC_GET_EVENT))
-    assert result.data['items'][0]['kind'] == 'Event'
-    assert result.data['items'][2]['involvedObject']['kind'] == 'ReplicationController'
-    assert result.get('items')[1]['message'] == 'Successfully assigned ruby-ex-2-htczn to node237'
-    assert result.events['busybox.1508ef957b1935a4']['type'] == 'Normal'
+    assert result.data["items"][0]["kind"] == "Event"
+    assert result.data["items"][2]["involvedObject"]["kind"] == "ReplicationController"
+    assert (
+        result.get("items")[1]["message"]
+        == "Successfully assigned ruby-ex-2-htczn to node237"
+    )
+    assert result.events["busybox.1508ef957b1935a4"]["type"] == "Normal"
 
 
 def test_oc_get_egressnetworkpolicy_yml():
-    result = openshift_get.OcGetEgressNetworkPolicy(context_wrap(OC_GET_EGRESS_NETWORK_POLICY))
-    assert result.data['items'][0]['kind'] == 'EgressNetworkPolicy'
-    assert result.data['items'][0]['metadata']['creationTimestamp'] == datetime.datetime(2018, 1, 29, 3, 31, 59)
-    assert result.get('items')[0]['metadata']['name'] == 'policy-test'
-    assert result.egress_network_policies['policy-test']['spec']['egress'][0]['to']['dnsName'] == 'www.baidu.com'
+    result = openshift_get.OcGetEgressNetworkPolicy(
+        context_wrap(OC_GET_EGRESS_NETWORK_POLICY)
+    )
+    assert result.data["items"][0]["kind"] == "EgressNetworkPolicy"
+    assert result.data["items"][0]["metadata"][
+        "creationTimestamp"
+    ] == datetime.datetime(2018, 1, 29, 3, 31, 59)
+    assert result.get("items")[0]["metadata"]["name"] == "policy-test"
+    assert (
+        result.egress_network_policies["policy-test"]["spec"]["egress"][0]["to"][
+            "dnsName"
+        ]
+        == "www.baidu.com"
+    )
 
 
 def test_oc_get_services_doc_example():
     env = {
-        'OcGetService': openshift_get.OcGetService,
-        'setting_dic': openshift_get.OcGetService(context_wrap(OC_GET_SERVICE))
+        "OcGetService": openshift_get.OcGetService,
+        "setting_dic": openshift_get.OcGetService(context_wrap(OC_GET_SERVICE)),
     }
     failed, total = doctest.testmod(openshift_get, globs=env)
     assert failed == 0
@@ -1513,15 +1556,26 @@ def test_oc_get_services_doc_example():
 
 def test_oc_get_route():
     result = openshift_get.OcGetRoute(context_wrap(OC_GET_ROUTE))
-    assert result.data['items'][0]['kind'] == 'Route'
-    assert result.data['items'][0]['metadata']['name'] == 'docker-registry'
-    assert result.get('items')[0]['spec']['host'] == 'docker-registry-default.router.default.svc.cluster.local'
-    assert result.routes['docker-registry']['spec']['wildcardPolicy'] == 'None'
+    assert result.data["items"][0]["kind"] == "Route"
+    assert result.data["items"][0]["metadata"]["name"] == "docker-registry"
+    assert (
+        result.get("items")[0]["spec"]["host"]
+        == "docker-registry-default.router.default.svc.cluster.local"
+    )
+    assert result.routes["docker-registry"]["spec"]["wildcardPolicy"] == "None"
 
 
 def test_oc_get_build():
     result = openshift_get.OcGetBuild(context_wrap(OC_GET_BUILD))
-    assert result.data['items'][0]['kind'] == 'Build'
-    assert result.data['items'][0]['metadata']['annotations']['openshift.io/build.pod-name'] == 'sample-app-2-build'
-    assert result.get('items')[0]['status']['phase'] == 'Pending'
-    assert result.started_builds['sample-app-2']['status']['config']['kind'] == 'BuildConfig'
+    assert result.data["items"][0]["kind"] == "Build"
+    assert (
+        result.data["items"][0]["metadata"]["annotations"][
+            "openshift.io/build.pod-name"
+        ]
+        == "sample-app-2-build"
+    )
+    assert result.get("items")[0]["status"]["phase"] == "Pending"
+    assert (
+        result.started_builds["sample-app-2"]["status"]["config"]["kind"]
+        == "BuildConfig"
+    )

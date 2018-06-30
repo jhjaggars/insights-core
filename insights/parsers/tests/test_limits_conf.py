@@ -55,8 +55,7 @@ def test_class_conf():
     ctx = context_wrap(LIMITS_CONF, path=LIMITS_CONF_PATH)
     data = LimitsConf(ctx)
 
-    assert data.domains == \
-        sorted(['oracle', 'root'])
+    assert data.domains == sorted(["oracle", "root"])
 
 
 def test_class_bad():
@@ -74,59 +73,63 @@ def test_class_complete():
     ctx = context_wrap(FULL_OPTS_LIMITS_CONF, path=LIMITS_CONF_PATH)
     data = LimitsConf(ctx)
 
-    assert data.domains == \
-        sorted(
-            ['oracle', '@dbadmins', '*', ':1001', '1000:', '2000:2020',
-            '@:101', '@100:', '@200:202', 'managers']
-        )
+    assert data.domains == sorted(
+        [
+            "oracle",
+            "@dbadmins",
+            "*",
+            ":1001",
+            "1000:",
+            "2000:2020",
+            "@:101",
+            "@100:",
+            "@200:202",
+            "managers",
+        ]
+    )
 
     # Data check
-    assert data.rules[0] == \
-        {'domain': 'oracle', 'type': 'soft', 'item': 'nofile', 'value': 1024, 'file': LIMITS_CONF_PATH}
+    assert data.rules[0] == {
+        "domain": "oracle",
+        "type": "soft",
+        "item": "nofile",
+        "value": 1024,
+        "file": LIMITS_CONF_PATH,
+    }
 
     # User domain match
     # oracle soft, wildcard, and oracle hard
-    assert data.find_all(domain='oracle') == \
-        [data.rules[x] for x in [0, 2, 9]]
+    assert data.find_all(domain="oracle") == [data.rules[x] for x in [0, 2, 9]]
     # Group domain match
     # dbadmins group and wildcard
-    assert data.find_all(domain='@dbadmins') == \
-        [data.rules[x] for x in [1, 2]]
+    assert data.find_all(domain="@dbadmins") == [data.rules[x] for x in [1, 2]]
     # UID domain match
     # wildcard, uid 1001 exact, and uid range 1000:
-    assert data.find_all(domain=1001) == \
-        [data.rules[x] for x in [2, 3, 4]]
+    assert data.find_all(domain=1001) == [data.rules[x] for x in [2, 3, 4]]
     # UID min range domain match
     # wildcard and uid range 1000:
-    assert data.find_all(domain=1002) == \
-        [data.rules[x] for x in [2, 4]]
+    assert data.find_all(domain=1002) == [data.rules[x] for x in [2, 4]]
     # UID min:max range match
     # wildcard, uid range 1000:, and uid range 2000:2020
-    assert data.find_all(domain=2001) == \
-        [data.rules[x] for x in [2, 4, 5]]
+    assert data.find_all(domain=2001) == [data.rules[x] for x in [2, 4, 5]]
     # GID domain match
     # wildcard, gid 101 exact, and gid range 100:
-    assert data.find_all(domain='@101') == \
-        [data.rules[x] for x in [2, 6, 7]]
+    assert data.find_all(domain="@101") == [data.rules[x] for x in [2, 6, 7]]
     # GID min range domain match
     # wildcard and gid range 100:
-    assert data.find_all(domain='@102') == \
-        [data.rules[x] for x in [2, 7]]
+    assert data.find_all(domain="@102") == [data.rules[x] for x in [2, 7]]
     # GID min:max range match
     # wildcard, gid range 100:, and gid range 200:202
-    assert data.find_all(domain='@201') == \
-        [data.rules[x] for x in [2, 7, 8]]
+    assert data.find_all(domain="@201") == [data.rules[x] for x in [2, 7, 8]]
     # soft type match
     # most rules but not the hard rule
-    assert data.find_all(type='soft') == \
-        [data.rules[x] for x in [0, 1, 2, 3, 4, 5, 6, 7, 8, 10]]
+    assert data.find_all(type="soft") == [
+        data.rules[x] for x in [0, 1, 2, 3, 4, 5, 6, 7, 8, 10]
+    ]
     # hard type match
     # hard and both
-    assert data.find_all(type='hard') == \
-        [data.rules[x] for x in [9, 10]]
+    assert data.find_all(type="hard") == [data.rules[x] for x in [9, 10]]
     # No match at all
-    assert data.find_all(domain='postgres', type='hard') == \
-        []
+    assert data.find_all(domain="postgres", type="hard") == []
     # No rules to match
-    assert data.find_all() == \
-        []
+    assert data.find_all() == []

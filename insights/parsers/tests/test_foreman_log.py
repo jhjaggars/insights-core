@@ -175,8 +175,10 @@ def test_production_log():
     fm_log = ProductionLog(context_wrap(PRODUCTION_LOG))
     assert 2 == len(fm_log.get("Rendered text template"))
     assert "Expired 48 Reports" in fm_log
-    assert fm_log.get("Completed 200 OK in 93")[0]['raw_message'] == \
-        "2015-11-13 09:41:58 [I] Completed 200 OK in 93ms (Views: 2.9ms | ActiveRecord: 0.3ms)"
+    assert (
+        fm_log.get("Completed 200 OK in 93")[0]["raw_message"]
+        == "2015-11-13 09:41:58 [I] Completed 200 OK in 93ms (Views: 2.9ms | ActiveRecord: 0.3ms)"
+    )
     assert len(list(fm_log.get_after(datetime(2015, 11, 13, 9, 41, 58)))) == 7
 
 
@@ -213,8 +215,13 @@ def test_candlepin_error_log():
 
 
 def test_foreman_ssl_access_ssl_log():
-    foreman_ssl_access_log = ForemanSSLAccessLog(context_wrap(FOREMAN_SSL_ACCESS_SSL_LOG))
+    foreman_ssl_access_log = ForemanSSLAccessLog(
+        context_wrap(FOREMAN_SSL_ACCESS_SSL_LOG)
+    )
     assert "385e688f-43ad-41b2-9fc7-593942ddec78" in foreman_ssl_access_log
     assert len(foreman_ssl_access_log.get("GET /rhsm/consumers")) == 5
     assert len(foreman_ssl_access_log.get("385e688f-43ad-41b2-9fc7-593942ddec78")) == 3
-    assert len(list(foreman_ssl_access_log.get_after(datetime(2017, 3, 27, 13, 34, 0)))) == 7
+    assert (
+        len(list(foreman_ssl_access_log.get_after(datetime(2017, 3, 27, 13, 34, 0))))
+        == 7
+    )

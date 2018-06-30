@@ -30,10 +30,13 @@ def test_rhn_conf():
     assert r["b"] == "2"
     assert r["c"] == "include an = sign"
     assert r["server.satellite.http_proxy_username"] == ""
-    assert r["traceback_mail"] == ['test@example.com', 'test@redhat.com']
+    assert r["traceback_mail"] == ["test@example.com", "test@redhat.com"]
     assert r["web.default_taskmaster_tasks"] == [
-        'RHN::Task::SessionCleanup', 'RHN::Task::ErrataQueue',
-        'RHN::Task::ErrataEngine', 'RHN::Task::DailySummary',
-        'RHN::Task::SummaryPopulation', 'RHN::Task::RHNProc',
-        'RHN::Task::PackageCleanup'
+        "RHN::Task::SessionCleanup",
+        "RHN::Task::ErrataQueue",
+        "RHN::Task::ErrataEngine",
+        "RHN::Task::DailySummary",
+        "RHN::Task::SummaryPopulation",
+        "RHN::Task::RHNProc",
+        "RHN::Task::PackageCleanup",
     ]

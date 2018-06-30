@@ -32,10 +32,10 @@ nginx    111435 111434  0 22:32 ?        00:00:00 nginx: worker process
 
 def test_doc_examples():
     env = {
-            'ps': ps.PsAuxww(context_wrap(PsAuxww_TEST_DOC)),
-            'ps_auxww': ps.PsAuxww(context_wrap(PsAuxww_TEST_DOC)),
-            'ps_ef': ps.PsEf(context_wrap(PsEf_TEST_DOC)),
-          }
+        "ps": ps.PsAuxww(context_wrap(PsAuxww_TEST_DOC)),
+        "ps_auxww": ps.PsAuxww(context_wrap(PsAuxww_TEST_DOC)),
+        "ps_ef": ps.PsEf(context_wrap(PsEf_TEST_DOC)),
+    }
     failed, total = doctest.testmod(ps, globs=env)
     # XXX: these tests depend on the order of sets and dictionaries
     # I'm skipping them for now.
@@ -58,36 +58,66 @@ def test_ps_auxww_from_auxww():
     # test with input from `ps auxww`
     p = ps.PsAuxww(context_wrap(PsAuxww_TEST))
     d = p.data
-    assert all('COMMAND' in row for row in d)
-    assert keys_in([
-        "USER", "PID", "%CPU", "%MEM", "VSZ", "RSS", "TTY", "STAT", "START",
-        "TIME", "COMMAND"
-    ], d[0])
+    assert all("COMMAND" in row for row in d)
+    assert keys_in(
+        [
+            "USER",
+            "PID",
+            "%CPU",
+            "%MEM",
+            "VSZ",
+            "RSS",
+            "TTY",
+            "STAT",
+            "START",
+            "TIME",
+            "COMMAND",
+        ],
+        d[0],
+    )
     assert d[0] == {
-        '%MEM': '0.0', 'TTY': '?', 'VSZ': '193892', 'PID': '1', '%CPU': '0.0',
-        'START': 'Oct23', 'USER': 'root', 'STAT': 'Ss', 'TIME': '1:40', 'RSS': '5000',
-        'COMMAND': '/usr/lib/systemd/systemd --switched-root --system --deserialize 22',
-        'COMMAND_NAME': 'systemd', 'ARGS': '--switched-root --system --deserialize 22',
+        "%MEM": "0.0",
+        "TTY": "?",
+        "VSZ": "193892",
+        "PID": "1",
+        "%CPU": "0.0",
+        "START": "Oct23",
+        "USER": "root",
+        "STAT": "Ss",
+        "TIME": "1:40",
+        "RSS": "5000",
+        "COMMAND": "/usr/lib/systemd/systemd --switched-root --system --deserialize 22",
+        "COMMAND_NAME": "systemd",
+        "ARGS": "--switched-root --system --deserialize 22",
     }
-    assert d[2]["COMMAND"] == '/usr/lib/systemd/systemd-journald'
+    assert d[2]["COMMAND"] == "/usr/lib/systemd/systemd-journald"
     assert d[-2] == {
-        'USER': 'user_01', 'PID': '2713', '%CPU': '2.4', '%MEM': '19.2',
-        'VSZ': '12508144', 'RSS': '3077224', 'TTY': '?', 'STAT': 'Sl',
-        'START': 'Nov21', 'TIME': '533:33', 'COMMAND': '/usr/lib64/firefox/firefox',
-        'COMMAND_NAME': 'firefox', 'ARGS': '',
+        "USER": "user_01",
+        "PID": "2713",
+        "%CPU": "2.4",
+        "%MEM": "19.2",
+        "VSZ": "12508144",
+        "RSS": "3077224",
+        "TTY": "?",
+        "STAT": "Sl",
+        "START": "Nov21",
+        "TIME": "533:33",
+        "COMMAND": "/usr/lib64/firefox/firefox",
+        "COMMAND_NAME": "firefox",
+        "ARGS": "",
     }
-    assert p.fuzzy_match('kthreadd')
-    assert '[kthreadd]' in p
-    assert 'sshd' not in p
+    assert p.fuzzy_match("kthreadd")
+    assert "[kthreadd]" in p
+    assert "sshd" not in p
     assert not p.fuzzy_match("sshd")
-    assert p.cpu_usage('/usr/lib64/firefox/firefox') == '2.4'
-    assert p.cpu_usage('firefox') is None
-    assert p.cpu_usage('dhclient') is None
-    assert p.cpu_usage('java') is None
-    assert p.running_pids() == ['1', '2', '781', '1111', '1112', '2713', '8257']
+    assert p.cpu_usage("/usr/lib64/firefox/firefox") == "2.4"
+    assert p.cpu_usage("firefox") is None
+    assert p.cpu_usage("dhclient") is None
+    assert p.cpu_usage("java") is None
+    assert p.running_pids() == ["1", "2", "781", "1111", "1112", "2713", "8257"]
 
     # Test __iter__
-    assert 13718356 == sum(int(proc['VSZ']) for proc in p)
+    assert 13718356 == sum(int(proc["VSZ"]) for proc in p)
 
 
 PsEf_TEST = """
@@ -108,30 +138,53 @@ def test_ps_ef_from_ef():
     # test with input from `ps -ef`
     p = ps.PsEf(context_wrap(PsEf_TEST))
     d = p.data
-    assert all('CMD' in row for row in d)
-    assert keys_in([
-        "UID", "PID", "PPID", "C", "STIME", "TTY", "TIME", "CMD"
-    ], d[0])
+    assert all("CMD" in row for row in d)
+    assert keys_in(["UID", "PID", "PPID", "C", "STIME", "TTY", "TIME", "CMD"], d[0])
     assert d[0] == {
-        'UID': 'root', 'TTY': '?', 'PID': '1', 'PPID': '0',
-        'TIME': '00:00:06', 'STIME': '03:53', 'C': '0',
-        'CMD': '/usr/lib/systemd/systemd --system --deserialize 15',
-        'COMMAND_NAME': 'systemd', 'ARGS': '--system --deserialize 15',
+        "UID": "root",
+        "TTY": "?",
+        "PID": "1",
+        "PPID": "0",
+        "TIME": "00:00:06",
+        "STIME": "03:53",
+        "C": "0",
+        "CMD": "/usr/lib/systemd/systemd --system --deserialize 15",
+        "COMMAND_NAME": "systemd",
+        "ARGS": "--system --deserialize 15",
     }
-    assert d[4]["CMD"] == '/usr/libexec/docker/rhel-push-plugin'
+    assert d[4]["CMD"] == "/usr/libexec/docker/rhel-push-plugin"
     assert d[-5] == {
-        'TTY': '?', 'ARGS': '', 'UID': 'root',
-        'CMD': '/usr/libexec/docker/rhel-push-plugin',
-        'PID': '1995', 'C': '0', 'STIME': '03:54', 'TIME': '00:02:06',
-        'PPID': '1', 'COMMAND_NAME': 'rhel-push-plugin'
+        "TTY": "?",
+        "ARGS": "",
+        "UID": "root",
+        "CMD": "/usr/libexec/docker/rhel-push-plugin",
+        "PID": "1995",
+        "C": "0",
+        "STIME": "03:54",
+        "TIME": "00:02:06",
+        "PPID": "1",
+        "COMMAND_NAME": "rhel-push-plugin",
     }
-    assert p.fuzzy_match('kthreadd')
-    assert p.parent_pid("111435") == ["111434", "nginx: master process /usr/sbin/nginx -c /etc/nginx/nginx.conf"]
-    assert '[kthreadd]' in p
-    assert 'sshd' not in p
+    assert p.fuzzy_match("kthreadd")
+    assert p.parent_pid("111435") == [
+        "111434",
+        "nginx: master process /usr/sbin/nginx -c /etc/nginx/nginx.conf",
+    ]
+    assert "[kthreadd]" in p
+    assert "sshd" not in p
     assert not p.fuzzy_match("sshd")
-    assert p.running_pids() == ['1', '2', '1803', '1969', '1995', '2078', '7201', '111434', '111435']
-    assert p.users("nginx: worker process") == {'nginx': ['111435']}
+    assert p.running_pids() == [
+        "1",
+        "2",
+        "1803",
+        "1969",
+        "1995",
+        "2078",
+        "7201",
+        "111434",
+        "111435",
+    ]
+    assert p.users("nginx: worker process") == {"nginx": ["111435"]}
 
 
 PsAuxcww_TEST = """
@@ -163,26 +216,48 @@ def test_ps_auxww_from_auxcww():
     # test with input from `ps auxcww`
     p = ps.PsAuxww(context_wrap(PsAuxcww_TEST))
     d = p.data
-    assert all('COMMAND' in row for row in d)
-    assert keys_in([
-        "USER", "PID", "%CPU", "%MEM", "VSZ", "RSS", "TTY", "STAT", "START",
-        "TIME", "COMMAND"
-    ], d[0])
+    assert all("COMMAND" in row for row in d)
+    assert keys_in(
+        [
+            "USER",
+            "PID",
+            "%CPU",
+            "%MEM",
+            "VSZ",
+            "RSS",
+            "TTY",
+            "STAT",
+            "START",
+            "TIME",
+            "COMMAND",
+        ],
+        d[0],
+    )
     assert d[0] == {
-        '%MEM': '0.0', 'TTY': '?', 'VSZ': '19356', 'PID': '1', '%CPU': '0.0',
-        'START': 'May31', 'COMMAND': 'init', 'COMMAND_NAME': 'init', 'USER': 'root', 'STAT': 'Ss',
-        'TIME': '0:01', 'RSS': '1544', 'ARGS': '',
+        "%MEM": "0.0",
+        "TTY": "?",
+        "VSZ": "19356",
+        "PID": "1",
+        "%CPU": "0.0",
+        "START": "May31",
+        "COMMAND": "init",
+        "COMMAND_NAME": "init",
+        "USER": "root",
+        "STAT": "Ss",
+        "TIME": "0:01",
+        "RSS": "1544",
+        "ARGS": "",
     }
-    assert d[2]["COMMAND"] == 'irqbalance'
-    assert d[-2]["COMMAND"] == 'qemu-kvm'
-    assert p.fuzzy_match('irqbal')
-    assert 'dhclient' in p
-    assert 'sshd' not in p
+    assert d[2]["COMMAND"] == "irqbalance"
+    assert d[-2]["COMMAND"] == "qemu-kvm"
+    assert p.fuzzy_match("irqbal")
+    assert "dhclient" in p
+    assert "sshd" not in p
     assert not p.fuzzy_match("sshd")
-    assert p.cpu_usage('dhclient') == '0.0'
-    assert p.cpu_usage('java') is None
+    assert p.cpu_usage("dhclient") == "0.0"
+    assert p.cpu_usage("java") is None
 
-    assert p.users('bash') == {'user1': ['20160'], 'user2': ['20161', '20164']}
+    assert p.users("bash") == {"user1": ["20160"], "user2": ["20161", "20164"]}
 
 
 PS_AUXWWW = """
@@ -203,30 +278,51 @@ def test_ps_auxww_from_auxwww():
     # test with input from `ps auxwww`
     p = ps.PsAuxww(context_wrap(PS_AUXWWW))
     d = p.data
-    assert all('COMMAND' in row for row in d)
-    assert keys_in([
-        "USER", "PID", "%CPU", "%MEM", "VSZ", "RSS", "TTY", "STAT", "START",
-        "TIME", "COMMAND"
-    ], d[0])
+    assert all("COMMAND" in row for row in d)
+    assert keys_in(
+        [
+            "USER",
+            "PID",
+            "%CPU",
+            "%MEM",
+            "VSZ",
+            "RSS",
+            "TTY",
+            "STAT",
+            "START",
+            "TIME",
+            "COMMAND",
+        ],
+        d[0],
+    )
     assert d[0] == {
-        'USER': 'root', 'PID': '1', '%CPU': '0.0', '%MEM': '0.0',
-        'VSZ': '21452', 'RSS': '1536', 'TTY': '?', 'STAT': 'Ss',
-        'START': 'Mar09', 'TIME': '0:01', 'COMMAND': '/sbin/init',
-        'COMMAND_NAME': 'init', 'ARGS': '',
+        "USER": "root",
+        "PID": "1",
+        "%CPU": "0.0",
+        "%MEM": "0.0",
+        "VSZ": "21452",
+        "RSS": "1536",
+        "TTY": "?",
+        "STAT": "Ss",
+        "START": "Mar09",
+        "TIME": "0:01",
+        "COMMAND": "/sbin/init",
+        "COMMAND_NAME": "init",
+        "ARGS": "",
     }
-    assert p.fuzzy_match('kthread')
-    assert '-bash' in p
-    assert '/sbin/init' in p
-    assert 'sshd' not in p
-    assert 'kthread' not in p
+    assert p.fuzzy_match("kthread")
+    assert "-bash" in p
+    assert "/sbin/init" in p
+    assert "sshd" not in p
+    assert "kthread" not in p
     assert not p.fuzzy_match("sshd")
-    assert p.fuzzy_match('python')
+    assert p.fuzzy_match("python")
 
     assert p.search() == []
-    assert p.search(COMMAND__contains='rsyslogd') == [p.data[3]]
-    assert p.search(USER='root', COMMAND__contains='kthread') == [p.data[1]]
-    assert p.search(TTY='tty1') == [p.data[7], p.data[8]]
-    assert p.search(STAT__contains='Z') == []
+    assert p.search(COMMAND__contains="rsyslogd") == [p.data[3]]
+    assert p.search(USER="root", COMMAND__contains="kthread") == [p.data[1]]
+    assert p.search(TTY="tty1") == [p.data[7], p.data[8]]
+    assert p.search(STAT__contains="Z") == []
 
 
 PsAux_TEST = """
@@ -245,32 +341,54 @@ def test_ps_auxww_from_aux():
     # test with input from `ps aux`
     p = ps.PsAuxww(context_wrap(PsAux_TEST))
     d = p.data
-    assert all('COMMAND' in row for row in d)
-    assert keys_in([
-        "USER", "PID", "%CPU", "%MEM", "VSZ", "RSS", "TTY", "STAT", "START",
-        "TIME", "COMMAND"
-    ], d[0])
+    assert all("COMMAND" in row for row in d)
+    assert keys_in(
+        [
+            "USER",
+            "PID",
+            "%CPU",
+            "%MEM",
+            "VSZ",
+            "RSS",
+            "TTY",
+            "STAT",
+            "START",
+            "TIME",
+            "COMMAND",
+        ],
+        d[0],
+    )
     assert d[0] == {
-        '%MEM': '0.0', 'TTY': '?', 'VSZ': '19356', 'PID': '1', '%CPU': '0.0',
-        'START': 'May31', 'COMMAND': '/sbin/init', 'COMMAND_NAME': 'init', 'USER': 'root',
-        'STAT': 'Ss', 'TIME': '0:01', 'RSS': '1544', 'ARGS': ''
+        "%MEM": "0.0",
+        "TTY": "?",
+        "VSZ": "19356",
+        "PID": "1",
+        "%CPU": "0.0",
+        "START": "May31",
+        "COMMAND": "/sbin/init",
+        "COMMAND_NAME": "init",
+        "USER": "root",
+        "STAT": "Ss",
+        "TIME": "0:01",
+        "RSS": "1544",
+        "ARGS": "",
     }
-    assert p.fuzzy_match('irqbal')
-    assert 'bash' in p
-    assert '/sbin/init' in p
-    assert 'sshd' not in p
-    assert 'kondemand' not in p
+    assert p.fuzzy_match("irqbal")
+    assert "bash" in p
+    assert "/sbin/init" in p
+    assert "sshd" not in p
+    assert "kondemand" not in p
     assert not p.fuzzy_match("sshd")
-    assert p.fuzzy_match('kondemand')
+    assert p.fuzzy_match("kondemand")
 
     assert p.search() == []
-    assert p.search(COMMAND__contains='java') == [p.data[6]]
-    assert p.search(USER='root', COMMAND__contains='kondemand') == [p.data[1]]
-    assert p.search(TTY='pts/3') == [p.data[3]]
-    assert p.search(STAT__contains='Z') == []
+    assert p.search(COMMAND__contains="java") == [p.data[6]]
+    assert p.search(USER="root", COMMAND__contains="kondemand") == [p.data[1]]
+    assert p.search(TTY="pts/3") == [p.data[3]]
+    assert p.search(STAT__contains="Z") == []
 
 
-PS_AUXWW_WITH_LATE_HEADER = '''
+PS_AUXWW_WITH_LATE_HEADER = """
 your 131072x1 screen size is bogus. expect trouble
 USER        PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
 root          1  0.0  0.1 193704  5088 ?        Ss   Jan10   6:52 /usr/lib/systemd/systemd --switched-root --system --deserialize 21
@@ -278,13 +396,16 @@ root          2  0.0  0.0      0     0 ?        S    Jan10   0:02 [kthreadd]
 root          3  0.0  0.0      0     0 ?        S    Jan10   0:29 [ksoftirqd/0]
 root          5  0.0  0.0      0     0 ?        S<   Jan10   0:00 [kworker/0:0H]
 root          7  0.0  0.0      0     0 ?        S    Jan10   0:00 [migration/0]
-'''
+"""
 
 
 def test_ps_auxww_with_late_header():
     p = ps.PsAuxww(context_wrap(PS_AUXWW_WITH_LATE_HEADER))
-    assert '[kthreadd]' in p
-    assert p.data[0]['COMMAND'] == '/usr/lib/systemd/systemd --switched-root --system --deserialize 21'
+    assert "[kthreadd]" in p
+    assert (
+        p.data[0]["COMMAND"]
+        == "/usr/lib/systemd/systemd --switched-root --system --deserialize 21"
+    )
 
 
 Ps_BAD = """
@@ -295,9 +416,9 @@ Ps_BAD = """
 def test_ps_auxww_with_bad_input():
     # test with bad input
     d1 = ps.PsAuxww(context_wrap(PsAuxcww_BAD))
-    assert 'test' not in d1
+    assert "test" not in d1
 
     with pytest.raises(ParseException) as exc:
         d2 = ps.PsAuxww(context_wrap(Ps_BAD))
         assert d2 is None
-    assert 'PsAuxww: Cannot find ps header line in output' in str(exc)
+    assert "PsAuxww: Cannot find ps header line in output" in str(exc)

@@ -19,18 +19,18 @@ d41d8cd98f00b204e9800998ecf8427e  /dev/null
 
 def test_md5check_prelink():
     md5info = md5check.MD5CheckSum(context_wrap(PRELINK_SAMPLE))
-    assert md5info.data['md5sum'] == '039a62d3e9786f5a63e84def09cb3b27'
-    assert md5info.data['filename'] == '/usr/lib64/libfreeblpriv3.so'
-    assert md5info.md5sum == '039a62d3e9786f5a63e84def09cb3b27'
-    assert md5info.filename == '/usr/lib64/libfreeblpriv3.so'
+    assert md5info.data["md5sum"] == "039a62d3e9786f5a63e84def09cb3b27"
+    assert md5info.data["filename"] == "/usr/lib64/libfreeblpriv3.so"
+    assert md5info.md5sum == "039a62d3e9786f5a63e84def09cb3b27"
+    assert md5info.filename == "/usr/lib64/libfreeblpriv3.so"
 
 
 def test_md5check_md5():
     md5info = md5check.MD5CheckSum(context_wrap(MD5_SAMPLE))
-    assert md5info.data['md5sum'] == '4777325b4a49cfae41a3991887920b68'
-    assert md5info.data['filename'] == '/usr/lib64/libfreebl3.so'
-    assert md5info.md5sum == '4777325b4a49cfae41a3991887920b68'
-    assert md5info.filename == '/usr/lib64/libfreebl3.so'
+    assert md5info.data["md5sum"] == "4777325b4a49cfae41a3991887920b68"
+    assert md5info.data["filename"] == "/usr/lib64/libfreebl3.so"
+    assert md5info.md5sum == "4777325b4a49cfae41a3991887920b68"
+    assert md5info.filename == "/usr/lib64/libfreebl3.so"
 
 
 def test_md5check_bad_input():

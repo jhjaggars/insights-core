@@ -46,18 +46,18 @@ class SEStatus(LegacyItemAccess, CommandParser):
     def parse_content(self, content):
         # Default to disabled if not found
         sestatus_info = {
-            'loaded_policy_name': None,
-            'current_mode': 'disabled',
-            'mode_from_config_file': 'disabled',
-            'policy_mls_status': 'disabled',
-            'policy_deny_unknown_status': 'disabled',
-            'max_kernel_policy_version': None,
-            'policy_booleans': {},
+            "loaded_policy_name": None,
+            "current_mode": "disabled",
+            "mode_from_config_file": "disabled",
+            "policy_mls_status": "disabled",
+            "policy_deny_unknown_status": "disabled",
+            "max_kernel_policy_version": None,
+            "policy_booleans": {},
         }
 
         for line in content:
             if ":" in line:
-                if 'Policy booleans' in line:
+                if "Policy booleans" in line:
                     pass
                 else:
                     key, val = [s.strip() for s in line.split(":", 1)]
@@ -66,12 +66,15 @@ class SEStatus(LegacyItemAccess, CommandParser):
                 if line.strip():
                     key, val = line.split()
                     #  convert 'on' and 'off' strings to actual boolean values
-                    sestatus_info['policy_booleans'][key] = val == 'on'
+                    sestatus_info["policy_booleans"][key] = val == "on"
 
         # When SELinux is disabled, sestatus has simply 'SELinux status: disabled'
         # in its output.  But 'SELinux status' is not included in the output
         # when SELinux is enabled.  So we include it as a nicety.
-        if sestatus_info['current_mode'] != 'disabled' and 'selinux_status' not in sestatus_info:
-            sestatus_info['selinux_status'] = sestatus_info['current_mode']
+        if (
+            sestatus_info["current_mode"] != "disabled"
+            and "selinux_status" not in sestatus_info
+        ):
+            sestatus_info["selinux_status"] = sestatus_info["current_mode"]
 
         self.data = sestatus_info

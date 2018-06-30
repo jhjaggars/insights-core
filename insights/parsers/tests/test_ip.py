@@ -39,7 +39,7 @@ def test_ip_addr():
     assert len(d) == 6
     assert keys_in(["lo", "eth7", "tunl0", "tunl1", "bond1.57", "ip.tun2"], d)
 
-    assert sorted(d.active) == sorted(['lo', 'eth7', 'bond1.57', 'ip.tun2'])
+    assert sorted(d.active) == sorted(["lo", "eth7", "bond1.57", "ip.tun2"])
 
     lo = d["lo"]
     assert len(lo) == 2
@@ -70,7 +70,10 @@ def test_ip_addr():
     bond1Addr = d["bond1.57"]
     assert len(bond1Addr) == 3
     assert bond1Addr.addrs(4) == ["10.192.4.171"]
-    assert bond1Addr.addrs(6) == ["fe80::211:3fff:fee2:f59e", "2001::211:3fff:fee2:f59e"]
+    assert bond1Addr.addrs(6) == [
+        "fe80::211:3fff:fee2:f59e",
+        "2001::211:3fff:fee2:f59e",
+    ]
 
     tun2 = d["ip.tun2"]
     assert tun2["mtu"] == 80
@@ -82,7 +85,7 @@ def test_ip_addr():
     # Tests of __cmp__
     assert eth7 != tunl0
     assert tunl0 != tunl1
-    assert tunl1 == d['tunl1']
+    assert tunl1 == d["tunl1"]
 
     # Tests of __iter__ and __getitem__
     for iface in d:
@@ -175,9 +178,9 @@ def test_ip_data_Link():
     if_list = link_info.active
     assert len(if_list) == 4
     assert keys_in(["lo", "enp0s3", "enp0s8", "enp0s9"], if_list)
-    assert keys_in(['ppp0', 'lo', 'tun0', 'enp0s25', 'vnet0', 'virbr0'], if_list_all)
+    assert keys_in(["ppp0", "lo", "tun0", "enp0s25", "vnet0", "virbr0"], if_list_all)
 
-    assert sorted(link_info.active) == sorted(['lo', 'enp0s3', 'enp0s8', 'enp0s9'])
+    assert sorted(link_info.active) == sorted(["lo", "enp0s3", "enp0s8", "enp0s9"])
 
     lo = link_info["lo"]
     assert lo["mac"] == "00:00:00:00:00:00"
@@ -308,10 +311,10 @@ def test_ip_route():
     assert d.ifaces("30.0.0.1")[0] == "notExist"
     assert d.ifaces("192.168.0.1")[0] == "bond0.400"
     assert len(d.data["default"]) == 1
-    assert getattr(d.by_device['bond0.300'][0], 'src') == '30.142.34.5'
-    assert getattr(d.by_prefix['default'][0], 'via') == '30.142.64.1'
-    assert getattr(d.by_prefix['30.142.34.0/26'][0], 'scope') == 'link'
-    assert getattr(d.by_table['None'][1], 'proto') == 'kernel'
+    assert getattr(d.by_device["bond0.300"][0], "src") == "30.142.34.5"
+    assert getattr(d.by_prefix["default"][0], "via") == "30.142.64.1"
+    assert getattr(d.by_prefix["30.142.34.0/26"][0], "scope") == "link"
+    assert getattr(d.by_table["None"][1], "proto") == "kernel"
     # order is not deterministic
     # assert getattr(d.by_type['None'][3], 'netmask') == 8
 
@@ -324,81 +327,81 @@ def test_ip_route_2():
     assert len(tbl.data) == 18
 
     # Ignored route types:
-    assert 'broadcast' not in tbl
-    assert 'local' not in tbl
-    assert 'unreachable' not in tbl
-    assert 'throw' not in tbl
-    assert 'prohibit' not in tbl
-    assert 'blackhole' not in tbl
-    assert 'nat' not in tbl
+    assert "broadcast" not in tbl
+    assert "local" not in tbl
+    assert "unreachable" not in tbl
+    assert "throw" not in tbl
+    assert "prohibit" not in tbl
+    assert "blackhole" not in tbl
+    assert "nat" not in tbl
 
     # Standard route types:
-    assert 'default' in tbl
+    assert "default" in tbl
 
     # Assert existence of the standard route attributes for all route
     # objects, even though the attribute itself may be None
     for prefix in tbl.data.keys():
         for route in tbl[prefix]:
-            for attr in ['via', 'dev', 'type', 'netmask', 'prefix', 'table']:
+            for attr in ["via", "dev", "type", "netmask", "prefix", "table"]:
                 assert hasattr(route, attr)
 
     # Route object checks
     # 10.0.0.0/8 via 10.64.54.1 dev tun0  proto static  metric 50
-    assert '10.0.0.0/8' in tbl
-    r1 = tbl['10.0.0.0/8']
+    assert "10.0.0.0/8" in tbl
+    r1 = tbl["10.0.0.0/8"]
     assert len(r1) == 1
     r1a = r1[0]
-    assert hasattr(r1a, 'prefix')
-    assert r1a.prefix == '10.0.0.0/8'
-    assert hasattr(r1a, 'via')
-    assert r1a.via == '10.64.54.1'
-    assert hasattr(r1a, 'dev')
-    assert r1a.dev == 'tun0'
-    assert hasattr(r1a, 'proto')
-    assert r1a.proto == 'static'
-    assert hasattr(r1a, 'metric')
-    assert r1a.metric == '50'
+    assert hasattr(r1a, "prefix")
+    assert r1a.prefix == "10.0.0.0/8"
+    assert hasattr(r1a, "via")
+    assert r1a.via == "10.64.54.1"
+    assert hasattr(r1a, "dev")
+    assert r1a.dev == "tun0"
+    assert hasattr(r1a, "proto")
+    assert r1a.proto == "static"
+    assert hasattr(r1a, "metric")
+    assert r1a.metric == "50"
 
     # 10.64.54.0/23 dev tun0  proto kernel  scope link  src 10.64.54.44  metric 50
-    assert '10.64.54.0/23' in tbl
-    r2 = tbl['10.64.54.0/23']
+    assert "10.64.54.0/23" in tbl
+    r2 = tbl["10.64.54.0/23"]
     assert len(r2) == 1
     r2a = r2[0]
-    assert hasattr(r2a, 'prefix')
-    assert r2a.prefix == '10.64.54.0/23'
-    assert hasattr(r2a, 'via')
+    assert hasattr(r2a, "prefix")
+    assert r2a.prefix == "10.64.54.0/23"
+    assert hasattr(r2a, "via")
     assert r2a.via is None
-    assert hasattr(r2a, 'dev')
-    assert r2a.dev == 'tun0'
-    assert hasattr(r2a, 'proto')
-    assert r2a.proto == 'kernel'
-    assert hasattr(r2a, 'scope')
-    assert r2a.scope == 'link'
-    assert hasattr(r2a, 'src')
-    assert r2a.src == '10.64.54.44'
-    assert hasattr(r2a, 'metric')
-    assert r2a.metric == '50'
+    assert hasattr(r2a, "dev")
+    assert r2a.dev == "tun0"
+    assert hasattr(r2a, "proto")
+    assert r2a.proto == "kernel"
+    assert hasattr(r2a, "scope")
+    assert r2a.scope == "link"
+    assert hasattr(r2a, "src")
+    assert r2a.src == "10.64.54.44"
+    assert hasattr(r2a, "metric")
+    assert r2a.metric == "50"
 
     # 2001:708:40:2001:a822:baff:fec4:2428 via fe80::a96:d7ff:fe38:d757 dev enp0s25  metric 0
     #     cache  mtu 1492 hoplimit 255
-    assert '2001:708:40:2001:a822:baff:fec4:2428' in tbl
-    r3 = tbl['2001:708:40:2001:a822:baff:fec4:2428']
+    assert "2001:708:40:2001:a822:baff:fec4:2428" in tbl
+    r3 = tbl["2001:708:40:2001:a822:baff:fec4:2428"]
     assert len(r3) == 1
     r3a = r3[0]
-    assert hasattr(r3a, 'prefix')
-    assert r3a.prefix == '2001:708:40:2001:a822:baff:fec4:2428'
-    assert hasattr(r3a, 'via')
-    assert r3a.via == 'fe80::a96:d7ff:fe38:d757'
-    assert hasattr(r3a, 'dev')
-    assert r3a.dev == 'enp0s25'
-    assert hasattr(r3a, 'metric')
-    assert r3a.metric == '0'
-    assert hasattr(r3a, 'cache')
+    assert hasattr(r3a, "prefix")
+    assert r3a.prefix == "2001:708:40:2001:a822:baff:fec4:2428"
+    assert hasattr(r3a, "via")
+    assert r3a.via == "fe80::a96:d7ff:fe38:d757"
+    assert hasattr(r3a, "dev")
+    assert r3a.dev == "enp0s25"
+    assert hasattr(r3a, "metric")
+    assert r3a.metric == "0"
+    assert hasattr(r3a, "cache")
     assert r3a.cache
-    assert hasattr(r3a, 'mtu')
-    assert r3a.mtu == '1492'
-    assert hasattr(r3a, 'hoplimit')
-    assert r3a.hoplimit == '255'
+    assert hasattr(r3a, "mtu")
+    assert r3a.mtu == "1492"
+    assert hasattr(r3a, "hoplimit")
+    assert r3a.hoplimit == "255"
 
     # by_prefix checks
     prefixes = tbl.by_prefix
@@ -407,11 +410,11 @@ def test_ip_route_2():
 
     # by_device checks
     devices = tbl.by_device
-    assert 'tun0' in devices
-    assert 'enp0s25' in devices
-    assert 'virbr0' in devices
+    assert "tun0" in devices
+    assert "enp0s25" in devices
+    assert "virbr0" in devices
     assert len(devices) == 3
-    assert len(devices['enp0s25']) == 16
+    assert len(devices["enp0s25"]) == 16
 
     # The order of these data structures is non-deterministic
     # Should be in order of reading, so find them in order by name
@@ -435,25 +438,25 @@ def test_ip_route_2():
 
     # by_type checks
     types = tbl.by_type
-    assert sorted(types.keys()) == sorted(['None', 'multicast'])
-    assert len(types['None']) == 18
-    for entry in types['None']:
+    assert sorted(types.keys()) == sorted(["None", "multicast"])
+    assert len(types["None"]) == 18
+    for entry in types["None"]:
         assert entry in tbl[entry.prefix]
 
     # by_table checks
     tables = tbl.by_table
-    assert sorted(tables.keys()) == sorted(['None', 'local'])
-    assert len(tables['None']) == 18
+    assert sorted(tables.keys()) == sorted(["None", "local"])
+    assert len(tables["None"]) == 18
     # Something tells me that out of
-    assert len(tables['local']) == 1
-    local = tables['local'][0]
+    assert len(tables["local"]) == 1
+    local = tables["local"][0]
     assert local.via is None
-    assert local.metric == '256'
-    assert local.prefix == 'ff00::/8'
-    assert local.dev == 'enp0s25'
-    assert local.mtu == '1492'
+    assert local.metric == "256"
+    assert local.prefix == "ff00::/8"
+    assert local.dev == "enp0s25"
+    assert local.mtu == "1492"
     assert local.netmask == 8
-    assert local.table == 'local'
+    assert local.table == "local"
     assert local.type is None
 
 
@@ -466,42 +469,42 @@ def test_bad_ip_routes():
     # instantiated but most of its fields are None
     assert len(tbl.data) == 3
 
-    assert 'ff00::/16' in tbl
-    r0a = tbl['ff00::/16'][0]
-    for attr in ['via', 'dev', 'type', 'table']:
+    assert "ff00::/16" in tbl
+    r0a = tbl["ff00::/16"][0]
+    for attr in ["via", "dev", "type", "table"]:
         assert hasattr(r0a, attr)
         assert getattr(r0a, attr) is None
-    assert hasattr(r0a, 'prefix')
-    assert r0a.prefix == 'ff00::/16'
-    assert hasattr(r0a, 'netmask')
+    assert hasattr(r0a, "prefix")
+    assert r0a.prefix == "ff00::/16"
+    assert hasattr(r0a, "netmask")
     assert r0a.netmask == 16
 
-    assert 'ff01::/16' in tbl
-    r1a = tbl['ff01::/16'][0]
-    for attr in ['via', 'dev', 'type', 'table']:
+    assert "ff01::/16" in tbl
+    r1a = tbl["ff01::/16"][0]
+    for attr in ["via", "dev", "type", "table"]:
         assert hasattr(r1a, attr)
         assert getattr(r1a, attr) is None
-    assert hasattr(r1a, 'prefix')
-    assert r1a.prefix == 'ff01::/16'
-    assert hasattr(r1a, 'netmask')
+    assert hasattr(r1a, "prefix")
+    assert r1a.prefix == "ff01::/16"
+    assert hasattr(r1a, "netmask")
     assert r1a.netmask == 16
 
-    assert 'ff02::/16' in tbl
-    r2a = tbl['ff02::/16'][0]
-    for attr in ['via', 'type', 'table']:
+    assert "ff02::/16" in tbl
+    r2a = tbl["ff02::/16"][0]
+    for attr in ["via", "type", "table"]:
         assert hasattr(r2a, attr)
         assert getattr(r2a, attr) is None
-    assert hasattr(r2a, 'prefix')
-    assert r2a.prefix == 'ff02::/16'
-    assert hasattr(r2a, 'netmask')
+    assert hasattr(r2a, "prefix")
+    assert r2a.prefix == "ff02::/16"
+    assert hasattr(r2a, "netmask")
     assert r2a.netmask == 16
-    assert hasattr(r2a, 'dev')
-    assert r2a.dev == 'enp0s25'
-    assert not hasattr(r2a, 'metric')
+    assert hasattr(r2a, "dev")
+    assert r2a.dev == "enp0s25"
+    assert not hasattr(r2a, "metric")
 
     # Also a good chance to test the failure to find an interface for a
     # routed address, since we don't have a default route defined.
-    assert tbl.ifaces('192.168.0.1') is None
+    assert tbl.ifaces("192.168.0.1") is None
 
 
 IPV4_NEIGH_CONTEXT = """
@@ -518,40 +521,54 @@ IPV4_NEIGH_CONTEXT = """
 
 def test_ipv4_neigh():
     result = ip.Ipv4Neigh(context_wrap(IPV4_NEIGH_CONTEXT))
-    assert '172.17.0.18' in result
+    assert "172.17.0.18" in result
     assert len(result.data) == 8
 
     # Test all unreachability detection states
     assert result["172.17.42.10"] == {
-        "dev": "lo", "lladdr": "00:00:00:00:00:00", "nud": "PERMANENT",
-        'addr': ipaddress.ip_address(u'172.17.42.10')
+        "dev": "lo",
+        "lladdr": "00:00:00:00:00:00",
+        "nud": "PERMANENT",
+        "addr": ipaddress.ip_address(u"172.17.42.10"),
     }
     assert result["172.17.42.11"] == {
-        "dev": "lo", "lladdr": "00:00:00:00:00:01", "nud": "NOARP",
-        'addr': ipaddress.ip_address(u'172.17.42.11')
+        "dev": "lo",
+        "lladdr": "00:00:00:00:00:01",
+        "nud": "NOARP",
+        "addr": ipaddress.ip_address(u"172.17.42.11"),
     }
     assert result["172.17.42.12"] == {
-        "dev": "lo", "lladdr": "00:00:00:00:00:02", "nud": "REACHABLE",
-        'addr': ipaddress.ip_address(u'172.17.42.12')
+        "dev": "lo",
+        "lladdr": "00:00:00:00:00:02",
+        "nud": "REACHABLE",
+        "addr": ipaddress.ip_address(u"172.17.42.12"),
     }
     assert result["172.17.42.13"] == {
-        "dev": "lo", "lladdr": "00:00:00:00:00:03", "nud": "STALE",
-        'addr': ipaddress.ip_address(u'172.17.42.13')
+        "dev": "lo",
+        "lladdr": "00:00:00:00:00:03",
+        "nud": "STALE",
+        "addr": ipaddress.ip_address(u"172.17.42.13"),
     }
     assert result["172.17.42.14"] == {
-        "dev": "lo", "lladdr": "00:00:00:00:00:04", "nud": "DELAY",
-        'addr': ipaddress.ip_address(u'172.17.42.14')
+        "dev": "lo",
+        "lladdr": "00:00:00:00:00:04",
+        "nud": "DELAY",
+        "addr": ipaddress.ip_address(u"172.17.42.14"),
     }
     assert result["172.17.42.15"] == {
-        "dev": "lo", "lladdr": "00:00:00:00:00:05", "nud": "FAILED",
-        'addr': ipaddress.ip_address(u'172.17.42.15')
+        "dev": "lo",
+        "lladdr": "00:00:00:00:00:05",
+        "nud": "FAILED",
+        "addr": ipaddress.ip_address(u"172.17.42.15"),
     }
     assert result["172.17.0.18"] == {
-        "nud": "FAILED", 'addr': ipaddress.ip_address(u'172.17.0.18')
+        "nud": "FAILED",
+        "addr": ipaddress.ip_address(u"172.17.0.18"),
     }
     assert result["172.17.0.19"] == {
-        "dev": "docker0", "nud": "FAILED",
-        'addr': ipaddress.ip_address(u'172.17.0.19')
+        "dev": "docker0",
+        "nud": "FAILED",
+        "addr": ipaddress.ip_address(u"172.17.0.19"),
     }
 
 
@@ -584,10 +601,14 @@ def test_ipv6_neigh():
     assert len(result["ff02::16"]) == 4
     assert len(result["ff02::1:ffea:2c00"]) == 4
     assert result["ff02::16"] == {
-        "dev": "vlinuxbr", "nud": "NOARP", "lladdr": "33:33:00:00:00:16",
-        'addr': ipaddress.ip_address(u'ff02::16')
+        "dev": "vlinuxbr",
+        "nud": "NOARP",
+        "lladdr": "33:33:00:00:00:16",
+        "addr": ipaddress.ip_address(u"ff02::16"),
     }
     assert result["ff02::1:ffea:2c00"] == {
-        "dev": "tun0", "nud": "NOARP", "lladdr": "33:33:ff:ea:2c:00",
-        'addr': ipaddress.ip_address(u'ff02::1:ffea:2c00')
+        "dev": "tun0",
+        "nud": "NOARP",
+        "lladdr": "33:33:ff:ea:2c:00",
+        "addr": ipaddress.ip_address(u"ff02::1:ffea:2c00"),
     }

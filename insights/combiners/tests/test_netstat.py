@@ -106,7 +106,7 @@ def test_ip_data_Link():
     assert len(if_list) == 4
     assert keys_in(["lo", "enp0s3", "enp0s8", "enp0s9"], if_list)
 
-    assert sorted(link_info.active) == sorted(['lo', 'enp0s3', 'enp0s8', 'enp0s9'])
+    assert sorted(link_info.active) == sorted(["lo", "enp0s3", "enp0s8", "enp0s9"])
 
     lo = link_info["lo"]
     assert lo["mac"] == "00:00:00:00:00:00"
@@ -133,14 +133,30 @@ def test_get_netstat_i():
     result = nstat.group_by_iface
     assert len(result) == 7
     assert result["bond0"] == {
-        "MTU": "1500", "Met": "0", "RX-OK": "845265", "RX-ERR": "0",
-        "RX-DRP": "0", "RX-OVR": "0", "TX-OK": "1753", "TX-ERR": "0",
-        "TX-DRP": "0", "TX-OVR": "0", "Flg": "BMmRU"
+        "MTU": "1500",
+        "Met": "0",
+        "RX-OK": "845265",
+        "RX-ERR": "0",
+        "RX-DRP": "0",
+        "RX-OVR": "0",
+        "TX-OK": "1753",
+        "TX-ERR": "0",
+        "TX-DRP": "0",
+        "TX-OVR": "0",
+        "Flg": "BMmRU",
     }
     assert result["eth0"] == {
-        "MTU": "1500", "Met": "0", "RX-OK": "422518", "RX-ERR": "0",
-        "RX-DRP": "0", "RX-OVR": "0", "TX-OK": "1703", "TX-ERR": "0",
-        "TX-DRP": "0", "TX-OVR": "0", "Flg": "BMsRU"
+        "MTU": "1500",
+        "Met": "0",
+        "RX-OK": "422518",
+        "RX-ERR": "0",
+        "RX-DRP": "0",
+        "RX-OVR": "0",
+        "TX-OK": "1703",
+        "TX-ERR": "0",
+        "TX-DRP": "0",
+        "TX-OVR": "0",
+        "Flg": "BMsRU",
     }
 
 
@@ -152,9 +168,17 @@ def test_combined():
     result = networkstats.group_by_iface
     assert len(result) == 7
     assert result["bond0"] == {
-        "MTU": "1500", "Met": "0", "RX-OK": "845265", "RX-ERR": "0",
-        "RX-DRP": "0", "RX-OVR": "0", "TX-OK": "1753", "TX-ERR": "0",
-        "TX-DRP": "0", "TX-OVR": "0", "Flg": "BMmRU"
+        "MTU": "1500",
+        "Met": "0",
+        "RX-OK": "845265",
+        "RX-ERR": "0",
+        "RX-DRP": "0",
+        "RX-OVR": "0",
+        "TX-OK": "1753",
+        "TX-ERR": "0",
+        "TX-DRP": "0",
+        "TX-OVR": "0",
+        "Flg": "BMmRU",
     }
 
     context = context_wrap(IP_S_LINK)
@@ -165,12 +189,26 @@ def test_combined():
     # assert networkstats.data[0]["Iface"] == "lo"
     assert len(result) == 4
     assert result["lo"] == {
-        'RX-OK': 98, 'TX-OK': 100, 'MTU': 65536, 'RX-ERR': 0,
-        'TX-DRP': 0, 'TX-ERR': 0, 'RX-DRP': 0, 'RX-OVR': 0, 'Flg': 'LRU'
+        "RX-OK": 98,
+        "TX-OK": 100,
+        "MTU": 65536,
+        "RX-ERR": 0,
+        "TX-DRP": 0,
+        "TX-ERR": 0,
+        "RX-DRP": 0,
+        "RX-OVR": 0,
+        "Flg": "LRU",
     }
     assert result["enp0s8"] == {
-        'RX-OK': 6, 'TX-DRP': 0, 'TX-OK': 4, 'MTU': 1500,
-        'RX-ERR': 0, 'TX-ERR': 0, 'RX-DRP': 0, 'RX-OVR': 0, 'Flg': 'BMRU'
+        "RX-OK": 6,
+        "TX-DRP": 0,
+        "TX-OK": 4,
+        "MTU": 1500,
+        "RX-ERR": 0,
+        "TX-ERR": 0,
+        "RX-DRP": 0,
+        "RX-OVR": 0,
+        "Flg": "BMRU",
     }
 
     context = context_wrap(NETSTAT_I_2)

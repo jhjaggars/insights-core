@@ -29,9 +29,11 @@ class Statuslist(CommandParser):
             yield row
 
     def parse_content(self, content):
-        new_content = get_active_lines(content, '-----------')
+        new_content = get_active_lines(content, "-----------")
         if len(content) <= 1:
-            raise ParseException("Input content is empty or there is no useful parsed data.")
+            raise ParseException(
+                "Input content is empty or there is no useful parsed data."
+            )
         return new_content
 
 
@@ -66,9 +68,11 @@ class SmbstatusS(Statuslist):
 
     def parse_content(self, content):
         content = super(SmbstatusS, self).parse_content(content)
-        if not content[0].startswith('Service '):
+        if not content[0].startswith("Service "):
             raise ParseException("Cannot find the header line.")
-        self.data = parse_fixed_table(content, header_substitute=[('Connected at', 'Connected_at')])
+        self.data = parse_fixed_table(
+            content, header_substitute=[("Connected at", "Connected_at")]
+        )
 
 
 @parser(Specs.smbstatus_p)
@@ -103,6 +107,10 @@ class Smbstatusp(Statuslist):
 
     def parse_content(self, content):
         content = super(Smbstatusp, self).parse_content(content)
-        if not any(l.startswith('PID ') for l in content):
+        if not any(l.startswith("PID ") for l in content):
             raise ParseException("Cannot find the header line.")
-        self.data = parse_fixed_table(content, heading_ignore=["PID     Username"], header_substitute=[('Protocol Version', 'Protocol_Version')])
+        self.data = parse_fixed_table(
+            content,
+            heading_ignore=["PID     Username"],
+            header_substitute=[("Protocol Version", "Protocol_Version")],
+        )

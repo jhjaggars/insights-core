@@ -53,4 +53,5 @@ from .. import parser, CommandParser
 @parser(Specs.ls_osroot)
 class LsOsroot(CommandParser, FileListing):
     """Parses output of ``ls -lan /`` command."""
+
     pass

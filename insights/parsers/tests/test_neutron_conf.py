@@ -28,12 +28,19 @@ service_provider = LOADBALANCER:Haproxy:neutron.services.loadbalancer.drivers.ha
 def test_neutron_conf():
     nconf = NeutronConf(context_wrap(NEUTRON_CONF))
     assert nconf is not None
-    assert list(nconf.sections()) == ['quotas', 'agent', 'keystone_authtoken', 'database', 'service_providers']
+    assert list(nconf.sections()) == [
+        "quotas",
+        "agent",
+        "keystone_authtoken",
+        "database",
+        "service_providers",
+    ]
     assert nconf.defaults() == {
-        'debug': 'False',
-        'verbose': 'False',
-        'core_plugin': 'neutron.plugins.openvswitch.ovs_neutron_plugin.OVSNeutronPluginV2'}
-    assert nconf.get('quotas', 'quota_network') == '10'
-    assert nconf.has_option('database', 'connection')
-    assert not nconf.has_option('yabba', 'dabba_do')
-    assert nconf.get('DEFAULT', 'debug') == 'False'
+        "debug": "False",
+        "verbose": "False",
+        "core_plugin": "neutron.plugins.openvswitch.ovs_neutron_plugin.OVSNeutronPluginV2",
+    }
+    assert nconf.get("quotas", "quota_network") == "10"
+    assert nconf.has_option("database", "connection")
+    assert not nconf.has_option("yabba", "dabba_do")
+    assert nconf.get("DEFAULT", "debug") == "False"

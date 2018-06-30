@@ -61,12 +61,13 @@ class BlockIDInfo(CommandParser):
                     }
                 ]
     """
+
     def parse_content(self, content):
         blkid_output = []
         for line in (l for l in content if l.strip()):
             dev_name, attributes = line.rsplit(":", 1)
-            device = dict((k, v) for k, v in re.findall(r'(\S+)=\"(.*?)\"\s?', line))
-            device['NAME'] = dev_name.strip()
+            device = dict((k, v) for k, v in re.findall(r"(\S+)=\"(.*?)\"\s?", line))
+            device["NAME"] = dev_name.strip()
             blkid_output.append(device)
 
         self.data = blkid_output
@@ -74,4 +75,4 @@ class BlockIDInfo(CommandParser):
 
     def filter_by_type(self, fs_type):
         """list: Returns a list of all entries where TYPE = ``fs_type``."""
-        return [row for row in self.data if row['TYPE'] == fs_type]
+        return [row for row in self.data if row["TYPE"] == fs_type]

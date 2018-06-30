@@ -52,11 +52,11 @@ class IpcsS(CommandParser):
 
     def parse_content(self, content):
         # heading_ignore is first line we _don't_ want to ignore...
-        table = parse_delimited_table(content, heading_ignore=['key'])
+        table = parse_delimited_table(content, heading_ignore=["key"])
         data = map(lambda item: dict((k, v) for (k, v) in item.items()), table)
         self.data = {}
         for item in data:
-            self.data[item.pop('semid')] = item
+            self.data[item.pop("semid")] = item
 
     def __contains__(self, semid):
         """
@@ -126,8 +126,8 @@ class IpcsSI(CommandParser):
         self._semid = None
         for line in get_active_lines(content):
             line = line.strip()
-            if line.startswith('Semaphore'):
-                self._semid = line.split('=')[-1]
+            if line.startswith("Semaphore"):
+                self._semid = line.split("=")[-1]
             elif self._semid and line[0].isdigit():
                 pids.add(line.split()[-1])
         self._pids = sorted(list(pids))

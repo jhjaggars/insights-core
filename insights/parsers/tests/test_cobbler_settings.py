@@ -358,4 +358,4 @@ safe_templating: true
 def test_cobbler_setting():
     result = CobblerSettings(context_wrap(setting_content))
     assert result.get("safe_templating") is True
-    assert result.get("mgmt_parameters") == {'from_cobbler': 1}
+    assert result.get("mgmt_parameters") == {"from_cobbler": 1}

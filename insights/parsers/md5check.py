@@ -48,15 +48,16 @@ class MD5CheckSum(CommandParser):
         d1e6613cfb62d3f111db7bdda39ac821
 
     """
+
     @property
     def filename(self):
         """ str: Return the file name for the current file."""
-        return self.data.get('filename')
+        return self.data.get("filename")
 
     @property
     def md5sum(self):
         """ str: Return the checksum for the current file."""
-        return self.data.get('md5sum')
+        return self.data.get("md5sum")
 
     def parse_content(self, content):
         self.data = {}

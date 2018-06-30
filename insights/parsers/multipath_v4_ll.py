@@ -153,14 +153,15 @@ class MultipathDevices(CommandParser):
         path_group = []
         path_group_attr = {}
 
-        MPATH_WWID_REG = re.compile(r'\(?([A-Za-z0-9_\s]+)\)?\s+dm-')
+        MPATH_WWID_REG = re.compile(r"\(?([A-Za-z0-9_\s]+)\)?\s+dm-")
         PROPERTY_SQBRKT_REG = re.compile(r"\[(?P<key>\w+)=(?P<value>[^\]]+)\]")
-        PATHGROUP_POLICY_STR = \
-            r"(?:policy=')?(?P<policy>(?:round-robin|queue-length|service-time) \d)" + \
-            r"(?:' | \[)prio=(?P<priority>\d+)(?:\]\[| status=)" + \
-            r"(?P<status>\w+)(?:\]|)"
+        PATHGROUP_POLICY_STR = (
+            r"(?:policy=')?(?P<policy>(?:round-robin|queue-length|service-time) \d)"
+            + r"(?:' | \[)prio=(?P<priority>\d+)(?:\]\[| status=)"
+            + r"(?P<status>\w+)(?:\]|)"
+        )
         PATHGROUP_POLICY_REG = re.compile(PATHGROUP_POLICY_STR)
-        HCTL_REG = re.compile(r'(?:[`|]-(?:\+-)?|\\_) (\d+:){3}\d+')
+        HCTL_REG = re.compile(r"(?:[`|]-(?:\+-)?|\\_) (\d+:){3}\d+")
 
         for line in content:
             m = MPATH_WWID_REG.search(line)
@@ -170,12 +171,12 @@ class MultipathDevices(CommandParser):
                 # Now that we've got a valid path, append the group data if we
                 # haven't already
                 if path_info:
-                    path_group_attr['path'] = path_info
+                    path_group_attr["path"] = path_info
                     path_group.append(path_group_attr)
                     # Must reset path group info to not carry on into new device
                     path_group_attr = {}
                     path_info = []
-                    mpath_dev['path_group'] = path_group
+                    mpath_dev["path_group"] = path_group
                     mpath_dev_all.append(mpath_dev)
 
                 mpath_dev = {}
@@ -184,63 +185,71 @@ class MultipathDevices(CommandParser):
                 no_alias = line.startswith(wwid)
                 (dm, venprod) = re.findall(r".*(dm-\S+)\s+(.*)", line)[0]
                 if not no_alias:
-                    (dm, venprod) = re.findall(r"\w+\s+\(.*\)\s+(dm-\S+)\s+(.*)", line)[0]
-                    mpath_dev['alias'] = line.split()[0]
-                mpath_dev['wwid'] = wwid
-                mpath_dev['dm_name'] = dm
-                mpath_dev['venprod'] = venprod
+                    (dm, venprod) = re.findall(r"\w+\s+\(.*\)\s+(dm-\S+)\s+(.*)", line)[
+                        0
+                    ]
+                    mpath_dev["alias"] = line.split()[0]
+                mpath_dev["wwid"] = wwid
+                mpath_dev["dm_name"] = dm
+                mpath_dev["venprod"] = venprod
 
-            elif 'size=' in line:
-                if '][' in line:
+            elif "size=" in line:
+                if "][" in line:
                     # Old RHEL 5 format:
                     for (k, v) in PROPERTY_SQBRKT_REG.findall(line):
                         mpath_dev[k] = v
                     # Handle un-named write policy attribute on the end:
-                    mpath_dev['wp'] = line[-3:-1]
+                    mpath_dev["wp"] = line[-3:-1]
                 else:
                     # Newer RHEL 6 format:
                     attr_line = shlex.split(line)
                     for item in attr_line:
-                        (k, v) = item.split('=', 1)
+                        (k, v) = item.split("=", 1)
                         mpath_dev[k] = v
 
             elif PATHGROUP_POLICY_REG.search(line):
                 m = PATHGROUP_POLICY_REG.search(line)
                 # New path info - save the previous if we have one:
                 if path_info:
-                    path_group_attr['path'] = path_info
+                    path_group_attr["path"] = path_info
                     path_group.append(path_group_attr)
 
                 path_group_attr = {}
                 path_info = []
-                path_group_attr['policy'] = m.group('policy')
-                path_group_attr['prio'] = m.group('priority')
-                path_group_attr['status'] = m.group('status')
+                path_group_attr["policy"] = m.group("policy")
+                path_group_attr["prio"] = m.group("priority")
+                path_group_attr["status"] = m.group("status")
 
             elif HCTL_REG.search(line):
                 colon_index = line.index(":")
                 # Dodgy hack to convert RHEL 5 attributes in square brackets into
                 # spaced out words to combine into the list
-                line = line.replace('[', ' ').replace(']', ' ')
-                path_info.append(line[colon_index - 2:].split())
+                line = line.replace("[", " ").replace("]", " ")
+                path_info.append(line[colon_index - 2 :].split())
 
         # final save of outstanding path and path group data:
         if path_info:
-            path_group_attr['path'] = path_info
+            path_group_attr["path"] = path_info
             path_group.append(path_group_attr)
         if path_group:
-            mpath_dev['path_group'] = path_group
+            mpath_dev["path_group"] = path_group
             mpath_dev_all.append(mpath_dev)
 
         self.devices = mpath_dev_all
 
         # Create some extra accessor properties
-        self.dms = [path['dm_name'] for path in self.devices if 'dm_name' in path]
-        self.by_dm = dict((path['dm_name'], path) for path in self.devices if 'dm_name' in path)
-        self.aliases = [path['alias'] for path in self.devices if 'alias' in path]
-        self.by_alias = dict((path['alias'], path) for path in self.devices if 'alias' in path)
-        self.wwids = [path['wwid'] for path in self.devices if 'wwid' in path]
-        self.by_wwid = dict((path['wwid'], path) for path in self.devices if 'wwid' in path)
+        self.dms = [path["dm_name"] for path in self.devices if "dm_name" in path]
+        self.by_dm = dict(
+            (path["dm_name"], path) for path in self.devices if "dm_name" in path
+        )
+        self.aliases = [path["alias"] for path in self.devices if "alias" in path]
+        self.by_alias = dict(
+            (path["alias"], path) for path in self.devices if "alias" in path
+        )
+        self.wwids = [path["wwid"] for path in self.devices if "wwid" in path]
+        self.by_wwid = dict(
+            (path["wwid"], path) for path in self.devices if "wwid" in path
+        )
 
     def __len__(self):
         """

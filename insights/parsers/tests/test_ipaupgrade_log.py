@@ -14,5 +14,5 @@ IPAUPGRADE_LOG = """
 
 def test_ipaupgrade_log():
     log = IpaupgradeLog(context_wrap(IPAUPGRADE_LOG))
-    assert len(log.get('DEBUG')) == 4
+    assert len(log.get("DEBUG")) == 4
     assert len(list(log.get_after(datetime(2017, 8, 7, 7, 37, 30)))) == 1

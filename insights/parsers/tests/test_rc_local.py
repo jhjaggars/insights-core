@@ -16,5 +16,7 @@ echo never > /sys/kernel/mm/redhat_transparent_hugepage/enabled
 def test_rc_local():
     rc_local = RcLocal(context_wrap(RC_LOCAL_DATA))
     assert len(rc_local.data) == 2
-    assert rc_local.data[0] == 'touch /var/lock/subsys/local'
-    assert rc_local.get('kernel') == ['echo never > /sys/kernel/mm/redhat_transparent_hugepage/enabled']
+    assert rc_local.data[0] == "touch /var/lock/subsys/local"
+    assert rc_local.get("kernel") == [
+        "echo never > /sys/kernel/mm/redhat_transparent_hugepage/enabled"
+    ]

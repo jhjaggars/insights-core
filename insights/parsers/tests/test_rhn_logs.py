@@ -36,7 +36,10 @@ def test_rhn_search_daemon_log():
     out_log = SearchDaemonLog(context_wrap(search_daemon_log))
     assert "Wrapper Started as Daemon" in out_log
     assert len(out_log.get("jvm")) == 1
-    assert out_log.get("jvm")[0]['raw_message'] == 'INFO   | jvm 1    | 2013/01/28 14:41:59 | Wrapper (Version 3.2.1) http://wrapper.tanukisoftware.org'
+    assert (
+        out_log.get("jvm")[0]["raw_message"]
+        == "INFO   | jvm 1    | 2013/01/28 14:41:59 | Wrapper (Version 3.2.1) http://wrapper.tanukisoftware.org"
+    )
     assert len(list(out_log.get_after(datetime(2013, 1, 28, 19, 30, 0)))) == 1
 
 
@@ -44,14 +47,17 @@ def test_rhn_taskomatic_daemon_log():
     out_log = TaskomaticDaemonLog(context_wrap(taskomatic_daemon_log))
     assert "Wrapper Started as Daemon" in out_log
     assert len(out_log.get("jvm")) == 9
-    assert out_log.get("jvm")[2]['raw_message'] == 'INFO   | jvm 1    | 2016/05/18 15:13:39 | May 18, 2016 3:13:39 PM com.mchange.v2.log.MLog <clinit>'
+    assert (
+        out_log.get("jvm")[2]["raw_message"]
+        == "INFO   | jvm 1    | 2016/05/18 15:13:39 | May 18, 2016 3:13:39 PM com.mchange.v2.log.MLog <clinit>"
+    )
     assert out_log.last_log_date == datetime(2016, 5, 18, 15, 13, 40)
     assert len(list(out_log.get_after(datetime(2016, 5, 18, 15, 13, 38)))) == 7
 
 
 def test_bad_date_handling():
     out_log = TaskomaticDaemonLog(context_wrap(taskomatic_daemon_bad_date))
-    assert 'Initializing c3p0 pool..' in out_log
+    assert "Initializing c3p0 pool.." in out_log
     assert out_log.last_log_date is None
 
 
@@ -72,41 +78,41 @@ def test_server_xmlrpc_log_data():
     log = ServerXMLRPCLog(context_wrap(SERVER_XMLRPC_LOG_DATA))
 
     # Check the first log line for all fields
-    line = log.get('10.4.4.17: xmlrpc/registration.welcome_message')[0]
+    line = log.get("10.4.4.17: xmlrpc/registration.welcome_message")[0]
 
-    assert line['timestamp'] == '2016/04/11 05:52:01 -04:00'
+    assert line["timestamp"] == "2016/04/11 05:52:01 -04:00"
     d = datetime(2016, 0o4, 11, 0o5, 52, 0o1)
-    assert line['datetime'] == d
-    assert line['pid'] == '23630'
-    assert line['client_ip'] == '10.4.4.17'
-    assert line['module'] == 'xmlrpc'
-    assert line['function'] == 'registration.welcome_message'
-    assert line['client_id'] is None
-    assert line['args'] == "'lang: None'"
+    assert line["datetime"] == d
+    assert line["pid"] == "23630"
+    assert line["client_ip"] == "10.4.4.17"
+    assert line["module"] == "xmlrpc"
+    assert line["function"] == "registration.welcome_message"
+    assert line["client_id"] is None
+    assert line["args"] == "'lang: None'"
 
     # Check that get works
-    assert len(log.get('welcome_message')) == 2
+    assert len(log.get("welcome_message")) == 2
 
     # Test get_after
     assert len(list(log.get_after(datetime(2016, 7, 27, 0, 0, 0)))) == 1
 
     # Check that __contains__ works
-    assert 'welcome_message' in log
+    assert "welcome_message" in log
 
     # Check parsing of lines without argument lists
-    line = log.get('registration.register_osad_jid')[0]
-    assert line['args'] is None
+    line = log.get("registration.register_osad_jid")[0]
+    assert line["args"] is None
 
     # Check lines that include the client ID
-    line = log.get('__add_hw_profile_no_auth')[0]
-    assert line['client_id'] == '1000010125'
-    assert line['args'] == "'items: 6'"
+    line = log.get("__add_hw_profile_no_auth")[0]
+    assert line["client_id"] == "1000010125"
+    assert line["args"] == "'items: 6'"
 
     # Check that we can get IPv6 addresses correctly
-    line = log.get('checkins enabled')[0]
-    assert line['client_ip'] == '2620:10a:0:4::40'
-    assert line['client_id'] == '1000014812'
-    assert line['args'] == "2, 'checkins enabled'"
+    line = log.get("checkins enabled")[0]
+    assert line["client_ip"] == "2620:10a:0:4::40"
+    assert line["client_id"] == "1000014812"
+    assert line["args"] == "2, 'checkins enabled'"
     # Use this line for the last test later
 
     # Test last attribute
@@ -126,13 +132,13 @@ SERVER_XMLRPC_LOG_NO_DATE = """
 
 def test_server_xmlrpc_log_bad_date():
     log = ServerXMLRPCLog(context_wrap(SERVER_XMLRPC_LOG_BAD_DATE))
-    assert len(log.get('registration.welcome_message')) == 1
-    line = log.get('registration.welcome_message')[0]
-    assert line['timestamp'] == '2016/13/35 05:52:01 -04:00'
-    assert 'datetime' not in line
+    assert len(log.get("registration.welcome_message")) == 1
+    line = log.get("registration.welcome_message")[0]
+    assert line["timestamp"] == "2016/13/35 05:52:01 -04:00"
+    assert "datetime" not in line
     log = ServerXMLRPCLog(context_wrap(SERVER_XMLRPC_LOG_NO_DATE))
-    assert len(log.get('registration.welcome_message')) == 0
-    assert log.last == {'raw_message': '/usr/bin/httpd: command or file not found'}
+    assert len(log.get("registration.welcome_message")) == 0
+    assert log.last == {"raw_message": "/usr/bin/httpd: command or file not found"}
 
 
 RHN_SERVER_SATELLITE_LOG = """
@@ -152,5 +158,5 @@ RHN_SERVER_SATELLITE_LOG = """
 
 def test_rhn_server_satellite_get():
     log = SatelliteServerLog(context_wrap(RHN_SERVER_SATELLITE_LOG))
-    assert len(log.get('Downloading')) == 3
+    assert len(log.get("Downloading")) == 3
     assert len(list(log.get_after(datetime(2016, 11, 19, 1, 13, 44)))) == 3

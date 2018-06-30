@@ -15,16 +15,16 @@ from .. import parser, LegacyItemAccess, IniConfigFile, add_filter
 from insights.specs import Specs
 
 filter_list = [
-        '[',
-        'interval',
-        'oneshot',
-        'type',
-        'server',
-        'debug',
-        'log_',
-        'configs',
-        'owner',
-        'env',
+    "[",
+    "interval",
+    "oneshot",
+    "type",
+    "server",
+    "debug",
+    "log_",
+    "configs",
+    "owner",
+    "env",
 ]
 add_filter(Specs.virt_who_conf, filter_list)
 
@@ -81,4 +81,5 @@ class VirtWhoConf(LegacyItemAccess, IniConfigFile):
         >>> vwho_conf.items('defaults')
         {'owner': 'Satellite', 'env': 'Satellite'}
     """
+
     pass

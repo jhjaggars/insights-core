@@ -140,6 +140,7 @@ class QemuXML(XMLParser):
         >>> memnode[1].get('mode') == 'strict'
         True
     """
+
     def parse_dom(self):
         if self.dom is None:
             return
@@ -155,4 +156,4 @@ class QemuXML(XMLParser):
 
     @property
     def vm_name(self):
-        return self.data.get('name', None)
+        return self.data.get("name", None)

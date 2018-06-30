@@ -21,7 +21,8 @@ class FilePermissions(object):
         Advanced File Permissions - SUID, SGID and Sticky Bit - are not yet correctly parsed.
     """
 
-    _PERMISSIONS_PATTERN = re.compile('''
+    _PERMISSIONS_PATTERN = re.compile(
+        """
         ^
         .([-rwxsS]{3})([-rwxsS]{3})([-rwxsS]{3})   # -rwxrwxrwx
         # -rw-------. 1 root root 4308 Apr 22 15:57 /etc/ssh/sshd_config
@@ -64,7 +65,9 @@ class FilePermissions(object):
         #                                           ^^^^^^^^^^^^^^^^^^^^^^
 
         $
-        ''', re.VERBOSE)
+        """,
+        re.VERBOSE,
+    )
 
     def __init__(self, line):
         """
@@ -79,8 +82,14 @@ class FilePermissions(object):
         self.line = line
         r = self._PERMISSIONS_PATTERN.search(self.line)
         if r:
-            (self.perms_owner, self.perms_group, self.perms_other,
-             self.owner, self.group, self.path) = r.groups()
+            (
+                self.perms_owner,
+                self.perms_group,
+                self.perms_other,
+                self.owner,
+                self.group,
+                self.path,
+            ) = r.groups()
         else:
             raise ValueError('Invalid `ls -l` line "{}"'.format(self.line))
 
@@ -94,7 +103,7 @@ class FilePermissions(object):
         the ``perms`` string up into owner, group
         """
         # Check that we have at least as much data as the __init__ requires
-        for k in ['perms', 'owner', 'group', 'name', 'dir']:
+        for k in ["perms", "owner", "group", "name", "dir"]:
             if k not in dirent:
                 raise ValueError("Need required key '{k}'".format(k=k))
         # Copy all values across
@@ -130,7 +139,7 @@ class FilePermissions(object):
         Returns:
             bool: True if owner can read the file.
         """
-        return 'r' in self.perms_owner
+        return "r" in self.perms_owner
 
     def group_can_read(self):
         """
@@ -139,7 +148,7 @@ class FilePermissions(object):
         Returns:
             bool: True if group can read the file.
         """
-        return 'r' in self.perms_group
+        return "r" in self.perms_group
 
     def others_can_read(self):
         """
@@ -149,7 +158,7 @@ class FilePermissions(object):
         Returns:
             bool: True if 'others' can read the file.
         """
-        return 'r' in self.perms_other
+        return "r" in self.perms_other
 
     def owner_can_only_read(self):
         """
@@ -159,7 +168,7 @@ class FilePermissions(object):
         Returns:
             bool: True if owner can only read the file.
         """
-        return 'r--' == self.perms_owner
+        return "r--" == self.perms_owner
 
     def group_can_only_read(self):
         """
@@ -169,7 +178,7 @@ class FilePermissions(object):
         Returns:
             bool: True if group can only read the file.
         """
-        return 'r--' == self.perms_group
+        return "r--" == self.perms_group
 
     def others_can_only_read(self):
         """
@@ -180,7 +189,7 @@ class FilePermissions(object):
         Returns:
             bool: True if 'others' can only read the file.
         """
-        return 'r--' == self.perms_other
+        return "r--" == self.perms_other
 
     def owner_can_write(self):
         """
@@ -189,7 +198,7 @@ class FilePermissions(object):
         Returns:
             bool: True if owner can write the file.
         """
-        return 'w' in self.perms_owner
+        return "w" in self.perms_owner
 
     def group_can_write(self):
         """
@@ -198,7 +207,7 @@ class FilePermissions(object):
         Returns:
             bool: True if group can write the file.
         """
-        return 'w' in self.perms_group
+        return "w" in self.perms_group
 
     def others_can_write(self):
         """
@@ -208,7 +217,7 @@ class FilePermissions(object):
         Returns:
             bool: True if 'others' can write the file.
         """
-        return 'w' in self.perms_other
+        return "w" in self.perms_other
 
     def only_root_can_read(self, root_group_can_read=True):
         """
@@ -279,11 +288,13 @@ class FilePermissions(object):
             the file.
         """
 
-        requirements = True  # The final answer is progressively assembled in this variable.
-        requirements &= self.owner == 'root'
+        requirements = (
+            True
+        )  # The final answer is progressively assembled in this variable.
+        requirements &= self.owner == "root"
         requirements &= not self.others_can_read()
         if root_group_can_read:
-            if self.group != 'root':
+            if self.group != "root":
                 # if group is not root, group must not be able to read
                 requirements &= not self.group_can_read()
         else:  # root_group_can_read == False
@@ -358,11 +369,13 @@ class FilePermissions(object):
             the file.
         """
 
-        requirements = True  # The final answer is progressively assembled in this variable.
-        requirements &= self.owner == 'root'
+        requirements = (
+            True
+        )  # The final answer is progressively assembled in this variable.
+        requirements &= self.owner == "root"
         requirements &= not self.others_can_write()
         if root_group_can_write:
-            if self.group != 'root':
+            if self.group != "root":
                 # if group is not root, group must not be able to write
                 requirements &= not self.group_can_write()
         else:  # root_group_can_write == False
@@ -377,12 +390,14 @@ class FilePermissions(object):
         Returns:
             bool: True if all permissions are zero ('---------')
         """
-        _PERM_NOTHING = '---'
-        return all((
-            self.perms_owner == _PERM_NOTHING,
-            self.perms_group == _PERM_NOTHING,
-            self.perms_other == _PERM_NOTHING,
-        ))
+        _PERM_NOTHING = "---"
+        return all(
+            (
+                self.perms_owner == _PERM_NOTHING,
+                self.perms_group == _PERM_NOTHING,
+                self.perms_other == _PERM_NOTHING,
+            )
+        )
 
     def __repr__(self):
-        return 'FilePermissions(' + self.path + ')'
+        return "FilePermissions(" + self.path + ")"

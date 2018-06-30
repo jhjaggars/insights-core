@@ -3,7 +3,7 @@ from insights.tests import context_wrap
 
 from datetime import date
 
-DMIDECODE = '''
+DMIDECODE = """
 # dmidecode 2.11
 SMBIOS 2.7 present.
 188 structures occupying 5463 bytes.
@@ -107,9 +107,9 @@ Processor Information
 
 Handle 0x0037, DMI type 127, 4 bytes.
 End Of Table
-'''
+"""
 
-DMIDECODE_V = '''
+DMIDECODE_V = """
 # dmidecode 2.12
 SMBIOS 2.4 present.
 364 structures occupying 16870 bytes.
@@ -158,9 +158,9 @@ System Information
 \tWake-up Type: Power Switch
 \tSKU Number: Not Specified
 \tFamily: Not Specified
-'''
+"""
 
-DMIDECODE_AWS = '''
+DMIDECODE_AWS = """
 # dmidecode 2.12-dmifs
 SMBIOS 2.4 present.
 11 structures occupying 310 bytes.
@@ -203,9 +203,9 @@ Chassis Information
 \tPower Supply State: Safe
 \tThermal State: Safe
 \tSecurity Status: Unknown
-'''
+"""
 
-DMIDECODE_KVM = '''
+DMIDECODE_KVM = """
 # dmidecode 3.0
 Scanning /dev/mem for entry point.
 SMBIOS 2.8 present.
@@ -252,11 +252,11 @@ Chassis Information
 \tHeight: Unspecified
 \tNumber Of Power Cords: Unspecified
 \tContained Elements: 0
-'''
+"""
 
 DMIDECODE_FAIL = "# dmidecode 2.11\n# No SMBIOS nor DMI entry point found, sorry.\n"
 
-DMIDECODE_DMI = '''
+DMIDECODE_DMI = """
 # dmidecode 2.2
 SMBIOS 2.4 present.
 104 structures occupying 3162 bytes.
@@ -300,7 +300,7 @@ Handle 0x0100
 \t\tSerial Number: 3H6CMK2537
 \t\tUUID: 58585858-5858-3348-3643-4D4B32353337
 \t\tWake-up Type: Power Switch
-'''
+"""
 
 # Several oddities in processing that should be picked up:
 # * Things besides 'Characteristics' that are double-indented
@@ -352,9 +352,9 @@ OEM-specific Type
 
 
 def test_get_dmidecode():
-    '''
+    """
     Test for three kinds of output format of dmidecode parser
-    '''
+    """
     context = context_wrap(DMIDECODE)
     ret = DMIDecode(context)
 
@@ -366,31 +366,43 @@ def test_get_dmidecode():
     assert ret.get("bios_information")[0].get("runtime_size") == "64 kB"
     assert ret.get("bios_information")[0].get("rom_size") == "8192 kB"
 
-    tmp = ["PCI is supported", "PNP is supported", "BIOS is upgradeable",
-           "BIOS shadowing is allowed", "ESCD support is available",
-           "Boot from CD is supported", "Selectable boot is supported",
-           "EDD is supported",
-           '5.25"/360 kB floppy services are supported (int 13h)',
-           '5.25"/1.2 MB floppy services are supported (int 13h)',
-           '3.5"/720 kB floppy services are supported (int 13h)',
-           "Print screen service is supported (int 5h)",
-           "j042 keyboard services are supported (int 9h)",
-           "Serial services are supported (int 14h)",
-           "Printer services are supported (int 17h)",
-           "CGA/mono video services are supported (int 10h)",
-           "ACPI is supported", "USB legacy is supported",
-           "BIOS boot specification is supported",
-           "Function key-initiated network boot is supported",
-           "Targeted content distribution is supported"]
+    tmp = [
+        "PCI is supported",
+        "PNP is supported",
+        "BIOS is upgradeable",
+        "BIOS shadowing is allowed",
+        "ESCD support is available",
+        "Boot from CD is supported",
+        "Selectable boot is supported",
+        "EDD is supported",
+        '5.25"/360 kB floppy services are supported (int 13h)',
+        '5.25"/1.2 MB floppy services are supported (int 13h)',
+        '3.5"/720 kB floppy services are supported (int 13h)',
+        "Print screen service is supported (int 5h)",
+        "j042 keyboard services are supported (int 9h)",
+        "Serial services are supported (int 14h)",
+        "Printer services are supported (int 17h)",
+        "CGA/mono video services are supported (int 10h)",
+        "ACPI is supported",
+        "USB legacy is supported",
+        "BIOS boot specification is supported",
+        "Function key-initiated network boot is supported",
+        "Targeted content distribution is supported",
+    ]
     assert ret.get("bios_information")[0].get("characteristics") == tmp
     assert ret.get("bios_information")[0].get("firmware_revision") == "1.22"
 
     assert len(ret.get("system_information")) == 1
     assert ret.get("system_information")[0].get("manufacturer") == "HP"
-    assert ret.get("system_information")[0].get("product_name") == "ProLiant DL380p Gen8"
+    assert (
+        ret.get("system_information")[0].get("product_name") == "ProLiant DL380p Gen8"
+    )
     assert ret.get("system_information")[0].get("version") == "Not Specified"
     assert ret.get("system_information")[0].get("serial_number") == "2M23360006"
-    assert ret.get("system_information")[0].get("uuid") == "34373936-3439-4D32-3233-333630303036"
+    assert (
+        ret.get("system_information")[0].get("uuid")
+        == "34373936-3439-4D32-3233-333630303036"
+    )
     assert ret.get("system_information")[0].get("wake-up_type") == "Power Switch"
     assert ret.get("system_information")[0].get("sku_number") == "697494-S01"
     assert ret.get("system_information")[0].get("family") == "ProLiant"
@@ -412,7 +424,7 @@ def test_get_dmidecode():
     assert ret.get("chassis_information")[0].get("manufacturer") == "hp"
     assert ret.get("chassis_information")[0].get("contained_elements") == "0"
 
-    assert len(ret.get('processor_information')) == 2
+    assert len(ret.get("processor_information")) == 2
     assert ret.get("processor_information")[0].get("socket_designation") == "CPU 1"
     assert ret.get("processor_information")[0].get("type") == "Central Processor"
 
@@ -420,20 +432,20 @@ def test_get_dmidecode():
     assert ret.get("processor_information")[1].get("type") == "Central Processor"
 
     # Check for 'nonsense' keys
-    assert 'table_at_0xbffcb000.' not in ret
+    assert "table_at_0xbffcb000." not in ret
 
     # Test property accessors
-    assert ret.system_info == ret['system_information'][0]
-    assert ret.bios == ret['bios_information'][0]
-    assert ret.bios_vendor == 'HP'
+    assert ret.system_info == ret["system_information"][0]
+    assert ret.bios == ret["bios_information"][0]
+    assert ret.bios_vendor == "HP"
     assert ret.bios_date == date(2013, 3, 1)
-    assert ret.processor_manufacturer == 'Bochs'
+    assert ret.processor_manufacturer == "Bochs"
 
 
 def test_get_dmidecode_fail():
-    '''
+    """
     Test for faied raw data
-    '''
+    """
     context = context_wrap(DMIDECODE_FAIL)
     ret = DMIDecode(context)
 
@@ -471,11 +483,11 @@ def test_get_dmidecode_fail():
 
 
 def test_get_dmidecode_dmi():
-    '''
+    """
     Test for three kinds of output format of dmidecode parser
     with special input format:
     "\n\tDMI" in the input
-    '''
+    """
     context = context_wrap(DMIDECODE_DMI)
     ret = DMIDecode(context)
 
@@ -486,65 +498,73 @@ def test_get_dmidecode_dmi():
     assert ret.get("bios_information")[0].get("runtime_size") == "64 kB"
     assert ret.get("bios_information")[0].get("rom_size") == "4096 kB"
 
-    tmp = ["PCI is supported", "PNP is supported", "BIOS is upgradeable",
-           "BIOS shadowing is allowed", "ESCD support is available",
-           "Boot from CD is supported", "Selectable boot is supported",
-           "EDD is supported",
-           '5.25"/360 KB floppy services are supported (int 13h)',
-           '5.25"/1.2 MB floppy services are supported (int 13h)',
-           '3.5"/720 KB floppy services are supported (int 13h)',
-           "Print screen service is supported (int 5h)",
-           "8042 keyboard services are supported (int 9h)",
-           "Serial services are supported (int 14h)",
-           "Printer services are supported (int 17h)",
-           "CGA/mono video services are supported (int 10h)",
-           "ACPI is supported", "USB legacy is supported",
-           "BIOS boot specification is supported",
-           "Function key-initiated network boot is supported``"]
+    tmp = [
+        "PCI is supported",
+        "PNP is supported",
+        "BIOS is upgradeable",
+        "BIOS shadowing is allowed",
+        "ESCD support is available",
+        "Boot from CD is supported",
+        "Selectable boot is supported",
+        "EDD is supported",
+        '5.25"/360 KB floppy services are supported (int 13h)',
+        '5.25"/1.2 MB floppy services are supported (int 13h)',
+        '3.5"/720 KB floppy services are supported (int 13h)',
+        "Print screen service is supported (int 5h)",
+        "8042 keyboard services are supported (int 9h)",
+        "Serial services are supported (int 14h)",
+        "Printer services are supported (int 17h)",
+        "CGA/mono video services are supported (int 10h)",
+        "ACPI is supported",
+        "USB legacy is supported",
+        "BIOS boot specification is supported",
+        "Function key-initiated network boot is supported``",
+    ]
     assert ret.get("bios_information")[0].get("characteristics") == tmp
 
     assert ret.get("system_information")[0].get("manufacturer") == "HP"
     assert ret.get("system_information")[0].get("product_name") == "ProLiant BL685c G1"
     assert ret.get("system_information")[0].get("version") == "Not Specified"
     assert ret.get("system_information")[0].get("serial_number") == "3H6CMK2537"
-    assert ret.get("system_information")[0].get("uuid") == "58585858-5858-3348-3643-4D4B32353337"
+    assert (
+        ret.get("system_information")[0].get("uuid")
+        == "58585858-5858-3348-3643-4D4B32353337"
+    )
     assert ret.get("system_information")[0].get("wake-up_type") == "Power Switch"
 
 
 def test_dmidecode_oddities():
     dmi = DMIDecode(context_wrap(DMIDECODE_ODDITIES))
 
-    assert len(dmi['oem-specific_type']) == 3
-    assert dmi['oem-specific_type'][0] == {
-        'header_and_data': '81 08 09 00 01 01 02 01',
-        'strings': ['Intel_ASF', 'Intel_ASF_001'],
+    assert len(dmi["oem-specific_type"]) == 3
+    assert dmi["oem-specific_type"][0] == {
+        "header_and_data": "81 08 09 00 01 01 02 01",
+        "strings": ["Intel_ASF", "Intel_ASF_001"],
     }
-    assert dmi['oem-specific_type'][1] == {
-        'header_and_data': '86 0D 0A 00 28 06 14 20 00 00 00 00 00',
+    assert dmi["oem-specific_type"][1] == {
+        "header_and_data": "86 0D 0A 00 28 06 14 20 00 00 00 00 00"
     }
-    assert dmi['oem-specific_type'][2] == {
-        'header_and_data': '01 02 03 04 05 06 07 08',
+    assert dmi["oem-specific_type"][2] == {"header_and_data": "01 02 03 04 05 06 07 08"}
+
+    assert len(dmi["port_connector_information"]) == 2
+    assert dmi["port_connector_information"][0] == {
+        "internal_reference_designator": "Not Available",
+        "internal_connector_type": "None",
+        "external_reference_designator": "USB 1",
+        "external_connector_type": "Access Bus (USB)",
+        "port_type": "USB",
+    }
+    assert dmi["port_connector_information"][0] == {
+        "internal_reference_designator": "Not Available",
+        "internal_connector_type": "None",
+        "external_reference_designator": "USB 1",
+        "external_connector_type": "Access Bus (USB)",
+        "port_type": "USB",
     }
 
-    assert len(dmi['port_connector_information']) == 2
-    assert dmi['port_connector_information'][0] == {
-        'internal_reference_designator': 'Not Available',
-        'internal_connector_type': 'None',
-        'external_reference_designator': 'USB 1',
-        'external_connector_type': 'Access Bus (USB)',
-        'port_type': 'USB',
-    }
-    assert dmi['port_connector_information'][0] == {
-        'internal_reference_designator': 'Not Available',
-        'internal_connector_type': 'None',
-        'external_reference_designator': 'USB 1',
-        'external_connector_type': 'Access Bus (USB)',
-        'port_type': 'USB',
-    }
-
-    assert len(dmi['bios_language_information']) == 1
-    assert dmi['bios_language_information'][0] == {
-        'language_description_format': 'Abbreviated',
-        'installable_languages': ['1', 'en-US'],
-        'currently_installed_language': 'en-US'
+    assert len(dmi["bios_language_information"]) == 1
+    assert dmi["bios_language_information"][0] == {
+        "language_description_format": "Abbreviated",
+        "installable_languages": ["1", "en-US"],
+        "currently_installed_language": "en-US",
     }

@@ -298,6 +298,7 @@ class SearchResult(Node):
     Dictionary operators target grandchildren instead of children
     so that searches can be chained to reach into the tree.
     """
+
     def __contains__(self, item):
         return any(c.name == item for c in self.grandchildren)
 
@@ -311,6 +312,7 @@ class Root(Node):
     """
     Placeholder Node for top level documents. It has no name or attrs.
     """
+
     pass
 
 
@@ -318,6 +320,7 @@ class Section(Node):
     """
     Node for sections such as the XML-like stanzas in httpd configurations.
     """
+
     def __init__(self, **kwargs):
         super(Section, self).__init__(**kwargs)
         for c in self.children:
@@ -334,6 +337,7 @@ class Section(Node):
 
 class Directive(Node):
     """ One liners. A name followed by one or more values. """
+
     @property
     def section(self):
         if self.parent:
@@ -347,6 +351,7 @@ class Directive(Node):
 
 def from_dict(dct):
     """ Convert a dictionary into a configtree.  """
+
     def inner(d):
         results = []
         for name, v in d.items():
@@ -366,6 +371,7 @@ def from_dict(dct):
             else:
                 results.append(Directive(name, attrs=[v]))
         return results
+
     return Root(children=inner(dct))
 
 
@@ -391,7 +397,9 @@ def pretty_format(doc, indent=4):
                 inner(c, prepend)
         elif isinstance(d, Section):
             results.append("")
-            header = d.name if not d.attrs else " ".join([d.name, d.svalue(conv=to_str)])
+            header = (
+                d.name if not d.attrs else " ".join([d.name, d.svalue(conv=to_str)])
+            )
             results.append(prepend + "[" + header + "]")
             prep = prepend + (" " * indent)
             for c in d.children:
@@ -399,6 +407,7 @@ def pretty_format(doc, indent=4):
             results.append("")
         else:
             results.append(prepend + d.name + ": " + d.svalue(conv=to_str))
+
     inner(doc, "")
     return results
 
@@ -407,6 +416,7 @@ class PushBack(object):
     """
     Wraps an iterable with push back capability. Tracks position in the stream.
     """
+
     def __init__(self, stream):
         self.stream = iter(stream)
         self.buffer = []
@@ -440,6 +450,7 @@ class LineGetter(PushBack):
     """
     A push back wrapper for lines. Automatically skips comments and spaces.
     """
+
     def __init__(self, it, comment_marker="#", strip=True):
         super(LineGetter, self).__init__(it)
         self.comment_marker = comment_marker
@@ -495,7 +506,7 @@ BOOLS = {
     "true": True,
     "no": False,
     "off": False,
-    "false": False
+    "false": False,
 }
 
 
@@ -516,7 +527,7 @@ def parse_attrs(attr_string):
     attrs = []
     while True:
         try:
-            while(pb.peek().isspace()):
+            while pb.peek().isspace():
                 next(pb)
 
             if pb.peek() in ('"', "'"):
@@ -550,6 +561,7 @@ class DocParser(object):
     Other line oriented configuration parsers may subclass this class to
     remove a bit of boilerplate.
     """
+
     def __init__(self, ctx):
         self.ctx = ctx
 
@@ -578,23 +590,27 @@ def __or(funcs, args):
 def _or(f, g):
     def inner(data):
         return f(data) or g(data)
+
     return inner
 
 
 def _and(f, g):
     def inner(data):
         return f(data) and g(data)
+
     return inner
 
 
 def _not(f):
     def inner(data):
         return not f(data)
+
     return inner
 
 
 class Bool(object):
     """ Allows boolean logic between predicates. """
+
     def __and__(self, other):
         return CompositeBool(_and(self, other))
 
@@ -607,6 +623,7 @@ class Bool(object):
 
 class CompositeBool(Bool):
     """ Combines two DSL predicates. """
+
     def __init__(self, pred):
         self.pred = pred
 
@@ -619,23 +636,25 @@ class CompositeBool(Bool):
 
 class UnaryBool(Bool):
     """ Lifts predicates into the DSL. """
+
     def __init__(self, pred):
         self.pred = pred
 
     def __call__(self, data):
-            if not isinstance(data, list):
-                data = [data]
-            for d in data:
-                try:
-                    if self.pred(d):
-                        return True
-                except:
-                    pass
-            return False
+        if not isinstance(data, list):
+            data = [data]
+        for d in data:
+            try:
+                if self.pred(d):
+                    return True
+            except:
+                pass
+        return False
 
 
 def BinaryBool(pred):
     """ Lifts predicates that take an argument into the DSL. """
+
     class Predicate(Bool):
         def __init__(self, value):
             self.value = value
@@ -650,6 +669,7 @@ def BinaryBool(pred):
                 except:
                     pass
             return False
+
     return Predicate
 
 
@@ -681,6 +701,7 @@ def __compose(g, f):
         for t in tmp:
             results.extend(g(t.children))
         return results
+
     return inner
 
 
@@ -694,6 +715,7 @@ def select(*queries, **kwargs):
     Builds a function that will execute the specified queries against a list of
     Nodes.
     """
+
     def make_query(*args):
         def simple_query(nodes):
             if len(args) == 0:
@@ -716,12 +738,14 @@ def select(*queries, **kwargs):
                     if name_pred(n.name):
                         results.append(n)
             return results
+
         if len(args) > 1:
             return __compose(make_query(*args[1:]), simple_query)
         return simple_query
 
     def deep_query(query, nodes):
         """ Slide the query down the branches. """
+
         def inner(children):
             results = []
             for c in children:
@@ -729,6 +753,7 @@ def select(*queries, **kwargs):
                     results.append(c)
                 results.extend(inner(c.children))
             return results
+
         return inner(nodes)
 
     def unique(roots):
@@ -760,4 +785,5 @@ def select(*queries, **kwargs):
         if one is None:
             return SearchResult(children=results)
         return results[one] if results else None
+
     return compiled_query

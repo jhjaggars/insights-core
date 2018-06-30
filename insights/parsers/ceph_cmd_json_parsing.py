@@ -75,6 +75,7 @@ class CephOsdDump(CommandParser, JSONParser):
     >>> result['pools'][0]['min_size']
     2
     """
+
     pass
 
 
@@ -120,6 +121,7 @@ class CephOsdDf(CommandParser, JSONParser):
     >>> result['nodes'][0]['pgs']
     945
     """
+
     pass
 
 
@@ -178,6 +180,7 @@ class CephS(CommandParser, JSONParser):
     >>> result['pgmap']['pgs_by_state'][0]['state_name']
     'active+clean'
     """
+
     pass
 
 
@@ -220,6 +223,7 @@ class CephDfDetail(CommandParser, JSONParser):
     >>> result['stats']['total_avail_bytes']
     16910123008
     """
+
     pass
 
 
@@ -248,6 +252,7 @@ class CephHealthDetail(CommandParser, JSONParser):
     >>> result["overall_status"]
     "HEALTH_OK"
     """
+
     pass
 
 
@@ -270,6 +275,7 @@ class CephECProfileGet(CommandParser, JSONParser):
     >>> result['k']
     "2"
     """
+
     pass
 
 
@@ -388,4 +394,5 @@ class CephOsdTree(CommandParser, JSONParser):
     >>> result['nodes'][0]['children']
     ['-5', '-4', '-3', '-2']
     """
+
     pass

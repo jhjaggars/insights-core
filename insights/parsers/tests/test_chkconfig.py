@@ -50,40 +50,54 @@ def test_chkconfig():
     chkconfig = ChkConfig(context)
     assert len(chkconfig.services) == 11
     assert len(chkconfig.parsed_lines) == 11
-    assert chkconfig.is_on('crond')
-    assert chkconfig.is_on('kdump')
-    assert chkconfig.is_on('telnet')
-    assert not chkconfig.is_on('restorecond')
-    assert not chkconfig.is_on('rlogin')
+    assert chkconfig.is_on("crond")
+    assert chkconfig.is_on("kdump")
+    assert chkconfig.is_on("telnet")
+    assert not chkconfig.is_on("restorecond")
+    assert not chkconfig.is_on("rlogin")
 
 
 def test_levels_on():
     chkconfig = ChkConfig(context_wrap(SERVICES))
-    assert chkconfig.levels_on('crond') == set(['2', '3', '4', '5'])
-    assert chkconfig.levels_on('telnet') == set(['2', '3', '4', '5'])
-    assert chkconfig.levels_on('rlogin') == set([])
+    assert chkconfig.levels_on("crond") == set(["2", "3", "4", "5"])
+    assert chkconfig.levels_on("telnet") == set(["2", "3", "4", "5"])
+    assert chkconfig.levels_on("rlogin") == set([])
     with pytest.raises(KeyError):
-        assert chkconfig.levels_on('bad_name')
+        assert chkconfig.levels_on("bad_name")
 
 
 def test_levels_off():
     chkconfig = ChkConfig(context_wrap(SERVICES))
-    assert chkconfig.levels_off('crond') == set(['0', '1', '6'])
-    assert chkconfig.levels_off('telnet') == set(['0', '1', '6'])
-    assert chkconfig.levels_off('rlogin') == set(['0', '1', '2', '3',
-                                                    '4', '5', '6'])
+    assert chkconfig.levels_off("crond") == set(["0", "1", "6"])
+    assert chkconfig.levels_off("telnet") == set(["0", "1", "6"])
+    assert chkconfig.levels_off("rlogin") == set(["0", "1", "2", "3", "4", "5", "6"])
     with pytest.raises(KeyError):
-        assert chkconfig.levels_off('bad_name')
+        assert chkconfig.levels_off("bad_name")
 
 
 def test_rhel_73():
     chkconfig = ChkConfig(context_wrap(RHEL_73_SERVICES))
-    assert sorted(chkconfig.level_states.keys()) == sorted([
-        'netconsole', 'network', 'rhnsd', 'chargen-dgram', 'chargen-stream',
-        'daytime-dgram', 'daytime-stream', 'discard-dgram', 'discard-stream',
-        'echo-dgram', 'echo-stream', 'rsync', 'tcpmux-server', 'time-dgram',
-        'time-stream',
-    ])
-    assert chkconfig.levels_off('netconsole') == set(['0', '1', '2', '3', '4', '5', '6'])
-    assert chkconfig.levels_on('network') == set(['2', '3', '4', '5'])
-    assert chkconfig.levels_on('rsync') == set(['0', '1', '2', '3', '4', '5', '6'])
+    assert sorted(chkconfig.level_states.keys()) == sorted(
+        [
+            "netconsole",
+            "network",
+            "rhnsd",
+            "chargen-dgram",
+            "chargen-stream",
+            "daytime-dgram",
+            "daytime-stream",
+            "discard-dgram",
+            "discard-stream",
+            "echo-dgram",
+            "echo-stream",
+            "rsync",
+            "tcpmux-server",
+            "time-dgram",
+            "time-stream",
+        ]
+    )
+    assert chkconfig.levels_off("netconsole") == set(
+        ["0", "1", "2", "3", "4", "5", "6"]
+    )
+    assert chkconfig.levels_on("network") == set(["2", "3", "4", "5"])
+    assert chkconfig.levels_on("rsync") == set(["0", "1", "2", "3", "4", "5", "6"])

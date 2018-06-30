@@ -61,7 +61,9 @@ from collections import namedtuple, defaultdict
 from insights.parsers import ParseException
 from insights.specs import Specs
 
-Record = namedtuple("Record", ['filesystem', 'total', 'used', 'available', 'capacity', 'mounted_on'])
+Record = namedtuple(
+    "Record", ["filesystem", "total", "used", "available", "capacity", "mounted_on"]
+)
 """namedtuple: Represents the information parsed from ``df`` command output."""
 
 
@@ -137,6 +139,7 @@ class DiskFree(CommandParser):
         mounts (dict): Dictionary with each entry being a ``Record`` object
             corresponding to the ``mounted_on`` key.
     """
+
     def __init__(self, context):
         super(DiskFree, self).__init__(context)
         filesystems = defaultdict(list)
@@ -218,6 +221,7 @@ class DiskFree_LI(DiskFree):
                 IUse%          capacity
                 Mounted on     mounted_on
     """
+
     pass
 
 
@@ -253,6 +257,7 @@ class DiskFree_ALP(DiskFree):
                 Capacity       capacity
                 Mounted on     mounted_on
     """
+
     pass
 
 
@@ -288,4 +293,5 @@ class DiskFree_AL(DiskFree):
                 Use%           capacity
                 Mounted on     mounted_on
     """
+
     pass

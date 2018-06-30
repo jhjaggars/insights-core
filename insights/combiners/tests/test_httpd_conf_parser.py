@@ -52,16 +52,16 @@ SSLCipherSuite ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM:+LOW
    MaxClients
 """.strip()
 
-HTTPD_CONF_SPLIT = '''
+HTTPD_CONF_SPLIT = """
 LogLevel warn
 IncludeOptional conf.d/*.conf
 EnableSendfile on
-'''.strip()
+""".strip()
 
-HTTPD_CONF_MORE = '''
+HTTPD_CONF_MORE = """
 UserDir disable
 UserDir enable bob
-'''.strip()
+""".strip()
 
 HTTPD_CONF_NEST_1 = """
 <VirtualHost 192.0.2.1>
@@ -121,7 +121,7 @@ HTTPD_CONF_NO_NAME_SEC = """
 </RequireAll>
 """.strip()
 
-HTTPD_CONF_DOC = '''
+HTTPD_CONF_DOC = """
 ServerRoot "/etc/httpd"
 LoadModule auth_basic_module modules/mod_auth_basic.so
 LoadModule auth_digest_module modules/mod_auth_digest.so
@@ -163,17 +163,35 @@ MaxSpareThreads     75
 ThreadsPerChild     25
 MaxRequestsPerChild  0
 </IfModule>
-'''.strip()
+""".strip()
 
 
 def test_get_httpd_conf_nest_1():
     context = context_wrap(HTTPD_CONF_NEST_1, path=HTTPD_CONF_PATH)
     result = _HttpdConf(context)
 
-    assert result["VirtualHost", "192.0.2.1"]["IfModule", "mod_php4.c"]['php_admin_flag'][last].value == "safe_mode Off"
-    assert result["VirtualHost", "192.0.2.1"]["IfModule", "mod_rewrite.c"]['RewriteEngine'][last].value is False
-    assert result["VirtualHost", "192.0.2.1"]["IfModule", "mod_rewrite.c"]['RewriteRule'][last].value == ".* /index.php"
-    assert result["VirtualHost", "192.0.2.1"]['ServerName'][last].value == "www.example.com"
+    assert (
+        result["VirtualHost", "192.0.2.1"]["IfModule", "mod_php4.c"]["php_admin_flag"][
+            last
+        ].value
+        == "safe_mode Off"
+    )
+    assert (
+        result["VirtualHost", "192.0.2.1"]["IfModule", "mod_rewrite.c"][
+            "RewriteEngine"
+        ][last].value
+        is False
+    )
+    assert (
+        result["VirtualHost", "192.0.2.1"]["IfModule", "mod_rewrite.c"]["RewriteRule"][
+            last
+        ].value
+        == ".* /index.php"
+    )
+    assert (
+        result["VirtualHost", "192.0.2.1"]["ServerName"][last].value
+        == "www.example.com"
+    )
 
 
 def test_get_httpd_conf_1():
@@ -181,30 +199,36 @@ def test_get_httpd_conf_1():
     result = _HttpdConf(context)
 
     assert "SSLCipherSuite" not in result
-    assert result['ServerRoot'][first].value == '/etc/httpd'
+    assert result["ServerRoot"][first].value == "/etc/httpd"
     assert result["NSSProtocol"][first].value == "SSLV3 TLSV1.0"
     assert result["IfModule", "prefork.c"]["MaxClients"][last].value == 256
     assert result["IfModule", "worker.c"]["MaxClients"][last].value == 300
     assert result.file_path == HTTPD_CONF_PATH
-    assert 'ThreadsPerChild' not in result['IfModule', 'prefork.c']
-    assert result['IfModule', 'prefork.c']['MaxRequestsPerChild'][last].value == 200
+    assert "ThreadsPerChild" not in result["IfModule", "prefork.c"]
+    assert result["IfModule", "prefork.c"]["MaxRequestsPerChild"][last].value == 200
     assert result.file_name == "httpd.conf"
-    assert result['LoadModule'][first].value == 'auth_basic_module modules/mod_auth_basic.so'
-    assert result['LoadModule'][last].value == 'auth_digest_module modules/mod_auth_digest.so'
-    assert result['Directory', '/']['Options'][last].value == 'FollowSymLinks'
+    assert (
+        result["LoadModule"][first].value
+        == "auth_basic_module modules/mod_auth_basic.so"
+    )
+    assert (
+        result["LoadModule"][last].value
+        == "auth_digest_module modules/mod_auth_digest.so"
+    )
+    assert result["Directory", "/"]["Options"][last].value == "FollowSymLinks"
 
 
 def test_get_httpd_conf_2():
     context = context_wrap(HTTPD_CONF_D_1, path=HTTPD_CONF_D_PATH)
     result = _HttpdConf(context)
 
-    except_SSLC = 'ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM:+LOW'
+    except_SSLC = "ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM:+LOW"
     assert result["SSLCipherSuite"][last].value == except_SSLC
     assert "NSSProtocol" not in result
     assert result.file_path == HTTPD_CONF_D_PATH
     assert result.file_name == "default.conf"
-    assert result["SSLProtocol"][last].value == '-ALL +SSLv3'
-    assert result["SSLProtocol"][last].line == 'SSLProtocol -ALL +SSLv3'
+    assert result["SSLProtocol"][last].value == "-ALL +SSLv3"
+    assert result["SSLProtocol"][last].line == "SSLProtocol -ALL +SSLv3"
 
 
 def test_multiple_values_for_directive():
@@ -213,9 +237,9 @@ def test_multiple_values_for_directive():
 
     assert result.file_path == HTTPD_CONF_PATH
     assert result.file_name == "httpd.conf"
-    assert len(result['UserDir']) == 2
-    assert result['UserDir'][0].value == 'disable'
-    assert result['UserDir'][1].value == 'enable bob'
+    assert len(result["UserDir"]) == 2
+    assert result["UserDir"][0].value == "disable"
+    assert result["UserDir"][1].value == "enable bob"
 
 
 def test_no_name_section():

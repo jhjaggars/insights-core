@@ -24,5 +24,5 @@ def is_running(context):
     on (i.e. ``/sys/kernel/mm/ksm/run`` is '1') or 'False' if not.
     """
     ksminfo = {}
-    ksminfo['running'] = (context.content[0].split()[0] == '1')
+    ksminfo["running"] = context.content[0].split()[0] == "1"
     return ksminfo

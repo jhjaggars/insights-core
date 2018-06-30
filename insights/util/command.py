@@ -6,7 +6,9 @@ def path_join(path1, path2):
     # os.path.join drops path1 entirely if path2 starts with a '/' which makes sense
     #    in some circomstances, but almost never in this program
     # so we use path_join instead
-    return os.path.join(path1, path2 if not path2.startswith('/') else path2.lstrip('/'))
+    return os.path.join(
+        path1, path2 if not path2.startswith("/") else path2.lstrip("/")
+    )
 
 
 def sh_join(split_command):
@@ -19,7 +21,7 @@ def sh_join(split_command):
     #   shlex.split will properly parse the shell command string.
     # Most of the real work happens in sh_quote
 
-    return reduce(lambda accum, arg: accum + ' ' + sh_quote(arg), split_command)
+    return reduce(lambda accum, arg: accum + " " + sh_quote(arg), split_command)
 
 
 def sh_quote(arg):
@@ -57,8 +59,8 @@ def sh_quote(arg):
     """
     double_count = arg.count('"')
     single_count = arg.count("'")
-    space_count = arg.count(' ') + arg.count('\t') + arg.count('\n')
-    backslash_count = arg.count('\\')
+    space_count = arg.count(" ") + arg.count("\t") + arg.count("\n")
+    backslash_count = arg.count("\\")
 
     # To try to make the output as pretty as we can we use the following:
     # if no characters need quoteing, return arg as is
@@ -87,11 +89,18 @@ def sh_single_quote(arg):
 def sh_double_quote(arg):
     # put double-quotes around, and escape any double-quotes and backslashes within arg
     #   this will always quote correctly
-    return '"' + arg.replace('\\', '\\\\').replace('"', '\\"') + '"'
+    return '"' + arg.replace("\\", "\\\\").replace('"', '\\"') + '"'
 
 
 def sh_backslash_quote(arg):
     # quote each special character individually by putting a backslash in front of it.
     #   this will always quote correctly, but is ugly unless only a few characters need quoteing
     # Note that when doing the replaceing, replace the backslashes first or this will fail!
-    return arg.replace('\\', '\\\\').replace('"', '\\"').replace("'", "\\'").replace(' ', '\\ ').replace('\t', '\\\t').replace('\n', '\\\n')
+    return (
+        arg.replace("\\", "\\\\")
+        .replace('"', '\\"')
+        .replace("'", "\\'")
+        .replace(" ", "\\ ")
+        .replace("\t", "\\\t")
+        .replace("\n", "\\\n")
+    )

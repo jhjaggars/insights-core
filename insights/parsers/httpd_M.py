@@ -66,7 +66,7 @@ class HttpdM(LegacyItemAccess, CommandParser):
         self.loaded_modules = []
         self.static_modules = []
         self.shared_modules = []
-        IGNORE_LINES = ('Loaded Modules:', 'Syntax')
+        IGNORE_LINES = ("Loaded Modules:", "Syntax")
         for line in content:
             if line.startswith((IGNORE_LINES)):
                 continue
@@ -77,10 +77,12 @@ class HttpdM(LegacyItemAccess, CommandParser):
 
         if self.data:
             self.loaded_modules = self.data.keys()
-            self.static_modules = [k for k, v in self.data.items() if v == 'static']
-            self.shared_modules = [k for k, v in self.data.items() if v == 'shared']
+            self.static_modules = [k for k, v in self.data.items() if v == "static"]
+            self.shared_modules = [k for k, v in self.data.items() if v == "shared"]
         else:
-            raise ParseException("Input content is not empty but there is no useful parsed data.")
+            raise ParseException(
+                "Input content is not empty but there is no useful parsed data."
+            )
 
     @property
     def httpd_command(self):
@@ -90,4 +92,4 @@ class HttpdM(LegacyItemAccess, CommandParser):
         """
         # Typical `file_path` of HttpdM looks like: '/usr/sbin/httpd_-M'
         # Remove the trailing '_-M'
-        return self.file_path[:-3] if self.file_path else ''
+        return self.file_path[:-3] if self.file_path else ""

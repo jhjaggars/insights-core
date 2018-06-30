@@ -7,6 +7,7 @@ from contextlib import contextmanager
 from insights.util import content_type, fs, subproc
 
 from insights.util.content_type import from_file
+
 logger = logging.getLogger(__name__)
 
 
@@ -39,7 +40,6 @@ class ZipExtractor(object):
 
 
 class TarExtractor(object):
-
     def __init__(self, timeout=None):
         self.timeout = timeout
 
@@ -48,7 +48,7 @@ class TarExtractor(object):
         "application/x-gzip": "-z",
         "application/gzip": "-z",
         "application/x-bzip2": "-j",
-        "application/x-tar": ""
+        "application/x-tar": "",
     }
 
     def _assert_type(self, _input, is_buffer=False):
@@ -59,8 +59,8 @@ class TarExtractor(object):
 
         inner_type = content_type.from_file_inner(_input)
 
-        if inner_type != 'application/x-tar':
-            raise InvalidArchive('No compressed tar archive')
+        if inner_type != "application/x-tar":
+            raise InvalidArchive("No compressed tar archive")
 
     def from_path(self, path, extract_dir=None):
         if os.path.isdir(path):
@@ -69,7 +69,11 @@ class TarExtractor(object):
             self._assert_type(path, False)
             tar_flag = self.TAR_FLAGS.get(self.content_type)
             self.tmp_dir = tempfile.mkdtemp(prefix="insights-", dir=extract_dir)
-            command = "tar %s -x --exclude=*/dev/null -f %s -C %s" % (tar_flag, path, self.tmp_dir)
+            command = "tar %s -x --exclude=*/dev/null -f %s -C %s" % (
+                tar_flag,
+                path,
+                self.tmp_dir,
+            )
             logging.debug("Extracting files in '%s'", self.tmp_dir)
             subproc.call(command, timeout=self.timeout)
         return self

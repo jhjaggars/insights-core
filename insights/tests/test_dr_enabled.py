@@ -24,6 +24,7 @@ def test_enabled_object():
 def test_disabled_string():
     dr.set_enabled("insights.core.context.HostContext", False)
     from insights.core.context import HostContext
+
     assert not dr.is_enabled(HostContext)
 
 

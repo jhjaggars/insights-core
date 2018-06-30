@@ -34,4 +34,5 @@ class IpaupgradeLog(LogFileOutput):
         >>> len(log.get_after(datetime(2017, 8, 7, 7, 37, 30)))
         1
     """
-    time_format = '%Y-%m-%dT%H:%M:%SZ'
+
+    time_format = "%Y-%m-%dT%H:%M:%SZ"

@@ -11,7 +11,6 @@ def get_simple_module_name(obj):
 
 
 class Evaluator(object):
-
     def __init__(self, broker=None):
         self.broker = broker
         self.rule_skips = []
@@ -56,7 +55,6 @@ class Evaluator(object):
 
 
 class SingleEvaluator(Evaluator):
-
     def append_metadata(self, r):
         for k, v in r.items():
             if k != "type":
@@ -67,15 +65,14 @@ class SingleEvaluator(Evaluator):
 
     def get_response(self):
         r = dict(self.metadata_keys)
-        r.update({
-            "system": {
-                "metadata": self.metadata,
-                "hostname": self.hostname
-            },
-            "reports": self.rule_results,
-            "fingerprints": self.fingerprint_results,
-            "skips": self.rule_skips,
-        })
+        r.update(
+            {
+                "system": {"metadata": self.metadata, "hostname": self.hostname},
+                "reports": self.rule_results,
+                "fingerprints": self.fingerprint_results,
+                "skips": self.rule_skips,
+            }
+        )
         return self.format_response(r)
 
     def handle_result(self, plugin, r):
@@ -83,15 +80,27 @@ class SingleEvaluator(Evaluator):
         if type_ == "metadata":
             self.append_metadata(r)
         elif type_ == "rule":
-            self.rule_results.append(self.format_result({
-                "rule_id": "{0}|{1}".format(get_simple_module_name(plugin), r["error_key"]),
-                "details": r
-            }))
+            self.rule_results.append(
+                self.format_result(
+                    {
+                        "rule_id": "{0}|{1}".format(
+                            get_simple_module_name(plugin), r["error_key"]
+                        ),
+                        "details": r,
+                    }
+                )
+            )
         elif type_ == "fingerprint":
-            self.fingerprint_results.append(self.format_result({
-                "fingerprint_id": "{0}|{1}".format(get_simple_module_name(plugin), r["fingerprint_key"]),
-                "details": r
-            }))
+            self.fingerprint_results.append(
+                self.format_result(
+                    {
+                        "fingerprint_id": "{0}|{1}".format(
+                            get_simple_module_name(plugin), r["fingerprint_key"]
+                        ),
+                        "details": r,
+                    }
+                )
+            )
         elif type_ == "skip":
             self.rule_skips.append(r)
         elif type_ == "metadata_key":
@@ -99,7 +108,6 @@ class SingleEvaluator(Evaluator):
 
 
 class InsightsEvaluator(SingleEvaluator):
-
     def __init__(self, broker=None, system_id=None):
         super(InsightsEvaluator, self).__init__(broker)
         self.system_id = system_id

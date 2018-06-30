@@ -50,6 +50,7 @@ class SwiftProxyServerConf(IniConfigFile):
         >>> proxy_server_conf.getint('DEFAULT', 'bind_port')
         8080
     """
+
     pass
 
 
@@ -99,4 +100,5 @@ class SwiftObjectExpirerConf(IniConfigFile):
         >>> proxy_server_conf.getint('object-expirer', 'report_interval')
         300
     """
+
     pass

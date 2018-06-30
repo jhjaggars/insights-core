@@ -21,22 +21,27 @@ Thread-13::INFO::2015-05-04 00:01:15,854::logUtils::47::dispatcher::(wrapper) Ru
 def test_vdsm_version_3_log():
     vdsm_log = VDSMLog(context_wrap(VDSM_VER_3_LOG))
     assert "VM Channels Listener" in vdsm_log
-    test_newline_handling = vdsm_log.get('SUCCESS')
+    test_newline_handling = vdsm_log.get("SUCCESS")
     assert len(test_newline_handling) == 3
-    assert test_newline_handling[0]['raw_message'] == "Thread-60::DEBUG::2015-05-04 00:01:07,490::blockSD::600::Storage.Misc.excCmd::(getReadDelay) SUCCESS: <err> = '1+0 records in\\n1+0 records out\\n4096 bytes (4.1 kB) copied, 0.000147196 s, 27.8 MB/s\\n'; <rc> = 0"
+    assert (
+        test_newline_handling[0]["raw_message"]
+        == "Thread-60::DEBUG::2015-05-04 00:01:07,490::blockSD::600::Storage.Misc.excCmd::(getReadDelay) SUCCESS: <err> = '1+0 records in\\n1+0 records out\\n4096 bytes (4.1 kB) copied, 0.000147196 s, 27.8 MB/s\\n'; <rc> = 0"
+    )
     parsed_newlines = list(vdsm_log.parse_lines(test_newline_handling))
     assert parsed_newlines[0] == {
-        'thread': "Thread-60",
-        'level': "DEBUG",
-        'asctime': datetime(2015, 5, 4, 0, 1, 7, 490000),
-        'module': "blockSD",
-        'line': "600",
-        'logname': "Storage.Misc.excCmd",
-        'message': "SUCCESS: <err> = '1+0 records in\\n1+0 records out\\n4096 bytes (4.1 kB) copied, 0.000147196 s, 27.8 MB/s\\n'; <rc> = 0"
+        "thread": "Thread-60",
+        "level": "DEBUG",
+        "asctime": datetime(2015, 5, 4, 0, 1, 7, 490000),
+        "module": "blockSD",
+        "line": "600",
+        "logname": "Storage.Misc.excCmd",
+        "message": "SUCCESS: <err> = '1+0 records in\\n1+0 records out\\n4096 bytes (4.1 kB) copied, 0.000147196 s, 27.8 MB/s\\n'; <rc> = 0",
     }
     # test get_after()
     assert len(list(vdsm_log.get_after(datetime(2015, 5, 4, 0, 1, 10)))) == 4
-    assert len(list(vdsm_log.get_after(datetime(2015, 5, 4, 0, 1, 10), 'dispatcher'))) == 2
+    assert (
+        len(list(vdsm_log.get_after(datetime(2015, 5, 4, 0, 1, 10), "dispatcher"))) == 2
+    )
 
 
 BAD_VDSM_VER_3_LOG = r"""
@@ -52,27 +57,25 @@ def test_bad_vdsm_log_parsing():
     parsed = list(vdsm_log.parse_lines(vdsm_log.lines))
     assert len(parsed) == 4
     assert parsed[0] == {
-        'thread': 'Thread-11',
-        'level': 'INFO',
-        'asctime': datetime(2015, 5, 3, 0, 1, 15, 853000),
+        "thread": "Thread-11",
+        "level": "INFO",
+        "asctime": datetime(2015, 5, 3, 0, 1, 15, 853000),
     }
     assert parsed[1] == {
-        'thread': 'Thread-12',
-        'level': 'INFO',
-        'asctime': datetime(2015, 5, 4, 0, 1, 15, 854000),
+        "thread": "Thread-12",
+        "level": "INFO",
+        "asctime": datetime(2015, 5, 4, 0, 1, 15, 854000),
     }
     assert parsed[2] == {
-        'thread': 'Thread-13',
-        'level': 'INFO',
-        'asctime': datetime(2015, 5, 4, 0, 1, 15, 854000),
-        'module': 'logUtils',
-        'line': '47',
-        'logname': 'dispatcher',
-        'message': "Run and protect: repoStats, Return response: {u'cf7dab23-6b5b-45f4-9e27-ab06fbc01759': {'code': 0, 'version': 0, 'acquired': True, 'delay': '0.000153278', 'lastCheck': '8.8', 'valid': True}, u'5a30691d-4fae-4023-ae96-50704f6b253c': {'code': 0, 'version': 3, 'acquired': True, 'delay': '0.000147196', 'lastCheck': '8.4', 'valid': True}, u'b0c17a6d-c5a5-4646-b4b5-edd85bc658db': {'code': 0, 'version': 3, 'acquired': True, 'delay': '0.000632011', 'lastCheck': '7.8', 'valid': True}, u'fe4d8910-ac67-4307-a3e7-be8a56d1c559': {'code': 0, 'version': 3, 'acquired': True, 'delay': '0.00020047', 'lastCheck': '7.9', 'valid': True}, u'e70cce65-0d02-4da4-8781-6aeeef5c86ff': {'code': 0, 'version': 3, 'acquired': True, 'delay': '0.000208457', 'lastCheck': '9.6', 'valid': True}, u'c3a10b1e-574e-4edd-ad00-a59cacc705b5': {'code': 0, 'version': 0, 'acquired': True, 'delay': '0.000201237', 'lastCheck': '8.8', 'valid': True}}"
+        "thread": "Thread-13",
+        "level": "INFO",
+        "asctime": datetime(2015, 5, 4, 0, 1, 15, 854000),
+        "module": "logUtils",
+        "line": "47",
+        "logname": "dispatcher",
+        "message": "Run and protect: repoStats, Return response: {u'cf7dab23-6b5b-45f4-9e27-ab06fbc01759': {'code': 0, 'version': 0, 'acquired': True, 'delay': '0.000153278', 'lastCheck': '8.8', 'valid': True}, u'5a30691d-4fae-4023-ae96-50704f6b253c': {'code': 0, 'version': 3, 'acquired': True, 'delay': '0.000147196', 'lastCheck': '8.4', 'valid': True}, u'b0c17a6d-c5a5-4646-b4b5-edd85bc658db': {'code': 0, 'version': 3, 'acquired': True, 'delay': '0.000632011', 'lastCheck': '7.8', 'valid': True}, u'fe4d8910-ac67-4307-a3e7-be8a56d1c559': {'code': 0, 'version': 3, 'acquired': True, 'delay': '0.00020047', 'lastCheck': '7.9', 'valid': True}, u'e70cce65-0d02-4da4-8781-6aeeef5c86ff': {'code': 0, 'version': 3, 'acquired': True, 'delay': '0.000208457', 'lastCheck': '9.6', 'valid': True}, u'c3a10b1e-574e-4edd-ad00-a59cacc705b5': {'code': 0, 'version': 0, 'acquired': True, 'delay': '0.000201237', 'lastCheck': '8.8', 'valid': True}}",
     }
-    assert parsed[3] == {
-        'thread': 'FATAL ERROR'
-    }
+    assert parsed[3] == {"thread": "FATAL ERROR"}
 
 
 VDSM_VER_4_LOG_1 = r"""
@@ -160,125 +163,130 @@ def test_vdsm_version_4_log():
     # Check lines with level 'ERROR'.
     # (psachin): This will NOT parse Python Traceback
     vdsm_log = VDSMLog(context_wrap(VDSM_VER_4_LOG_1))
-    assert 'libvirtError' in vdsm_log
-    lines_with_error = vdsm_log.get('The vm start process failed')
+    assert "libvirtError" in vdsm_log
+    lines_with_error = vdsm_log.get("The vm start process failed")
     parsed = list(vdsm_log.parse_lines(lines_with_error))
     assert parsed[0] == {
-        'thread': 'vm/27f1a8d4',
-        'level': 'ERROR',
-        'logname': 'virt.vm',
-        'module': 'vm',
-        'asctime': datetime(2017, 4, 18, 13, 56, 28, 96000),
-        'lineno': '617',
-        'message': "(vmId='27f1a8d4-1f81-49e6-bd83-4ecb0a462b54') The vm start process failed"  # noqa
+        "thread": "vm/27f1a8d4",
+        "level": "ERROR",
+        "logname": "virt.vm",
+        "module": "vm",
+        "asctime": datetime(2017, 4, 18, 13, 56, 28, 96000),
+        "lineno": "617",
+        "message": "(vmId='27f1a8d4-1f81-49e6-bd83-4ecb0a462b54') The vm start process failed",  # noqa
     }
 
     # Looks for traceback
-    assert 'Traceback' in vdsm_log
+    assert "Traceback" in vdsm_log
 
     # This will not work(== 0) as get_after() don't work for milliseconds
-    after_error_logs = vdsm_log.get_after(parsed[0]['asctime'], 'The vm start process failed')
+    after_error_logs = vdsm_log.get_after(
+        parsed[0]["asctime"], "The vm start process failed"
+    )
     assert len(list(after_error_logs)) == 0
 
     # Try to see if the INFO logs with same thread has messages with content '..PCI slot' and 'Stopping connection'
-    info_lines = list(vdsm_log.parse_lines(vdsm_log.get(parsed[0]['thread'])))
+    info_lines = list(vdsm_log.parse_lines(vdsm_log.get(parsed[0]["thread"])))
     assert len(info_lines) == 3
     for line in info_lines:
-        if 'Attempted double use of PCI slot' in line['message'] and line['level'] == 'INFO':
-            assert line['logname'] == 'virt.vm'
-        if 'Stopping connection' in line['message'] and line['level'] == 'INFO':
-            assert line['module'] == 'guestagent'
+        if (
+            "Attempted double use of PCI slot" in line["message"]
+            and line["level"] == "INFO"
+        ):
+            assert line["logname"] == "virt.vm"
+        if "Stopping connection" in line["message"] and line["level"] == "INFO":
+            assert line["module"] == "guestagent"
 
     # Another logs with line having 'ERROR' but with different
     # thread_name & datetime,
     vdsm_log = VDSMLog(context_wrap(VDSM_VER_4_LOG_2))
-    assert 'libvirtError' in vdsm_log
-    lines_with_error = vdsm_log.get('ERROR')
+    assert "libvirtError" in vdsm_log
+    lines_with_error = vdsm_log.get("ERROR")
     parsed = list(vdsm_log.parse_lines(lines_with_error))
     assert parsed[0] == {
-        'thread': 'vm/1b8dc1a2',
-        'level': 'ERROR',
-        'logname': 'virt.vm',
-        'module': 'vm',
-        'asctime': datetime(2017, 5, 22, 11, 50, 45, 363000),
-        'lineno': '617',
-        'message': "(vmId='1b8dc1a2-acd3-4a57-9a2b-23f12ae52e38') The vm start process failed"  # noqa
+        "thread": "vm/1b8dc1a2",
+        "level": "ERROR",
+        "logname": "virt.vm",
+        "module": "vm",
+        "asctime": datetime(2017, 5, 22, 11, 50, 45, 363000),
+        "lineno": "617",
+        "message": "(vmId='1b8dc1a2-acd3-4a57-9a2b-23f12ae52e38') The vm start process failed",  # noqa
     }
 
     # Parse line with level 'WARN'
-    assert 'WARN' in vdsm_log
-    lines_with_warn = vdsm_log.get('WARN')
+    assert "WARN" in vdsm_log
+    lines_with_warn = vdsm_log.get("WARN")
     parsed = list(vdsm_log.parse_lines(lines_with_warn))
     assert parsed[0] == {
-        'asctime': datetime(2017, 5, 22, 11, 50, 46, 80000),
-        'level': 'WARN',
-        'lineno': '352',
-        'message': "(vmId='1b8dc1a2-acd3-4a57-9a2b-23f12ae52e38') trying to set state to Powering down when already Down",  # noqa
-        'module': 'vm',
-        'logname': 'virt.vm',
-        'thread': 'jsonrpc/1'
+        "asctime": datetime(2017, 5, 22, 11, 50, 46, 80000),
+        "level": "WARN",
+        "lineno": "352",
+        "message": "(vmId='1b8dc1a2-acd3-4a57-9a2b-23f12ae52e38') trying to set state to Powering down when already Down",  # noqa
+        "module": "vm",
+        "logname": "virt.vm",
+        "thread": "jsonrpc/1",
     }
 
     # Logs with lines having level 'INFO'
     vdsm_log = VDSMLog(context_wrap(VDSM_VER_4_LOG_3))
-    lines_with_info = vdsm_log.get('INFO')
+    lines_with_info = vdsm_log.get("INFO")
     parsed = list(vdsm_log.parse_lines(lines_with_info))
     assert len(parsed) == 16
     assert parsed[15] == {
-        'asctime': datetime(2017, 4, 18, 13, 56, 38, 427000),
-        'level': 'INFO',
-        'lineno': '732',
-        'message': 'Resource namespace 01_img_0c78b4d6-ba00-4d3e-9f9f-65c7d5899d71 already registered',  # noqa
-        'module': 'sd',
-        'logname': 'storage.StorageDomain',
-        'thread': 'monitor/0c78b4d',
+        "asctime": datetime(2017, 4, 18, 13, 56, 38, 427000),
+        "level": "INFO",
+        "lineno": "732",
+        "message": "Resource namespace 01_img_0c78b4d6-ba00-4d3e-9f9f-65c7d5899d71 already registered",  # noqa
+        "module": "sd",
+        "logname": "storage.StorageDomain",
+        "thread": "monitor/0c78b4d",
     }
 
-    lines_with_spm_st = vdsm_log.get('spm_st')
+    lines_with_spm_st = vdsm_log.get("spm_st")
     parsed = list(vdsm_log.parse_lines(lines_with_spm_st))
     assert parsed[0] == {
-        'asctime': datetime(2017, 4, 18, 13, 56, 38, 374000),
-        'level': 'INFO',
-        'lineno': '54',
-        'message': "Run and protect: getSpmStatus, Return response: {'spm_st': {'spmId': 1, 'spmStatus': 'SPM', 'spmLver': 3L}}",  # noqa
-        'module': 'logUtils',
-        'logname': 'dispatcher',
-        'thread': 'jsonrpc/2'
+        "asctime": datetime(2017, 4, 18, 13, 56, 38, 374000),
+        "level": "INFO",
+        "lineno": "54",
+        "message": "Run and protect: getSpmStatus, Return response: {'spm_st': {'spmId': 1, 'spmStatus': 'SPM', 'spmLver': 3L}}",  # noqa
+        "module": "logUtils",
+        "logname": "dispatcher",
+        "thread": "jsonrpc/2",
     }
 
     # Logs with line having ERROR with different fields than
     # VDSM_LOG_1 & VDSM_LOG_2 altogether
     vdsm_log = VDSMLog(context_wrap(VDSM_VER_4_LOG_4))
-    assert 'ERROR' in vdsm_log
-    lines_with_error = vdsm_log.get('ERROR')
+    assert "ERROR" in vdsm_log
+    lines_with_error = vdsm_log.get("ERROR")
     parsed = list(vdsm_log.parse_lines(lines_with_error))
     assert parsed[0] == {
-        'asctime': datetime(2017, 4, 18, 14, 0, 1, 808000),
-        'level': 'ERROR',
-        'lineno': '304',
-        'message': 'Error during handshake: unexpected eof',
-        'module': 'm2cutils',
-        'logname': 'ProtocolDetector.SSLHandshakeDispatcher',
-        'thread': 'Reactor thread'
+        "asctime": datetime(2017, 4, 18, 14, 0, 1, 808000),
+        "level": "ERROR",
+        "lineno": "304",
+        "message": "Error during handshake: unexpected eof",
+        "module": "m2cutils",
+        "logname": "ProtocolDetector.SSLHandshakeDispatcher",
+        "thread": "Reactor thread",
     }
 
     # Check DEBUG logs
     vdsm_log = VDSMLog(context_wrap(VDSM_VER_4_LOG_5))
 
-    assert 'DEBUG' in vdsm_log
-    lines_with_debug = vdsm_log.get('DEBUG')
+    assert "DEBUG" in vdsm_log
+    lines_with_debug = vdsm_log.get("DEBUG")
     parsed = list(vdsm_log.parse_lines(lines_with_debug))
     assert len(parsed) == 5
 
-    lines_with_storage_check = vdsm_log.get('storage.check')
+    lines_with_storage_check = vdsm_log.get("storage.check")
     parsed = list(vdsm_log.parse_lines(lines_with_storage_check))
     assert len(parsed) == 1
     assert parsed[0] == {
-        'asctime': datetime(2018, 1, 31, 9, 20, 2, 658000),
-        'level': 'DEBUG',
-        'lineno': '328',
-        'message': "FINISH check u'/rhev/data-center/mnt/rhevm.example.com:_home_exports_iso/be94b389-000f-4487-baf4-35ded403e579/dom_md/metadata' (rc=0, elapsed=0.05)",
-        'module': 'check',
-        'logname': 'storage.check',
-        'thread': 'check/loop'
+        "asctime": datetime(2018, 1, 31, 9, 20, 2, 658000),
+        "level": "DEBUG",
+        "lineno": "328",
+        "message": "FINISH check u'/rhev/data-center/mnt/rhevm.example.com:_home_exports_iso/be94b389-000f-4487-baf4-35ded403e579/dom_md/metadata' (rc=0, elapsed=0.05)",
+        "module": "check",
+        "logname": "storage.check",
+        "thread": "check/loop",
     }

@@ -24,19 +24,16 @@ from insights.parsers.virt_what import VirtWhat as VW, BAREMETAL
 
 # Below 2 Maps are only For DMIDecode
 GENERIC_MAP = {
-    'vmware': ['VMware'],
-    'kvm': ['Red Hat', 'KVM'],
-    'xen': ['Xen', 'domU'],
-    'virtualpc': ['Microsoft Corporation', 'Virtual Machine'],
-    'virtualbox': ['innotek GmbH'],
-    'parallels': ['Parallels'],
-    'qemu': ['QEMU'],
+    "vmware": ["VMware"],
+    "kvm": ["Red Hat", "KVM"],
+    "xen": ["Xen", "domU"],
+    "virtualpc": ["Microsoft Corporation", "Virtual Machine"],
+    "virtualbox": ["innotek GmbH"],
+    "parallels": ["Parallels"],
+    "qemu": ["QEMU"],
 }
 
-SPECIFIC_MAP = {
-    'aws': ['amazon'],
-    'xen-hvm': ['HVM'],
-}
+SPECIFIC_MAP = {"aws": ["amazon"], "xen-hvm": ["HVM"]}
 
 
 @combiner([DMIDecode, VW])
@@ -56,7 +53,7 @@ class VirtWhat(object):
 
     def __init__(self, dmi, vw):
         self.is_virtual = self.is_physical = None
-        self.generic = ''
+        self.generic = ""
         self.specifics = []
 
         if vw and not vw.errors:
@@ -73,13 +70,23 @@ class VirtWhat(object):
             if dmi_info:
                 for dmi_v in dmi_info:
                     if not self.generic:
-                        generic = [g for g, val in GENERIC_MAP.items() if any(v in dmi_v for v in val)]
-                        self.generic = generic[0] if generic else ''
-                    self.specifics.extend([g for g, val in SPECIFIC_MAP.items() if any(v in dmi_v for v in val)])
+                        generic = [
+                            g
+                            for g, val in GENERIC_MAP.items()
+                            if any(v in dmi_v for v in val)
+                        ]
+                        self.generic = generic[0] if generic else ""
+                    self.specifics.extend(
+                        [
+                            g
+                            for g, val in SPECIFIC_MAP.items()
+                            if any(v in dmi_v for v in val)
+                        ]
+                    )
 
                 self.is_virtual = True
                 self.is_physical = False
-                if self.generic == '':
+                if self.generic == "":
                     self.generic = BAREMETAL
                     self.is_virtual = False
                     self.is_physical = True

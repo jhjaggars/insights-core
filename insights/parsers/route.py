@@ -37,10 +37,10 @@ class Route(CommandParser):
 
     def parse_content(self, content):
         # heading_ignore is first line we _don't_ want to ignore...
-        self.data = parse_delimited_table(content, heading_ignore=['Destination'])
+        self.data = parse_delimited_table(content, heading_ignore=["Destination"])
 
     def __contains__(self, dest):
-        return any(dest == line['Destination'] for line in self.data)
+        return any(dest == line["Destination"] for line in self.data)
 
     def __iter__(self):
         for row in self.data:

@@ -15,8 +15,9 @@ class JbossDomainLog(LogFileOutput):
     """
     Read JBoss domain log file.
     """
-    time_format = '%H:%M:%S'
-    _line_re = re.compile(r'^(?P<timestamp>\d+:\d+:\d+)(,\d+)(?P<messages>.*)$')
+
+    time_format = "%H:%M:%S"
+    _line_re = re.compile(r"^(?P<timestamp>\d+:\d+:\d+)(,\d+)(?P<messages>.*)$")
 
     def get_after(self, timestamp, s=None):
         """
@@ -51,7 +52,8 @@ class JbossDomainLog(LogFileOutput):
         if not isinstance(timestamp, time):
             raise TypeError(
                 "get_after needs a time type timestamp, but get '{c}'".format(
-                    c=timestamp)
+                    c=timestamp
+                )
             )
         including_lines = False
         search_by_expression = self._valid_search(s)
@@ -61,9 +63,9 @@ class JbossDomainLog(LogFileOutput):
                 continue
             # Otherwise, search all lines
             match = self._line_re.search(line)
-            if match and match.group('timestamp'):
+            if match and match.group("timestamp"):
                 # Get logtimestamp and compare to given timestamp
-                l_hh, l_mm, l_ss = match.group('timestamp').split(":")
+                l_hh, l_mm, l_ss = match.group("timestamp").split(":")
                 logstamp = time(int(l_hh), int(l_mm), int(l_ss))
                 if logstamp >= timestamp:
                     including_lines = True
@@ -107,4 +109,5 @@ class JbossDomainServerLog(JbossDomainLog):
         >>> list(log.get_after(time(16, 23, 3)))[1]['raw_message']
         '16:23:03,958 INFO  [org.jboss.as.security] (ServerService Thread Pool -- 37) JBAS013371: Activating Security Subsystem'
     """
+
     pass

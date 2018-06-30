@@ -1,4 +1,4 @@
-'''
+"""
 389 Directory Server logs
 =========================
 
@@ -10,7 +10,7 @@ DirSrvErrorsLog - files ``var/log/dirsrv/.*/errors``
 
 .. note::
     Please refer to the super-class :class:`insights.core.LogFileOutput`
-'''
+"""
 
 from insights import parser, LogFileOutput
 from insights.specs import Specs
@@ -18,7 +18,7 @@ from insights.specs import Specs
 
 @parser(Specs.dirsrv_access)
 class DirSrvAccessLog(LogFileOutput):
-    '''
+    """
     The ``access`` log file from all directories in ``/var/log/dirsrv/``
 
     This uses the standard LogFileOutput parser class for its implementation.
@@ -52,13 +52,14 @@ class DirSrvAccessLog(LogFileOutput):
         ...
         Path: /var/log/dirsrv/slapd-EXAMPLE-COM/access
         Connection lines: 2
-    '''
-    time_format = '%d/%b/%Y:%H:%M:%S'
+    """
+
+    time_format = "%d/%b/%Y:%H:%M:%S"
 
 
 @parser(Specs.dirsrv_errors)
 class DirSrvErrorsLog(LogFileOutput):
-    '''
+    """
     The ``errors`` log file from all directories in ``/var/log/dirsrv/``
 
     This uses the standard LogFileOutput parser class for its implementation.
@@ -92,5 +93,6 @@ class DirSrvErrorsLog(LogFileOutput):
         Path: /var/log/dirsrv/slapd-PKI-IPA/errors
         TLS send error lines: 6
         Connections not before 23:22:31: 4
-    '''
-    time_format = '%d/%b/%Y:%H:%M:%S'
+    """
+
+    time_format = "%d/%b/%Y:%H:%M:%S"

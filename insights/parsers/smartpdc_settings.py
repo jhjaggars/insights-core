@@ -39,4 +39,5 @@ from .. import YAMLParser, parser
 @parser(Specs.smartpdc_settings)
 class SmartpdcSettings(YAMLParser):
     """ Class for parsing the content of ``/etc/smart_proxy_dynflow_core/settings.yml``."""
+
     pass

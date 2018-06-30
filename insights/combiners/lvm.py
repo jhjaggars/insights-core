@@ -89,9 +89,11 @@ def get_shared_data(component):
         list: List of component data.
     """
     if component:
-        return (copy.deepcopy(component.data)
-                if 'content' not in component.data
-                else copy.deepcopy(component.data['content']))
+        return (
+            copy.deepcopy(component.data)
+            if "content" not in component.data
+            else copy.deepcopy(component.data["content"])
+        )
     else:
         return []
 
@@ -149,10 +151,13 @@ def merge_lvm_data(primary, secondary, name_key):
             combined_data[name] = pri_data[name]
         else:
             # Data in both primary and secondary, pick primary if better or no secondary
-            combined_data[name].update(dict(
-                (k, v) for k, v in pri_data[name].items()
-                if v is not None or k not in combined_data[name]
-            ))
+            combined_data[name].update(
+                dict(
+                    (k, v)
+                    for k, v in pri_data[name].items()
+                    if v is not None or k not in combined_data[name]
+                )
+            )
 
     return set_defaults(combined_data)
 
@@ -161,7 +166,7 @@ def set_defaults(lvm_data):
     """dict: Sets all existing null string values to None."""
     for l in lvm_data:
         for k, v in lvm_data[l].items():
-            if v == '':
+            if v == "":
                 lvm_data[l][k] = None
 
     return lvm_data
@@ -171,21 +176,21 @@ def set_defaults(lvm_data):
 class Lvm(object):
     """Class implements shared combiner for LVM information."""
 
-    LvVgName = namedtuple('LvVgName', ['LV', 'VG'])
+    LvVgName = namedtuple("LvVgName", ["LV", "VG"])
     """Named tuple used as key for logical volumes."""
 
     def __init__(self, lvs, lvs_headings, pvs, pvs_headings, vgs, vgs_headings):
         # Volume Groups information
-        self.volume_groups = merge_lvm_data(get_shared_data(vgs),
-                                            get_shared_data(vgs_headings),
-                                            'VG')
+        self.volume_groups = merge_lvm_data(
+            get_shared_data(vgs), get_shared_data(vgs_headings), "VG"
+        )
         """dict: Contains a dictionary of volume group data with keys
             from the original output."""
 
         # Physical Volumes information
-        self.physical_volumes = merge_lvm_data(get_shared_data(pvs),
-                                               get_shared_data(pvs_headings),
-                                               'PV_KEY')
+        self.physical_volumes = merge_lvm_data(
+            get_shared_data(pvs), get_shared_data(pvs_headings), "PV_KEY"
+        )
         """dict: Contains a dictionary of physical volume data with keys
             from the original output."""
 
@@ -195,13 +200,11 @@ class Lvm(object):
         # name with the volume group name to ensure it is unique
         pri_lvs_data = get_shared_data(lvs)
         for l in pri_lvs_data:
-            l['LVVG'] = Lvm.LvVgName(LV=l['LV'], VG=l['VG'])
+            l["LVVG"] = Lvm.LvVgName(LV=l["LV"], VG=l["VG"])
         sec_lvs_data = get_shared_data(lvs_headings)
         for l in sec_lvs_data:
-            l['LVVG'] = Lvm.LvVgName(LV=l['LV'], VG=l['VG'])
-        self.logical_volumes = merge_lvm_data(pri_lvs_data,
-                                              sec_lvs_data,
-                                              'LVVG')
+            l["LVVG"] = Lvm.LvVgName(LV=l["LV"], VG=l["VG"])
+        self.logical_volumes = merge_lvm_data(pri_lvs_data, sec_lvs_data, "LVVG")
         """dict: Contains a dictionary of logical volume data with keys
             from the original output. The key is a tuple of the
             logical volume name and the volume group name. This tuple
@@ -211,7 +214,9 @@ class Lvm(object):
         self.logical_volumes = set_defaults(self.logical_volumes)
 
         # Since name is not used as the key we need to create the name list
-        self.physical_volume_names = set([p['PV'] for p in self.physical_volumes.values()])
+        self.physical_volume_names = set(
+            [p["PV"] for p in self.physical_volumes.values()]
+        )
 
     @property
     def volume_group_names(self):
@@ -238,11 +243,15 @@ class Lvm(object):
             `lv_filter` in the logical volume and if specified `vg_filter` in the
             volume group."""
         if vg_filter is None:
-            return dict((k, v) for k, v in self.logical_volumes.items()
-                        if lv_filter in k.LV)
+            return dict(
+                (k, v) for k, v in self.logical_volumes.items() if lv_filter in k.LV
+            )
         else:
-            return dict((k, v) for k, v in self.logical_volumes.items()
-                        if lv_filter in k.LV and vg_filter in k.VG)
+            return dict(
+                (k, v)
+                for k, v in self.logical_volumes.items()
+                if lv_filter in k.LV and vg_filter in k.VG
+            )
 
 
 @combiner([LvsAll, PvsAll, VgsAll])
@@ -252,19 +261,19 @@ class LvmAll(Lvm):
 
     def __init__(self, lvsall, pvsall, vgsall):
         # Volume Groups information
-        self.volume_groups = merge_lvm_data(get_shared_data(vgsall), [], 'VG')
+        self.volume_groups = merge_lvm_data(get_shared_data(vgsall), [], "VG")
         """dict: Contains a dictionary of volume group data with keys
             from the original output."""
 
         # Physical Volumes information
-        self.physical_volumes = merge_lvm_data(get_shared_data(pvsall), [], 'PV_KEY')
+        self.physical_volumes = merge_lvm_data(get_shared_data(pvsall), [], "PV_KEY")
         """dict: Contains a dictionary of physical volume data with keys
             from the original output."""
 
         pri_lvs_data = get_shared_data(lvsall)
         for l in pri_lvs_data:
-            l['LVVG'] = Lvm.LvVgName(LV=l['LV'], VG=l['VG'])
-        self.logical_volumes = merge_lvm_data(pri_lvs_data, [], 'LVVG')
+            l["LVVG"] = Lvm.LvVgName(LV=l["LV"], VG=l["VG"])
+        self.logical_volumes = merge_lvm_data(pri_lvs_data, [], "LVVG")
         """dict: Contains a dictionary of logical volume data with keys
             from the original output. The key is a tuple of the
             logical volume name and the volume group name. This tuple
@@ -274,4 +283,6 @@ class LvmAll(Lvm):
         self.logical_volumes = set_defaults(self.logical_volumes)
 
         # Since name is not used as the key we need to create the name list
-        self.physical_volume_names = set([p['PV'] for p in self.physical_volumes.values()])
+        self.physical_volume_names = set(
+            [p["PV"] for p in self.physical_volumes.values()]
+        )

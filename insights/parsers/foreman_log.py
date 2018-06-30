@@ -34,27 +34,31 @@ from insights.specs import Specs
 @parser(Specs.foreman_proxy_log)
 class ProxyLog(LogFileOutput):
     """Class for parsing ``foreman-proxy/proxy.log`` file."""
+
     time_format = {
-        'standard': '%d/%b/%Y:%H:%M:%S',  # 31/May/2016:09:57:34
-        'error': '%Y-%m-%dT%H:%M:%S.%f'  # 2016-05-31T09:57:35.884636
+        "standard": "%d/%b/%Y:%H:%M:%S",  # 31/May/2016:09:57:34
+        "error": "%Y-%m-%dT%H:%M:%S.%f",  # 2016-05-31T09:57:35.884636
     }
 
 
 @parser(Specs.foreman_satellite_log)
 class SatelliteLog(LogFileOutput):
     """Class for parsing ``foreman-installer/satellite.log`` file."""
+
     pass
 
 
 @parser(Specs.foreman_production_log)
 class ProductionLog(LogFileOutput):
     """Class for parsing ``foreman/production.log`` file."""
+
     pass
 
 
 @parser(Specs.candlepin_log)
 class CandlepinLog(LogFileOutput):
     """Class for parsing ``candlepin/candlepin.log`` file."""
+
     pass
 
 
@@ -84,6 +88,7 @@ class CandlepinErrorLog(LogFileOutput):
         >>> candlepin_log.get_after(datetime(2016, 9, 7, 16, 0, 0)[0]['raw_message']
         '2016-09-07 16:49:24,650 [=, org=] WARN  org.apache.qpid.transport.network.security.ssl.SSLUtil - Exception received while trying to verify hostname'
     """
+
     pass
 
 
@@ -105,4 +110,5 @@ class ForemanSSLAccessLog(LogFileOutput):
         >>> foreman_ssl_acess_log = shared[ForemanSSLAccessLog]
         >>> foreman_ssl_acess_log.get('req=d9dc3cfd-abf7-485e-b1eb-e1e28e4b0f28')
     """
-    time_format = '%d/%b/%Y:%H:%M:%S'
+
+    time_format = "%d/%b/%Y:%H:%M:%S"

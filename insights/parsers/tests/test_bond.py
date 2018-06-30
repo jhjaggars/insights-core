@@ -135,15 +135,15 @@ Slave queue ID: 0
 def test_bond_class():
 
     bond_obj = Bond(context_wrap(BONDINFO_1, CONTEXT_PATH))
-    assert bond_obj.file_name == 'bond0'
+    assert bond_obj.file_name == "bond0"
     assert not bond_obj.partner_mac_address
-    assert bond_obj.bond_mode == '0'
-    assert bond_obj.slave_interface == ['eno1', 'eno2']
+    assert bond_obj.bond_mode == "0"
+    assert bond_obj.slave_interface == ["eno1", "eno2"]
 
     bond_obj = Bond(context_wrap(BONDINFO_MODE_4, CONTEXT_PATH))
-    assert bond_obj.bond_mode == '4'
+    assert bond_obj.bond_mode == "4"
     assert bond_obj.partner_mac_address == "00:00:00:00:00:00"
-    assert bond_obj.aggregator_id == ['3', '3', '2']
+    assert bond_obj.aggregator_id == ["3", "3", "2"]
     assert bond_obj.xmit_hash_policy == "layer2"
 
     bond_obj = Bond(context_wrap(BONDINFO_CORRUPT, CONTEXT_PATH))
@@ -154,7 +154,7 @@ def test_bond_class():
     with pytest.raises(ParseException) as exc:
         bond_obj = Bond(context_wrap(BONDINFO_UNKNOWN_BOND_MODE, CONTEXT_PATH))
         assert not bond_obj.bond_mode
-    assert 'Unrecognised bonding mode' in str(exc)
+    assert "Unrecognised bonding mode" in str(exc)
 
     bond_obj = Bond(context_wrap(BONDINFO_MODE_2, CONTEXT_PATH))
     assert bond_obj.xmit_hash_policy == "layer2+3"

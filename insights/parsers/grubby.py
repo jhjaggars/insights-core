@@ -23,8 +23,9 @@ class GrubbyDefaultIndex(Parser):
     Attributes:
         default_index (int): the numeric index of the current default boot entry, count from 0
     """
+
     def parse_content(self, content):
         if content and content[0].isdigit():
             self.default_index = int(content[0])
         else:
-            raise SkipException('Invalid default index value.')
+            raise SkipException("Invalid default index value.")

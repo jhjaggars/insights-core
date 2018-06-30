@@ -19,6 +19,7 @@ RULE_TYPES = set()
 
 class ContentException(dr.SkipComponent):
     """ Raised whenever a datasource fails to get data. """
+
     pass
 
 
@@ -58,8 +59,9 @@ def rule_executor(component, broker, requires, optional, executor=dr.default_exe
             raise dr.SkipComponent()
     except dr.MissingRequirements as mr:
         details = dr.stringify_requirements(mr.requirements)
-        r = make_skip(dr.get_name(component),
-                reason="MISSING_REQUIREMENTS", details=details)
+        r = make_skip(
+            dr.get_name(component), reason="MISSING_REQUIREMENTS", details=details
+        )
     validate_response(r)
     return r
 
@@ -83,18 +85,22 @@ class DatasourceDelegate(dr.Delegate):
         self.raw = False
 
 
-def make_rule_type(auto_requires=[],
-                   auto_optional=[],
-                   group=dr.GROUPS.single,
-                   use_broker_executor=False,
-                   type_metadata={}):
+def make_rule_type(
+    auto_requires=[],
+    auto_optional=[],
+    group=dr.GROUPS.single,
+    use_broker_executor=False,
+    type_metadata={},
+):
 
     executor = broker_rule_executor if use_broker_executor else rule_executor
-    _type = dr.new_component_type(auto_requires=auto_requires,
-                                  auto_optional=auto_optional,
-                                  group=group,
-                                  executor=executor,
-                                  type_metadata=type_metadata)
+    _type = dr.new_component_type(
+        auto_requires=auto_requires,
+        auto_optional=auto_optional,
+        group=group,
+        executor=executor,
+        type_metadata=type_metadata,
+    )
 
     def decorator(*requires, **kwargs):
         if kwargs.get("cluster"):
@@ -107,10 +113,14 @@ def make_rule_type(auto_requires=[],
 
 
 class StdTypes(dr.TypeSet):
-    _datasource = dr.new_component_type(executor=datasource_executor, delegate_class=DatasourceDelegate)
+    _datasource = dr.new_component_type(
+        executor=datasource_executor, delegate_class=DatasourceDelegate
+    )
     """ A component that one or more Parsers will consume."""
 
-    _metadata = dr.new_component_type(auto_requires=["metadata.json"], executor=parser_executor)
+    _metadata = dr.new_component_type(
+        auto_requires=["metadata.json"], executor=parser_executor
+    )
 
     _parser = dr.new_component_type(executor=parser_executor)
 
@@ -142,17 +152,21 @@ cluster_rule = StdTypes.cluster_rule
 def datasource(*args, **kwargs):
     def _f(func):
         metadata = kwargs.get("metadata", {})
-        c = StdTypes._datasource(*args, metadata=metadata, component_type=datasource)(func)
+        c = StdTypes._datasource(*args, metadata=metadata, component_type=datasource)(
+            func
+        )
         delegate = dr.get_delegate(c)
         delegate.multi_output = kwargs.get("multi_output", False)
         delegate.raw = kwargs.get("raw", False)
         return c
+
     return _f
 
 
 def metadata(group=dr.GROUPS.single):
     def _f(func):
         return StdTypes._metadata(group=group, component_type=metadata)(func)
+
     return _f
 
 
@@ -164,7 +178,10 @@ def parser(dependency, group=dr.GROUPS.single):
     """
 
     def _f(component):
-        return StdTypes._parser(dependency, group=group, component_type=parser)(component)
+        return StdTypes._parser(dependency, group=group, component_type=parser)(
+            component
+        )
+
     return _f
 
 
@@ -193,10 +210,12 @@ def is_component(obj):
 
 
 def make_skip(rule_fqdn, reason, details=None):
-    return {"rule_fqdn": rule_fqdn,
-            "reason": reason,
-            "details": details,
-            "type": "skip"}
+    return {
+        "rule_fqdn": rule_fqdn,
+        "reason": reason,
+        "details": details,
+        "type": "skip",
+    }
 
 
 def _is_make_reponse_too_long(key, kwargs):
@@ -207,11 +226,14 @@ def _is_make_reponse_too_long(key, kwargs):
     detail_length = len(str(kwargs))
 
     if detail_length > settings.defaults["max_detail_length"]:
-        log.error("Length of data in %s is too long." % response_type[kwargs['type']], extra={
-            "max_detail_length": settings.defaults["max_detail_length"],
-            "error_key": key,
-            "len": detail_length
-        })
+        log.error(
+            "Length of data in %s is too long." % response_type[kwargs["type"]],
+            extra={
+                "max_detail_length": settings.defaults["max_detail_length"],
+                "error_key": key,
+                "len": detail_length,
+            },
+        )
         return True
     return False
 
@@ -242,10 +264,7 @@ def make_response(error_key, **kwargs):
     if "error_key" in kwargs or "type" in kwargs:
         raise Exception("Can't use an invalid argument for make_response")
 
-    r = {
-        "type": "rule",
-        "error_key": error_key
-    }
+    r = {"type": "rule", "error_key": error_key}
     kwargs.update(r)
 
     detail_length = len(str(kwargs))
@@ -284,10 +303,7 @@ def make_fingerprint(fingerprint_key, **kwargs):
     if "fingerprint_key" in kwargs or "type" in kwargs:
         raise Exception("Can't use an invalid argument for make_fingerprint")
 
-    r = {
-        "type": "fingerprint",
-        "fingerprint_key": fingerprint_key
-    }
+    r = {"type": "fingerprint", "fingerprint_key": fingerprint_key}
     kwargs.update(r)
 
     detail_length = len(str(kwargs))
@@ -335,13 +351,17 @@ def validate_response(r):
         if not error_key:
             raise ValidationException("Rule response missing error_key", r)
         elif not isinstance(error_key, str):
-            raise ValidationException("Response contains invalid error_key type", type(error_key))
+            raise ValidationException(
+                "Response contains invalid error_key type", type(error_key)
+            )
     if r["type"] == "fingerprint":
         fingerprint_key = r.get("fingerprint_key")
         if not fingerprint_key:
             raise ValidationException("Rule response missing fingerprint_key", r)
         elif not isinstance(fingerprint_key, str):
-            raise ValidationException("Response contains invalid fingerprint_key type", type(fingerprint_key))
+            raise ValidationException(
+                "Response contains invalid fingerprint_key type", type(fingerprint_key)
+            )
 
 
 try:

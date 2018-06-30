@@ -50,9 +50,8 @@ class Lssap(CommandParser):
     Raises:
         ParseException: Raised if any error occurs parsing the content.
     """
-    instance_dict = {'D': 'netweaver',
-                     'HDB': 'hana',
-                     'ASCS': 'ascs'}
+
+    instance_dict = {"D": "netweaver", "HDB": "hana", "ASCS": "ascs"}
 
     def __init__(self, *args, **kwargs):
         self.data = []
@@ -62,23 +61,37 @@ class Lssap(CommandParser):
         # remove lssap version and bar text from content
         clean_content = content[2:-1]
         if len(clean_content) > 0 and "SID" in clean_content[0]:
-            self.data = parse_delimited_table(clean_content, delim='|', header_delim=None)
+            self.data = parse_delimited_table(
+                clean_content, delim="|", header_delim=None
+            )
         else:
-            raise ParseException("Lssap: Unable to parse {0} line(s) of content: ({1})".format(len(content), content))
+            raise ParseException(
+                "Lssap: Unable to parse {0} line(s) of content: ({1})".format(
+                    len(content), content
+                )
+            )
 
-        self.running_inst_types = [row["Instance"].rstrip('1234567890') for row in self.data if "Instance" in row]
+        self.running_inst_types = [
+            row["Instance"].rstrip("1234567890")
+            for row in self.data
+            if "Instance" in row
+        ]
 
-        invalid_inst = [i for i in self.running_inst_types if i not in self.instance_dict]
+        invalid_inst = [
+            i for i in self.running_inst_types if i not in self.instance_dict
+        ]
 
         if invalid_inst:
-            raise ParseException("Lssap: Invalid instance parsed in content: {0}".format(invalid_inst))
+            raise ParseException(
+                "Lssap: Invalid instance parsed in content: {0}".format(invalid_inst)
+            )
 
     def version(self, instance):
         """str: returns the Version column corresponding to the ``instance`` in
         Instance or ``None`` if ``instance`` is not found.
         """
         for row in self.data:
-            if instance == row['Instance']:
+            if instance == row["Instance"]:
                 return row["Version"]
 
     @property
@@ -93,12 +106,18 @@ class Lssap(CommandParser):
 
     def is_netweaver(self):
         """bool: SAP Netweaver is running on the system."""
-        return 'D' in list(set(self.running_inst_types) & set(self.instance_dict.keys()))
+        return "D" in list(
+            set(self.running_inst_types) & set(self.instance_dict.keys())
+        )
 
     def is_hana(self):
         """bool: SAP Hana is running on the system."""
-        return 'HDB' in list(set(self.running_inst_types) & set(self.instance_dict.keys()))
+        return "HDB" in list(
+            set(self.running_inst_types) & set(self.instance_dict.keys())
+        )
 
     def is_ascs(self):
         """bool: SAP System Central Services is running on the system."""
-        return 'ASCS' in list(set(self.running_inst_types) & set(self.instance_dict.keys()))
+        return "ASCS" in list(
+            set(self.running_inst_types) & set(self.instance_dict.keys())
+        )

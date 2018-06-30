@@ -25,7 +25,7 @@ def rhn_schema_version(context):
     """
     if context.content:
         content = context.content
-        if len(content) == 1 and 'No such' not in content[0]:
+        if len(content) == 1 and "No such" not in content[0]:
             ver = content[0].strip()
             if ver:
                 return ver

@@ -27,7 +27,10 @@ def test_sysconfig_kdump():
     assert sc_kdump.KDUMP_KERNELVER == ""
     assert sc_kdump.KDUMP_COMMANDLINE == ""
     assert sc_kdump.KDUMP_COMMANDLINE_REMOVE == "hugepages hugepagesz slub_debug quiet"
-    assert sc_kdump.KDUMP_COMMANDLINE_APPEND == "irqpoll nr_cpus=1 reset_devices cgroup_disable=memory mce=off numa=off udev.children-max=2 panic=10 rootflags=nofail acpi_no_memhotplug transparent_hugepage=never"
+    assert (
+        sc_kdump.KDUMP_COMMANDLINE_APPEND
+        == "irqpoll nr_cpus=1 reset_devices cgroup_disable=memory mce=off numa=off udev.children-max=2 panic=10 rootflags=nofail acpi_no_memhotplug transparent_hugepage=never"
+    )
     assert sc_kdump.KEXEC_ARGS == "--elf32-core-headers"
     assert sc_kdump.KDUMP_IMG == "vmlinuz"
     assert sc_kdump.KDUMP_IMG_EXT == ""
@@ -38,7 +41,10 @@ def test_sysconfig_kdump():
     assert sc_kdump.KDUMP_KERNELVER == ""
     assert sc_kdump.KDUMP_COMMANDLINE == ""
     assert sc_kdump.KDUMP_COMMANDLINE_REMOVE == ""
-    assert sc_kdump.KDUMP_COMMANDLINE_APPEND == "irqpoll nr_cpus=1 reset_devices cgroup_disable=memory mce=off numa=off udev.children-max=2 panic=10 rootflags=nofail acpi_no_memhotplug transparent_hugepage=never"
+    assert (
+        sc_kdump.KDUMP_COMMANDLINE_APPEND
+        == "irqpoll nr_cpus=1 reset_devices cgroup_disable=memory mce=off numa=off udev.children-max=2 panic=10 rootflags=nofail acpi_no_memhotplug transparent_hugepage=never"
+    )
     assert sc_kdump.KEXEC_ARGS == ""
     assert sc_kdump.KDUMP_IMG == "vmlinuz"
     assert sc_kdump.KDUMP_IMG_EXT == ""

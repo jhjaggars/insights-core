@@ -44,6 +44,7 @@ class Facter(LegacyItemAccess, CommandParser):
     All facts may be accessed as ``obj.fact_name``. The ``get`` method is also
     provided to access any facts.
     """
+
     def parse_content(self, content):
         """
         Main parsing class method which stores all interesting data from the content.
@@ -57,8 +58,8 @@ class Facter(LegacyItemAccess, CommandParser):
         self.fqdn = self.hostname = self.domain = None
         facts_info = {}
         for line in content:
-            if ' => ' in line:
-                key, value = [k.strip() for k in line.split('=>', 1)]
+            if " => " in line:
+                key, value = [k.strip() for k in line.split("=>", 1)]
                 facts_info[key] = value
 
         for k, v in facts_info.items():

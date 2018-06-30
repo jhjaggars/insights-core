@@ -20,9 +20,11 @@ MAX_GLOBS = 1001
 @pytest.fixture
 def max_globs():
     for f in range(MAX_GLOBS):
-        tmpfile = tempfile.NamedTemporaryFile(prefix='tmp_', suffix='_glob', delete=False)
+        tmpfile = tempfile.NamedTemporaryFile(
+            prefix="tmp_", suffix="_glob", delete=False
+        )
         tmpfile.close()
-        with open(tmpfile.name, 'w') as fd:
+        with open(tmpfile.name, "w") as fd:
             fd.write(DATA)
     yield tempfile.gettempdir()
     for fle in glob.glob1(tempfile.gettempdir(), "tmp_*_glob"):

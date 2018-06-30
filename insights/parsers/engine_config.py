@@ -72,8 +72,8 @@ class EngineConfigAll(CommandParser):
         keywords (set): Set of keywords present in the configuration
                         file, each keyword has been converted to lowercase.
     """
-    keyvalue = namedtuple('KeyValue',
-                          ['keyword', 'value', 'version', 'kw_lower'])
+
+    keyvalue = namedtuple("KeyValue", ["keyword", "value", "version", "kw_lower"])
     """namedtuple: Represent name value pair as a namedtuple with case."""
 
     def parse_content(self, content):
@@ -86,8 +86,10 @@ class EngineConfigAll(CommandParser):
         self.fields = []
         for line in get_active_lines(content):
             try:
-                key, val, ver = itemgetter(0, 1, -1)(line.split(' '))
-                self.fields.append(self.keyvalue(key.strip(':'), val, ver, key.strip(':').lower()))  # noqa
+                key, val, ver = itemgetter(0, 1, -1)(line.split(" "))
+                self.fields.append(
+                    self.keyvalue(key.strip(":"), val, ver, key.strip(":").lower())
+                )  # noqa
             except:
                 # TODO: Log an exception.
                 pass

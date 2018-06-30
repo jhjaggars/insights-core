@@ -30,26 +30,26 @@ lrwxrwxrwx.  1 root root       34 May 11 11:00 vmlinuz -> vmlinuz-2.6.32-504.12.
 
 def test_ls_boot():
     ls_boot = LsBoot(context_wrap(LS_BOOT))
-    assert '/boot' in ls_boot
-    assert '/boot/grub2' in ls_boot
-    assert ls_boot.dirs_of('/boot') == ['.', '..', 'grub2']
+    assert "/boot" in ls_boot
+    assert "/boot/grub2" in ls_boot
+    assert ls_boot.dirs_of("/boot") == [".", "..", "grub2"]
 
-    grub2_files = ls_boot.files_of('/boot/grub2')
-    assert 'menu.lst' in grub2_files
-    assert 'device.map' in grub2_files
-    assert 'grub.cfg' in grub2_files
+    grub2_files = ls_boot.files_of("/boot/grub2")
+    assert "menu.lst" in grub2_files
+    assert "device.map" in grub2_files
+    assert "grub.cfg" in grub2_files
     assert len(grub2_files) == 3
 
-    boot_files = ls_boot.files_of('/boot')
+    boot_files = ls_boot.files_of("/boot")
     assert "config-3.10.0-229.14.1.el7.x86_64" in boot_files
     assert len(boot_files) == 1
 
 
 def test_boot_links():
     ls_boot = LsBoot(context_wrap(LS_BOOT_LINKS))
-    boot_files = ls_boot.files_of('/boot')
-    assert '/boot' in ls_boot
-    assert 'initramfs-2.6.32-504.el6.x86_64.img' in boot_files
-    assert 'initrd' in boot_files
-    assert 'vmlinuz' in boot_files
-    assert 'vmlinuz-2.6.32-504.el6.x86_64' in boot_files
+    boot_files = ls_boot.files_of("/boot")
+    assert "/boot" in ls_boot
+    assert "initramfs-2.6.32-504.el6.x86_64.img" in boot_files
+    assert "initrd" in boot_files
+    assert "vmlinuz" in boot_files
+    assert "vmlinuz-2.6.32-504.el6.x86_64" in boot_files

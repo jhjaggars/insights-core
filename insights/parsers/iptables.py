@@ -78,6 +78,7 @@ class IPTablesConfiguration(Parser):
     A general class for parsing iptables configuration in the
     ``iptables-save``-like format.
     """
+
     def parse_content(self, content):
         self.chains = []
         self.rules = []
@@ -88,41 +89,47 @@ class IPTablesConfiguration(Parser):
             elif line.startswith(":"):
                 name, policy, counter = line[1:].split()
                 packet_counter, byte_counter = counter.strip("[]").split(":")
-                self.chains.append({
-                    "policy": policy if policy != "-" else None,
-                    "table": current_table,
-                    "name": name,
-                    "packet_counter": int(packet_counter),
-                    "byte_counter": int(byte_counter),
-                })
+                self.chains.append(
+                    {
+                        "policy": policy if policy != "-" else None,
+                        "table": current_table,
+                        "name": name,
+                        "packet_counter": int(packet_counter),
+                        "byte_counter": int(byte_counter),
+                    }
+                )
             elif line.startswith("-"):
                 line_spl = line[3:].split(None, 1)
                 if not line_spl:
                     continue
                 chain_name = line_spl[0]
-                rule = line_spl[1] if len(line_spl) == 2 else ''
-                target_option = [i for i in (' -j', '-j ', ' -g', '-g ') if i in rule]
+                rule = line_spl[1] if len(line_spl) == 2 else ""
+                target_option = [i for i in (" -j", "-j ", " -g", "-g ") if i in rule]
                 if target_option:
-                    constraints, target = [i.strip() for i in rule.split(target_option[-1])]
+                    constraints, target = [
+                        i.strip() for i in rule.split(target_option[-1])
+                    ]
                     if " " in target:
                         target, target_options = target.split(None, 1)
                     else:
                         target_options = None
-                    self.rules.append({
-                        "table": current_table,
-                        "chain": chain_name,
-                        "rule": rule,
-                        "target_action": "jump" if target_option[-1].strip() == "-j" else "goto",
-                        "constraints": constraints,
-                        "target": target,
-                        "target_options": target_options
-                    })
+                    self.rules.append(
+                        {
+                            "table": current_table,
+                            "chain": chain_name,
+                            "rule": rule,
+                            "target_action": "jump"
+                            if target_option[-1].strip() == "-j"
+                            else "goto",
+                            "constraints": constraints,
+                            "target": target,
+                            "target_options": target_options,
+                        }
+                    )
                 else:
-                    self.rules.append({
-                        "table": current_table,
-                        "chain": chain_name,
-                        "rule": rule
-                    })
+                    self.rules.append(
+                        {"table": current_table, "chain": chain_name, "rule": rule}
+                    )
 
     def get_chain(self, name, table="filter"):
         """
@@ -160,7 +167,9 @@ class IPTablesConfiguration(Parser):
         Returns:
             dict: chains with set of defined rules
         """
-        return dict((c["name"], self.get_chain(c["name"], table)) for c in self.get_table(table))
+        return dict(
+            (c["name"], self.get_chain(c["name"], table)) for c in self.get_table(table)
+        )
 
     def get_rule(self, s):
         """
@@ -186,6 +195,7 @@ class IPTables(CommandParser, IPTablesConfiguration):
     See the :py:class:`insights.parsers.iptables.IPTablesConfiguration` base
     class for additional information.
     """
+
     pass
 
 
@@ -197,6 +207,7 @@ class IP6Tables(CommandParser, IPTablesConfiguration):
     See the :py:class:`insights.parsers.iptables.IPTablesConfiguration` base
     class for additional information.
     """
+
     pass
 
 
@@ -212,6 +223,7 @@ class IPTabPermanent(IPTablesConfiguration):
     See the :py:class:`insights.parsers.iptables.IPTablesConfiguration` base
     class for additional information.
     """
+
     pass
 
 
@@ -227,4 +239,5 @@ class IP6TabPermanent(IPTablesConfiguration):
     See the :py:class:`insights.parsers.iptables.IPTablesConfiguration` base
     class for additional information.
     """
+
     pass

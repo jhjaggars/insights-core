@@ -50,4 +50,5 @@ class PostgreSQLLog(LogFileOutput):
         File: /var/log/pgsql/data/pg_log/postgresql-Wed
         Startups: 0
     """
+
     pass

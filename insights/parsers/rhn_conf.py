@@ -56,7 +56,7 @@ class RHNConf(LegacyItemAccess, Parser):
 
     def parse_content(self, content):
         self.data = {}
-        for line in unsplit_lines(get_active_lines(content), ',', keep_cont_char=True):
-            if '=' in line:
-                k, v = [i.strip() for i in line.split('=', 1)]
-                self.data[k] = [i.strip() for i in v.split(',')] if ',' in v else v
+        for line in unsplit_lines(get_active_lines(content), ",", keep_cont_char=True):
+            if "=" in line:
+                k, v = [i.strip() for i in line.split("=", 1)]
+                self.data[k] = [i.strip() for i in v.split(",")] if "," in v else v

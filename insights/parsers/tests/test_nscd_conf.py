@@ -112,7 +112,7 @@ def test_nscd_conf():
         NscdConfLine("check-files", "hosts", "yes"),
         NscdConfLine("persistent", "hosts", "yes"),
         NscdConfLine("shared", "hosts", "yes"),
-        NscdConfLine("max-db-size", "hosts", "33554432")
+        NscdConfLine("max-db-size", "hosts", "33554432"),
     ]
 
     # Attribute tests
@@ -132,12 +132,12 @@ def test_nscd_conf():
         NscdConfLine(attribute="enable-cache", service="group", value="no"),
         NscdConfLine(attribute="enable-cache", service="hosts", value="yes"),
         NscdConfLine(attribute="enable-cache", service="services", value="yes"),
-        NscdConfLine(attribute="enable-cache", service="netgroup", value="no")
+        NscdConfLine(attribute="enable-cache", service="netgroup", value="no"),
     ]
     assert conf.filter("cache") == [
         NscdConfLine(attribute="enable-cache", service="passwd", value="no"),
         NscdConfLine(attribute="enable-cache", service="group", value="no"),
         NscdConfLine(attribute="enable-cache", service="hosts", value="yes"),
         NscdConfLine(attribute="enable-cache", service="services", value="yes"),
-        NscdConfLine(attribute="enable-cache", service="netgroup", value="no")
+        NscdConfLine(attribute="enable-cache", service="netgroup", value="no"),
     ]

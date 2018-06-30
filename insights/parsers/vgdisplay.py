@@ -82,10 +82,7 @@ class VgDisplay(CommandParser):
         ["Couldn't find device with uuid VVLmw8-e2AA-ECfW-wDPl-Vnaa-0wW1-utv7tV."]
     """
 
-    _FILTER_INFO = [
-        "Couldn't find device with uuid",
-        "physical volumes missing",
-    ]
+    _FILTER_INFO = ["Couldn't find device with uuid", "physical volumes missing"]
 
     def parse_content(self, content):
         self.vg_list = []
@@ -99,7 +96,7 @@ class VgDisplay(CommandParser):
         # alone.  However, the header sets the left-most column the value
         # starts at, so once we pick up the header we ignore the regex match
         # and get the key and value as substrings.
-        header_re = re.compile(r'^(?P<key>VG Name|LV Path|PV Name)\s+(?P<val>\S.*)$')
+        header_re = re.compile(r"^(?P<key>VG Name|LV Path|PV Name)\s+(?P<val>\S.*)$")
         # To save different handling, we use this to refer to the current
         # dictionary we're storing data in, whether it be a VG, LV or PV.
         current_data_store = None
@@ -120,32 +117,30 @@ class VgDisplay(CommandParser):
             # inside, so only match if outside a keyval section.
             if not in_keyval_section and match:
                 in_keyval_section = True
-                key, value = match.group('key', 'val')
+                key, value = match.group("key", "val")
                 # Determine column for start of value - remember, this string
                 # is now stripped so this may look different from your examples
                 value_start_column = line.index(value)
                 if key == "VG Name":
                     # New Volume Group - new vg_info_dict entry
-                    self.vg_list.append({
-                        # Logical and Physical volumes stored by name / device
-                        'Logical Volumes': {},
-                        'Physical Volumes': {},
-                        'VG Name': value,
-                    })
+                    self.vg_list.append(
+                        {
+                            # Logical and Physical volumes stored by name / device
+                            "Logical Volumes": {},
+                            "Physical Volumes": {},
+                            "VG Name": value,
+                        }
+                    )
                     current_data_store = self.vg_list[-1]
-                elif key == 'LV Path':
+                elif key == "LV Path":
                     # New Logical Volume - append to 'Logical Volumes'
-                    current_data_store = {
-                        key: value,
-                    }
-                    self.vg_list[-1]['Logical Volumes'][value] = current_data_store
+                    current_data_store = {key: value}
+                    self.vg_list[-1]["Logical Volumes"][value] = current_data_store
                 else:  # elif key == 'PV Name':
                     # New Physical Volume - append to 'Physical Volumes'
-                    current_data_store = {
-                        key: value,
-                    }
-                    self.vg_list[-1]['Physical Volumes'][value] = current_data_store
-            elif line == '':
+                    current_data_store = {key: value}
+                    self.vg_list[-1]["Physical Volumes"][value] = current_data_store
+            elif line == "":
                 # Blank line = new section, stop expecting keys and values
                 in_keyval_section = False
             elif in_keyval_section and len(line) > value_start_column:

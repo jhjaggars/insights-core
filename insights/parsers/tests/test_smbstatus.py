@@ -58,9 +58,9 @@ share_test   13668   10.66.208.149 Wed Sep 27 10:33:55 AM 2017 CST  -           
 
 def test_smbstatuss():
     smbstatuss = SmbstatusS(context_wrap(SMBSTATUSS))
-    assert smbstatuss.data[2]["pid"] == '13628'
-    assert smbstatuss.data[1]["Connected_at"] == 'Wed Sep 27 11:33:55 AM 2017 CST'
-    assert smbstatuss.data[1]["Encryption"] == '-'
+    assert smbstatuss.data[2]["pid"] == "13628"
+    assert smbstatuss.data[1]["Connected_at"] == "Wed Sep 27 11:33:55 AM 2017 CST"
+    assert smbstatuss.data[1]["Encryption"] == "-"
     for result in smbstatuss:
         if result["Service"] == "share_test1":
             assert result["pid"] == "12668"
@@ -68,9 +68,9 @@ def test_smbstatuss():
 
 def test_smbstatusp():
     smbstatusp = Smbstatusp(context_wrap(SMBSTATUSP))
-    assert smbstatusp.data[2]["Username"] == 'test3smb'
-    assert smbstatusp.data[1]["Protocol_Version"] == 'SMB2_02'
-    assert smbstatusp.data[1]["Signing"] == '-'
+    assert smbstatusp.data[2]["Username"] == "test3smb"
+    assert smbstatusp.data[1]["Protocol_Version"] == "SMB2_02"
+    assert smbstatusp.data[1]["Signing"] == "-"
     for result in smbstatusp:
         if result["PID"] == "12668":
             assert result["Username"] == "testsmb"
@@ -78,7 +78,7 @@ def test_smbstatusp():
 
 def test_statuslist_exp():
     with pytest.raises(ParseException) as pe:
-        Statuslist(context_wrap('---------------------------'))
+        Statuslist(context_wrap("---------------------------"))
         assert "Input content is empty or there is no useful parsed data." in str(pe)
 
 
@@ -100,10 +100,10 @@ def test_smbstatusp_exp():
 
 def test_smbstatus_doc():
     env = {
-            'SmbstatusS': SmbstatusS,
-            'smbstatuss_info': SmbstatusS(context_wrap(SMBSTATUSS_DOC)),
-            'Smbstatusp': Smbstatusp,
-            'smbstatusp_info': Smbstatusp(context_wrap(SMBSTATUSP_DOC))
-          }
+        "SmbstatusS": SmbstatusS,
+        "smbstatuss_info": SmbstatusS(context_wrap(SMBSTATUSS_DOC)),
+        "Smbstatusp": Smbstatusp,
+        "smbstatusp_info": Smbstatusp(context_wrap(SMBSTATUSP_DOC)),
+    }
     failed, total = doctest.testmod(smbstatus, globs=env)
     assert failed == 0

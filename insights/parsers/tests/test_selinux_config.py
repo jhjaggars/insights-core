@@ -20,6 +20,6 @@ SELINUXTYPE=targeted
 
 def test_selinux_config():
     selinux_config = SelinuxConfig(context_wrap(SELINUX_CONFIG)).data
-    assert selinux_config["SELINUX"] == 'enforcing'
-    assert selinux_config.get("SELINUXTYPE") == 'targeted'
+    assert selinux_config["SELINUX"] == "enforcing"
+    assert selinux_config.get("SELINUXTYPE") == "targeted"
     assert len(selinux_config) == 2

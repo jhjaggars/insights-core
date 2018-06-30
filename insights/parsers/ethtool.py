@@ -268,11 +268,11 @@ class Features(LegacyItemAccess, CommandParser):
 
     def is_on(self, feature):
         """(bool): Does this feature exist and is it on?"""
-        return self.get(feature, {}).get('on', False)
+        return self.get(feature, {}).get("on", False)
 
     def is_fixed(self, feature):
         """(bool): Does this feature exist and is it fixed?"""
-        return self.get(feature, {}).get('fixed', False)
+        return self.get(feature, {}).get("fixed", False)
 
     def parse_content(self, content):
         self.data = {}
@@ -291,10 +291,7 @@ class Features(LegacyItemAccess, CommandParser):
                 fixed = "fixed" in value
                 if fixed:
                     value = value.split()[0].strip()
-                self.data[key.strip()] = {
-                    "on": value == "on",
-                    "fixed": fixed
-                }
+                self.data[key.strip()] = {"on": value == "on", "fixed": fixed}
 
 
 @parser(Specs.ethtool_a)
@@ -385,7 +382,7 @@ class Pause(CommandParser):
         for line in content[1:]:
             if line.strip():
                 (key, value) = [s.strip() for s in line.split(":", 1)]
-                self.data[key] = (value == "on")
+                self.data[key] = value == "on"
                 # Can't use key if it has a space in it, and we provide these
                 # as properties anyway.
                 # setattr(self, key, value == "on")
@@ -490,10 +487,10 @@ class CoalescingInfo(CommandParser):
             raise ParseException("Command output missing value data")
 
         second_line_content = content[1].split(" ")
-        self.data["adaptive-rx"] = (second_line_content[2] == "on")
-        self.adaptive_rx = (second_line_content[2] == "on")
-        self.data["adaptive-tx"] = (second_line_content[5] == "on")
-        self.adaptive_tx = (second_line_content[5] == "on")
+        self.data["adaptive-rx"] = second_line_content[2] == "on"
+        self.adaptive_rx = second_line_content[2] == "on"
+        self.data["adaptive-tx"] = second_line_content[5] == "on"
+        self.adaptive_tx = second_line_content[5] == "on"
 
         for line in content[2:]:
             if line.strip():
@@ -586,7 +583,7 @@ class Ring(CommandParser):
                 self.data[section] = ringdata
 
         section = None
-        sections = {'Pre-set maximums:': 'max', 'Current hardware settings:': 'current'}
+        sections = {"Pre-set maximums:": "max", "Current hardware settings:": "current"}
         section_data = {}
         # Skip "Ring parameters for interface:"
         for line in content[1:]:
@@ -594,7 +591,7 @@ class Ring(CommandParser):
                 set_section(section, section_data)
                 section = sections[line]
                 section_data = {}
-            elif ':' in line:
+            elif ":" in line:
                 # key: value, store in section data for now
                 key, value = (s.strip() for s in line.split(":", 1))
                 section_data[key.replace(" ", "_").lower()] = int(value)
@@ -676,9 +673,9 @@ class Statistics(CommandParser):
         return results
 
     def parse_content(self, content):
-        '''
+        """
         Parse the output of ``ethtool -S``.
-        '''
+        """
         self.data = {}
         self.iface = extract_iface_name_from_path(self.file_path, "ethtool_-S_")
 
@@ -690,14 +687,14 @@ class Statistics(CommandParser):
             return
 
         for line in content[1:]:  # ignore 'NIC statistics' line
-            if ':' not in line:
+            if ":" not in line:
                 continue
             # Some interfaces can report keys with colons in them, e.g.
             # "rxq0: rx_pkts", so look for the last colon and strip from
             # there.
-            i = line.rfind(':')
+            i = line.rfind(":")
             key = line[:i].strip()
-            value = line[i + 2:].strip()
+            value = line[i + 2 :].strip()
             value = int(value)
             self.data[key] = value
 
@@ -777,6 +774,7 @@ class Ethtool(CommandParser):
         >>> ethinfo.supported_ports  # This is converted to a list of strings
         ['TP', 'MII']
     """
+
     @property
     def ifname(self):
         """str: Return the name of network interface in content."""
@@ -785,12 +783,12 @@ class Ethtool(CommandParser):
     @property
     def speed(self):
         """list (str): Return field in Speed."""
-        return self.data.get('Speed')
+        return self.data.get("Speed")
 
     @property
     def link_detected(self):
         """boolean: Returns field in Link detected."""
-        return self.data.get('Link detected', ['no'])[0] == 'yes'
+        return self.data.get("Link detected", ["no"])[0] == "yes"
 
     def parse_content(self, content):
         self.data = {}
@@ -798,40 +796,44 @@ class Ethtool(CommandParser):
 
         # One way to get this result is run command '$ ethtool'.
         if "ethtool: bad command line argument(s)" in content[0]:
-            raise ParseException('ethtool: bad command line argument for ethtool', content)
+            raise ParseException(
+                "ethtool: bad command line argument for ethtool", content
+            )
 
         if "Settings for" not in content[0]:
-            raise ParseException("ethtool: unrecognised first line '{l}'".format(l=content[0]))
+            raise ParseException(
+                "ethtool: unrecognised first line '{l}'".format(l=content[0])
+            )
 
-        self.data['ETHNIC'] = content[0].split()[-1].strip(':')
+        self.data["ETHNIC"] = content[0].split()[-1].strip(":")
 
         if "No data available" in content[1]:
-            raise ParseException('Fake ethnic as ethtool command argument', content)
+            raise ParseException("Fake ethnic as ethtool command argument", content)
 
         key = value = None
         for line in content[1:]:
             line = line.strip()
             if line:
                 try:
-                    if ':' in line:
-                        key, value = line.split(':', 1)
+                    if ":" in line:
+                        key, value = line.split(":", 1)
                         key = key.strip()
                         self.data[key] = [value.strip()]
                     else:
                         self.data[key].append(line)
                 except:
-                    raise ParseException('Ethtool unable to parse content', line)
+                    raise ParseException("Ethtool unable to parse content", line)
 
         self.supported_link_modes = []
-        if 'Supported link modes' in self.data:
-            for pair in self.data['Supported link modes']:
+        if "Supported link modes" in self.data:
+            for pair in self.data["Supported link modes"]:
                 self.supported_link_modes += pair.split()
 
         self.advertised_link_modes = []
-        if 'Advertised link modes' in self.data:
-            for pair in self.data['Advertised link modes']:
+        if "Advertised link modes" in self.data:
+            for pair in self.data["Advertised link modes"]:
                 self.advertised_link_modes += pair.split()
 
         self.supported_ports = []
-        if 'Supported ports' in self.data:
-            self.supported_ports = self.data['Supported ports'][0].strip('[] ').split()
+        if "Supported ports" in self.data:
+            self.supported_ports = self.data["Supported ports"][0].strip("[] ").split()

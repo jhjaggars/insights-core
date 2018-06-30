@@ -5,7 +5,12 @@ from insights.core import archives
 from insights.core import dr
 from insights.core import serde
 from insights.core.archives import COMPRESSION_TYPES
-from insights.core.context import ClusterArchiveContext, JDRContext, HostArchiveContext, SosArchiveContext
+from insights.core.context import (
+    ClusterArchiveContext,
+    JDRContext,
+    HostArchiveContext,
+    SosArchiveContext,
+)
 from insights.core.evaluators import SingleEvaluator
 
 log = logging.getLogger(__name__)

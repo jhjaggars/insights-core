@@ -8,7 +8,7 @@ from insights.specs import Specs
 
 @parser(Specs.neutron_server_log)
 class NeutronServerLog(LogFileOutput):
-    '''
+    """
     Read the ``/var/log/neutron/server.log`` file.
 
     .. note::
@@ -34,5 +34,6 @@ class NeutronServerLog(LogFileOutput):
         6
         >>> neutron_log.get_after(datetime.datetime(2016, 9, 13, 6, 0, 0))[0]['raw_message']
         '2016-09-13 06:06:45.884 30588 WARNING keystonemiddleware.auth_token [-] Authorization failed for token'
-    '''
+    """
+
     pass

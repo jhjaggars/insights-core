@@ -27,6 +27,6 @@ def test_sysctl():
 
 def test_sysctl_conf():
     r = sysctl.SysctlConf(context_wrap(SYSCTL_CONF_TEST))
-    assert keys_in(['kernel.domainname', 'kernel.modprobe'], r.data)
-    assert r.data['kernel.domainname'] == 'example.com'
-    assert r.data['kernel.modprobe'] == '/sbin/mod probe'
+    assert keys_in(["kernel.domainname", "kernel.modprobe"], r.data)
+    assert r.data["kernel.domainname"] == "example.com"
+    assert r.data["kernel.modprobe"] == "/sbin/mod probe"

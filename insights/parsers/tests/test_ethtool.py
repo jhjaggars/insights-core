@@ -8,14 +8,14 @@ from insights.util import keys_in
 import doctest
 
 
-TEST_ETHTOOL_A_DOCS = '''
+TEST_ETHTOOL_A_DOCS = """
 Pause parameters for eth0:
 Autonegotiate:  on
 RX:             on
 TX:             on
 RX negotiated:  off
 TX negotiated:  off
-'''
+"""
 
 SUCCESS_ETHTOOL_A = """
 Pause parameters for enp0s25:
@@ -104,7 +104,7 @@ def test_ethtool_a_blank_line():
     assert result.ifname == "enp0s25"
 
 
-TEST_ETHTOOL_C_DOCS = '''
+TEST_ETHTOOL_C_DOCS = """
 Coalesce parameters for eth0:
 Adaptive RX: off  TX: off
 stats-block-usecs: 0
@@ -131,7 +131,7 @@ rx-usecs-high: 0
 rx-frame-high: 0
 tx-usecs-high: 0
 tx-frame-high: 0
-'''
+"""
 
 TEST_ETHTOOL_C = """
 Coalesce parameters for eth2:
@@ -167,8 +167,18 @@ def test_get_ethtool_c():
     context = context_wrap(TEST_ETHTOOL_C)
     context.path = TEST_ETHTOOL_C_PATH
     result = ethtool.CoalescingInfo(context)
-    assert keys_in(["adaptive-rx", "adaptive-tx", "pkt-rate-high",
-                    "tx-usecs-irq", "tx-frame-low", "tx-usecs-high", "tx-frame-high"], result.data)
+    assert keys_in(
+        [
+            "adaptive-rx",
+            "adaptive-tx",
+            "pkt-rate-high",
+            "tx-usecs-irq",
+            "tx-frame-low",
+            "tx-usecs-high",
+            "tx-frame-high",
+        ],
+        result.data,
+    )
     assert result.ifname == "eth2"
     assert not result.adaptive_rx
     assert not result.adaptive_tx
@@ -181,25 +191,27 @@ def test_get_ethtool_c():
 
 def test_get_ethtool_c_cannot_get():
     context = context_wrap(TEST_ETHTOOL_C_CANNOT_GET)
-    context.path = 'sos_commands/networking/ethtool_-c_usb0'
+    context.path = "sos_commands/networking/ethtool_-c_usb0"
     result = ethtool.CoalescingInfo(context)
-    assert result.ifname == 'usb0'
+    assert result.ifname == "usb0"
 
 
 def test_get_ethtool_c_bad_args():
-    context = context_wrap(TEST_ETHTOOL_C_BAD_ARGS, path='sos_commands/networking/ethtool_-c_eth0')
+    context = context_wrap(
+        TEST_ETHTOOL_C_BAD_ARGS, path="sos_commands/networking/ethtool_-c_eth0"
+    )
     result = ethtool.CoalescingInfo(context)
-    assert result.ifname == 'eth0'
+    assert result.ifname == "eth0"
 
 
 def test_get_ethtool_c_short():
     context = context_wrap(TEST_ETHTOOL_C_SHORT, path=TEST_ETHTOOL_C_PATH)
     with pytest.raises(ParseException) as exc:
         ethtool.CoalescingInfo(context)
-    assert 'Command output missing value data' in str(exc)
+    assert "Command output missing value data" in str(exc)
 
 
-TEST_ETHTOOL_G_DOCS = '''
+TEST_ETHTOOL_G_DOCS = """
 Ring parameters for eth0:
 Pre-set maximums:
 RX:             2047
@@ -211,7 +223,7 @@ RX:             200
 RX Mini:        0
 RX Jumbo:       0
 TX:             511
-'''
+"""
 
 TEST_ETHTOOL_G = """
 Ring parameters for eth2:
@@ -261,10 +273,10 @@ def test_ethtool_g():
     assert keys_in(["max", "current"], result.data)
 
     assert result.ifname == "eth2"
-    assert result.data['max'].rx == 2047
-    assert result.data['max'].rx_mini == 0
-    assert result.data['max'].rx_jumbo == 0
-    assert result.data['max'].tx == 511
+    assert result.data["max"].rx == 2047
+    assert result.data["max"].rx_mini == 0
+    assert result.data["max"].rx_jumbo == 0
+    assert result.data["max"].tx == 511
     assert result.max.rx == 2047
     assert result.max.rx_mini == 0
     assert result.max.rx_jumbo == 0
@@ -288,7 +300,7 @@ def test_ethtool_g_2():
     assert result.ifname == "eth2"
 
 
-TEST_ETHTOOL_I_DOCS = '''
+TEST_ETHTOOL_I_DOCS = """
 driver: bonding
 version: 3.6.0
 firmware-version: 2
@@ -298,7 +310,7 @@ supports-test: no
 supports-eeprom-access: no
 supports-register-dump: no
 supports-priv-flags: no
-'''
+"""
 
 TEST_ETHTOOL_I_GOOD = """
 driver: virtio_net
@@ -329,9 +341,9 @@ def test_good():
     context = context_wrap(TEST_ETHTOOL_I_GOOD)
     parsed = ethtool.Driver(context)
     assert parsed.version == "1.0.0"
-    assert parsed.driver == 'virtio_net'
+    assert parsed.driver == "virtio_net"
     assert parsed.firmware_version is None
-    assert parsed.bus_info == '0000:00:03.0'
+    assert parsed.bus_info == "0000:00:03.0"
     assert not parsed.supports_statistics
     assert not parsed.supports_test
     assert not parsed.supports_eeprom_access
@@ -420,43 +432,49 @@ tx-checksumming on
 def test_Features_good():
     # Test picking up interface from header line rather than path
     features = ethtool.Features(
-        context_wrap(ETHTOOL_K_STANDARD, path='sos_commands/networking/ethtool_-k_bond0'))
-    assert features.ifname == 'bond0'
-    assert features.iface == 'bond0'
+        context_wrap(
+            ETHTOOL_K_STANDARD, path="sos_commands/networking/ethtool_-k_bond0"
+        )
+    )
+    assert features.ifname == "bond0"
+    assert features.iface == "bond0"
 
-    assert not features.is_on('rx-checksumming')
-    assert features.is_on('tx-checksumming')
+    assert not features.is_on("rx-checksumming")
+    assert features.is_on("tx-checksumming")
 
-    assert features.is_fixed('rx-checksumming')
-    assert not features.is_fixed('tx-checksumming')
+    assert features.is_fixed("rx-checksumming")
+    assert not features.is_fixed("tx-checksumming")
 
 
 def test_Features_bad_args():
     # Even if content is bad, interface should be available from path
     features = ethtool.Features(
-        context_wrap(ETHTOOL_K_BAD_ARGS, path="sbin/ethtool_-k_bond0"))
-    assert features.ifname == 'bond0'
-    assert features.iface == 'bond0'
+        context_wrap(ETHTOOL_K_BAD_ARGS, path="sbin/ethtool_-k_bond0")
+    )
+    assert features.ifname == "bond0"
+    assert features.iface == "bond0"
     assert features.data == {}
 
 
 def test_Features_cannot_get():
     features = ethtool.Features(
-        context_wrap(ETHTOOL_K_CANNOT_GET, path="sbin/ethtool_-k_eth1"))
-    assert features.ifname == 'eth1'
-    assert features.iface == 'eth1'
+        context_wrap(ETHTOOL_K_CANNOT_GET, path="sbin/ethtool_-k_eth1")
+    )
+    assert features.ifname == "eth1"
+    assert features.iface == "eth1"
 
     assert features.data == {}
 
 
 def test_Features_missing_colon():
     features = ethtool.Features(
-        context_wrap(ETHTOOL_K_MISSING_COLON, path="sbin/ethtool_-k_bond0"))
-    assert features.ifname == 'bond0'
+        context_wrap(ETHTOOL_K_MISSING_COLON, path="sbin/ethtool_-k_bond0")
+    )
+    assert features.ifname == "bond0"
     assert features.data == {}
 
 
-TEST_ETHTOOL_S_DOCS = '''
+TEST_ETHTOOL_S_DOCS = """
 NIC statistics:
      rx_octets: 808488730
      rx_fragments: 0
@@ -471,9 +489,9 @@ NIC statistics:
      rx_xoff_entered: 0
      rx_frame_too_long_errors: 0
      rx_jabbers: 0
-'''
+"""
 
-SUCCEED_ETHTOOL_S = '''
+SUCCEED_ETHTOOL_S = """
 NIC statistics:
     rx_packets: 912398
     tx_packets: 965449
@@ -557,7 +575,7 @@ NIC statistics:
     rx_queue_3_drops: 0
     rx_queue_3_csum_err: 0
     rx_queue_3_alloc_failed: 0
-'''
+"""
 
 ETHTOOL_S_eth0_1 = """NIC statistics:
     rxq0: rx_pkts: 5000000
@@ -578,36 +596,40 @@ Nothing to see here
 def test_ethtool_S():
     ethtool_S_info = ethtool.Statistics(context_wrap(SUCCEED_ETHTOOL_S))
     ret = {}
-    for line in SUCCEED_ETHTOOL_S.split('\n')[2:-1]:
-        key, value = line.split(':')
+    for line in SUCCEED_ETHTOOL_S.split("\n")[2:-1]:
+        key, value = line.split(":")
         ret[key.strip()] = int(value.strip()) if value else None
     eth_data = dict(ethtool_S_info.data)
     assert eth_data == ret
 
     # Test search functionality
-    assert ethtool_S_info.search(r'rx_queue_3') == {
-        'rx_queue_3_packets': 0,
-        'rx_queue_3_bytes': 0,
-        'rx_queue_3_drops': 0,
-        'rx_queue_3_csum_err': 0,
-        'rx_queue_3_alloc_failed': 0,
+    assert ethtool_S_info.search(r"rx_queue_3") == {
+        "rx_queue_3_packets": 0,
+        "rx_queue_3_bytes": 0,
+        "rx_queue_3_drops": 0,
+        "rx_queue_3_csum_err": 0,
+        "rx_queue_3_alloc_failed": 0,
     }
-    assert ethtool_S_info.search(r'RX_QUEUE_3', flags=re.IGNORECASE) == {
-        'rx_queue_3_packets': 0,
-        'rx_queue_3_bytes': 0,
-        'rx_queue_3_drops': 0,
-        'rx_queue_3_csum_err': 0,
-        'rx_queue_3_alloc_failed': 0,
+    assert ethtool_S_info.search(r"RX_QUEUE_3", flags=re.IGNORECASE) == {
+        "rx_queue_3_packets": 0,
+        "rx_queue_3_bytes": 0,
+        "rx_queue_3_drops": 0,
+        "rx_queue_3_csum_err": 0,
+        "rx_queue_3_alloc_failed": 0,
     }
 
 
 def test_ethtool_S_subinterface():
     ethtool_S_info = ethtool.Statistics(context_wrap(ETHTOOL_S_eth0_1))
-    assert sorted(ethtool_S_info.data.keys()) == sorted([
-        'rxq0: rx_pkts', 'rxq0: rx_drops_no_frags',
-        'rxq1: rx_pkts', 'rxq1: rx_drops_no_frags'
-    ])
-    assert ethtool_S_info.data['rxq0: rx_pkts'] == 5000000
+    assert sorted(ethtool_S_info.data.keys()) == sorted(
+        [
+            "rxq0: rx_pkts",
+            "rxq0: rx_drops_no_frags",
+            "rxq1: rx_pkts",
+            "rxq1: rx_drops_no_frags",
+        ]
+    )
+    assert ethtool_S_info.data["rxq0: rx_pkts"] == 5000000
 
 
 def test_ethtool_S_f():
@@ -648,11 +670,13 @@ def test_extract_from_path_1():
         (TEST_EXTRACT_FROM_PATH_5, "p3p2.2002-fcoe@p3p2"),
     ]
     for input_, value in test_data:
-        ifname = ethtool.extract_iface_name_from_path(input_, TEST_EXTRACT_FROM_PATH_PARAM)
+        ifname = ethtool.extract_iface_name_from_path(
+            input_, TEST_EXTRACT_FROM_PATH_PARAM
+        )
         assert ifname == value
 
 
-TEST_ETHTOOL_DOCS = '''
+TEST_ETHTOOL_DOCS = """
         Settings for eth0:
                 Supported ports: [ TP MII ]
                 Supported link modes:   10baseT/Half 10baseT/Full
@@ -677,7 +701,7 @@ TEST_ETHTOOL_DOCS = '''
                 Current message level: 0x00000007 (7)
                                        drv probe link
         Cannot get link status: Operation not permitted
-'''
+"""
 
 ETHTOOL_INFO = """
 Settings for eth1:
@@ -718,18 +742,22 @@ def test_ethtool():
     ethtool_info = ethtool.Ethtool(context_wrap(ETHTOOL_INFO, path="ethtool_eth1"))
     assert ethtool_info.ifname == "eth1"
     assert ethtool_info.link_detected
-    assert ethtool_info.speed == ['1000Mb/s']
+    assert ethtool_info.speed == ["1000Mb/s"]
     assert ethtool_info.supported_link_modes == [
-        '10baseT/Half', '10baseT/Full',
-        '100baseT/Half', '100baseT/Full',
-        '1000baseT/Full'
+        "10baseT/Half",
+        "10baseT/Full",
+        "100baseT/Half",
+        "100baseT/Full",
+        "1000baseT/Full",
     ]
     assert ethtool_info.advertised_link_modes == [
-        '10baseT/Half', '10baseT/Full',
-        '100baseT/Half', '100baseT/Full',
-        '1000baseT/Full'
+        "10baseT/Half",
+        "10baseT/Full",
+        "100baseT/Half",
+        "100baseT/Full",
+        "1000baseT/Full",
     ]
-    assert ethtool_info.supported_ports == ['TP', 'MII']
+    assert ethtool_info.supported_ports == ["TP", "MII"]
 
 
 def test_ethtool_corner_cases():
@@ -767,7 +795,7 @@ def test_ethtool_fail():
 
     with pytest.raises(ParseException) as e:
         ethtool.Ethtool(context_wrap(ETHTOOL_INFO_BAD_3, path="ethtool_eth1"))
-    assert 'Ethtool unable to parse content' in str(e.value)
+    assert "Ethtool unable to parse content" in str(e.value)
 
 
 # Because tests are done at the module level, we have to put all the shared
@@ -775,13 +803,31 @@ def test_ethtool_fail():
 # Also note that to support common usage, all of these are supplied in lists.
 def test_ethtool_i_doc_examples():
     env = {
-        'coalesce': [ethtool.CoalescingInfo(context_wrap(TEST_ETHTOOL_C_DOCS, path='ethtool_-c_eth0'))],
-        'interfaces': [ethtool.Driver(context_wrap(TEST_ETHTOOL_I_DOCS, path='ethtool_-i_bond0'))],
-        'ethers': [ethtool.Ethtool(context_wrap(TEST_ETHTOOL_DOCS, path='ethtool_eth0'))],
-        'features': [ethtool.Features(context_wrap(ETHTOOL_K_STANDARD, path='ethtool_-k_bond0'))],
-        'pause': [ethtool.Pause(context_wrap(TEST_ETHTOOL_A_DOCS, path='ethtool_-a_eth0'))],
-        'ring': [ethtool.Ring(context_wrap(TEST_ETHTOOL_G_DOCS, path='ethtool_-g_eth0'))],
-        'stats': [ethtool.Statistics(context_wrap(TEST_ETHTOOL_S_DOCS, path='ethtool_-S_eth0'))],
+        "coalesce": [
+            ethtool.CoalescingInfo(
+                context_wrap(TEST_ETHTOOL_C_DOCS, path="ethtool_-c_eth0")
+            )
+        ],
+        "interfaces": [
+            ethtool.Driver(context_wrap(TEST_ETHTOOL_I_DOCS, path="ethtool_-i_bond0"))
+        ],
+        "ethers": [
+            ethtool.Ethtool(context_wrap(TEST_ETHTOOL_DOCS, path="ethtool_eth0"))
+        ],
+        "features": [
+            ethtool.Features(context_wrap(ETHTOOL_K_STANDARD, path="ethtool_-k_bond0"))
+        ],
+        "pause": [
+            ethtool.Pause(context_wrap(TEST_ETHTOOL_A_DOCS, path="ethtool_-a_eth0"))
+        ],
+        "ring": [
+            ethtool.Ring(context_wrap(TEST_ETHTOOL_G_DOCS, path="ethtool_-g_eth0"))
+        ],
+        "stats": [
+            ethtool.Statistics(
+                context_wrap(TEST_ETHTOOL_S_DOCS, path="ethtool_-S_eth0")
+            )
+        ],
     }
     failed, total = doctest.testmod(ethtool, globs=env)
     assert failed == 0

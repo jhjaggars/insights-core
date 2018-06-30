@@ -114,8 +114,8 @@ service tftp
 }
 """
 
-CONF_PATH = '/etc/xinetd.conf'
-D_TFTP_PATH = '/etc/xinetd.d/tftp'
+CONF_PATH = "/etc/xinetd.conf"
+D_TFTP_PATH = "/etc/xinetd.d/tftp"
 
 
 def test_XinetdConf_0():
@@ -134,18 +134,18 @@ def test_XinetdConf_1():
     assert xinetd_conf.is_includedir
     assert data.get("includedir") == "/etc/xinetd.d"
     assert data.get("defaults") == {
-        'enabled': '',
-        'v6only': 'no',
-        'log_on_failure': 'HOST',
-        'umask': '002',
-        'log_on_success': 'PID HOST DURATION EXIT',
-        'instances': '50',
-        'per_source': '10',
-        'groups': 'yes',
-        'cps': '50 10',
-        'log_type': 'SYSLOG daemon info'
+        "enabled": "",
+        "v6only": "no",
+        "log_on_failure": "HOST",
+        "umask": "002",
+        "log_on_success": "PID HOST DURATION EXIT",
+        "instances": "50",
+        "per_source": "10",
+        "groups": "yes",
+        "cps": "50 10",
+        "log_type": "SYSLOG daemon info",
     }
-    assert xinetd_conf.file_name == 'xinetd.conf'
+    assert xinetd_conf.file_name == "xinetd.conf"
     assert xinetd_conf.file_path == CONF_PATH
 
 
@@ -156,18 +156,18 @@ def test_XinetdConf_tftp():
     assert not d_tftp.is_includedir
     assert data.get("includedir") is None
     assert data.get("tftp") == {
-        'protocol': 'udp',
-        'socket_type': 'dgram',
-        'server': '/usr/sbin/in.tftpd',
-        'server_args': '-s /var/lib/tftpboot',
-        'disable': 'yes',
-        'flags': 'IPv4',
-        'user': 'root',
-        'per_source': '11',
-        'cps': '100 2',
-        'wait': 'yes'
+        "protocol": "udp",
+        "socket_type": "dgram",
+        "server": "/usr/sbin/in.tftpd",
+        "server_args": "-s /var/lib/tftpboot",
+        "disable": "yes",
+        "flags": "IPv4",
+        "user": "root",
+        "per_source": "11",
+        "cps": "100 2",
+        "wait": "yes",
     }
-    assert d_tftp.file_name == 'tftp'
+    assert d_tftp.file_name == "tftp"
     assert d_tftp.file_path == D_TFTP_PATH
 
 
@@ -192,4 +192,4 @@ def test_XinetdConf_5():
     assert xinetd_conf.is_valid
     assert not xinetd_conf.is_includedir
     assert data.get("includedir") == "/etc/xinetd.d/abc"
-    assert data.get("defaults") == {'umask': '002'}
+    assert data.get("defaults") == {"umask": "002"}

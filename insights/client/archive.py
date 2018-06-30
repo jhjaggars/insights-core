@@ -28,12 +28,10 @@ class InsightsArchive(object):
         Create temp dir, archive dir, and command dir
         """
 
-        self.tmp_dir = tempfile.mkdtemp(prefix='/var/tmp/')
-        self.archive_tmp_dir = tempfile.mkdtemp(prefix='/var/tmp/')
+        self.tmp_dir = tempfile.mkdtemp(prefix="/var/tmp/")
+        self.archive_tmp_dir = tempfile.mkdtemp(prefix="/var/tmp/")
         name = determine_hostname(target_name)
-        self.archive_name = ("insights-%s-%s" %
-                             (name,
-                              time.strftime("%Y%m%d%H%M%S")))
+        self.archive_name = "insights-%s-%s" % (name, time.strftime("%Y%m%d%H%M%S"))
         self.archive_dir = self.create_archive_dir()
         self.cmd_dir = self.create_command_dir()
         self.compressor = compressor
@@ -58,7 +56,7 @@ class InsightsArchive(object):
         """
         Returns the full archive path
         """
-        return os.path.join(self.archive_dir, path.lstrip('/'))
+        return os.path.join(self.archive_dir, path.lstrip("/"))
 
     def _copy_file(self, path):
         """
@@ -96,7 +94,7 @@ class InsightsArchive(object):
         """
         for directory in path:
             if os.path.isdir(path):
-                full_path = os.path.join(self.archive_dir, directory.lstrip('/'))
+                full_path = os.path.join(self.archive_dir, directory.lstrip("/"))
                 logger.debug("Copying %s to %s", directory, full_path)
                 shutil.copytree(directory, full_path)
             else:
@@ -104,12 +102,7 @@ class InsightsArchive(object):
         return path
 
     def get_compression_flag(self, compressor):
-        return {
-            "gz": "z",
-            "xz": "J",
-            "bz2": "j",
-            "none": ""
-        }.get(compressor, "z")
+        return {"gz": "z", "xz": "J", "bz2": "j", "none": ""}.get(compressor, "z")
 
     def create_tar_file(self, full_archive=False):
         """
@@ -119,14 +112,20 @@ class InsightsArchive(object):
         ext = "" if self.compressor == "none" else ".%s" % self.compressor
         tar_file_name = tar_file_name + ".tar" + ext
         logger.debug("Tar File: " + tar_file_name)
-        subprocess.call(shlex.split("tar c%sfS %s -C %s ." % (
-            self.get_compression_flag(self.compressor),
-            tar_file_name,
-            # for the docker "uber archive,"use archive_dir
-            #   rather than tmp_dir for all the files we tar,
-            #   because all the individual archives are in there
-            self.tmp_dir if not full_archive else self.archive_dir)),
-            stderr=subprocess.PIPE)
+        subprocess.call(
+            shlex.split(
+                "tar c%sfS %s -C %s ."
+                % (
+                    self.get_compression_flag(self.compressor),
+                    tar_file_name,
+                    # for the docker "uber archive,"use archive_dir
+                    #   rather than tmp_dir for all the files we tar,
+                    #   because all the individual archives are in there
+                    self.tmp_dir if not full_archive else self.archive_dir,
+                )
+            ),
+            stderr=subprocess.PIPE,
+        )
         self.delete_archive_dir()
         logger.debug("Tar File Size: %s", str(os.path.getsize(tar_file_name)))
         return tar_file_name
@@ -153,21 +152,21 @@ class InsightsArchive(object):
         shutil.rmtree(self.archive_tmp_dir, True)
 
     def add_to_archive(self, spec):
-        '''
+        """
         Add files and commands to archive
         Use InsightsSpec.get_output() to get data
-        '''
+        """
         if isinstance(spec, InsightsCommand):
-            archive_path = os.path.join(self.cmd_dir, spec.archive_path.lstrip('/'))
+            archive_path = os.path.join(self.cmd_dir, spec.archive_path.lstrip("/"))
         if isinstance(spec, InsightsFile):
-            archive_path = self.get_full_archive_path(spec.archive_path.lstrip('/'))
+            archive_path = self.get_full_archive_path(spec.archive_path.lstrip("/"))
         output = spec.get_output()
         if output:
             write_data_to_file(output, archive_path)
 
     def add_metadata_to_archive(self, metadata, meta_path):
-        '''
+        """
         Add metadata to archive
-        '''
-        archive_path = self.get_full_archive_path(meta_path.lstrip('/'))
+        """
+        archive_path = self.get_full_archive_path(meta_path.lstrip("/"))
         write_data_to_file(metadata, archive_path)

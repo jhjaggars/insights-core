@@ -62,6 +62,7 @@ class DockerInspectImage(DockerInspect):
     """
     Parse docker image inspect output using the DockerInspect parser class.
     """
+
     pass
 
 
@@ -70,4 +71,5 @@ class DockerInspectContainer(DockerInspect):
     """
     Parse docker container inspect output using the DockerInspect parser class.
     """
+
     pass

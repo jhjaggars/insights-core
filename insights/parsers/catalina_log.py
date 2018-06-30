@@ -54,7 +54,8 @@ class CatalinaServerLog(LogFileOutput):
         >>> list(log.get_after(datetime(2017, 11, 28, 14, 11, 21)))[0]['raw_message']
         'Nov 28, 2017 2:11:22 PM org.apache.coyote.AbstractProtocol init'
     """
-    time_format = '%b %d, %Y %I:%M:%S %p'
+
+    time_format = "%b %d, %Y %I:%M:%S %p"
 
 
 @parser(Specs.catalina_out)
@@ -103,4 +104,5 @@ class CatalinaOut(LogFileOutput):
         >>> list(out.get_after(datetime(2015, 11, 10, 12, 00, 00)))[0]['raw_message']
         'Nov 10, 2015 4:55:48 PM org.apache.coyote.http11.Http11Protocol pause'
     """
-    time_format = '%b %d, %Y %I:%M:%S %p'
+
+    time_format = "%b %d, %Y %I:%M:%S %p"

@@ -34,4 +34,5 @@ class CephOsdLog(LogFileOutput):
     .. note::
         Please refer to the super-class :class:`insights.core.LogFileOutput`
     """
-    time_format = '%Y-%m-%d %H:%M:%S.%f'
+
+    time_format = "%Y-%m-%d %H:%M:%S.%f"

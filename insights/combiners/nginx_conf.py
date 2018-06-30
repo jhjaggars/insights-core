@@ -31,6 +31,7 @@ class NginxConfTree(ConfigCombiner):
 
     See the :py:class:`insights.core.ConfigComponent` class for example usage.
     """
+
     def __init__(self, confs):
         super(NginxConfTree, self).__init__(confs, "nginx.conf", eq("include"))
 

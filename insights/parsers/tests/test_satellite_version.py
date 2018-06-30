@@ -19,7 +19,9 @@ SDL-1.2.14-6.el6.x86_64                                     Wed May 18 14:16:25 
 
 
 def test_get_sat6_version():
-    result = Satellite6Version(context_wrap(satellite_version, path='satellite_version'))
+    result = Satellite6Version(
+        context_wrap(satellite_version, path="satellite_version")
+    )
     assert result.full == "6.1.3"
     assert result.version == "6.1.3"
     assert result.major == 6
@@ -29,5 +31,5 @@ def test_get_sat6_version():
 
 def test_get_no_sat_version():
     with pytest.raises(ParseException) as e:
-        Satellite6Version(context_wrap(no_sat, path='satellite_version'))
+        Satellite6Version(context_wrap(no_sat, path="satellite_version"))
     assert "Cannot parse satellite version" in str(e)

@@ -18,6 +18,7 @@ class IpcsSemaphore(object):
     Class for holding information about one semaphore.
 
     """
+
     def __init__(self, data):
         self.semid = None
         """str: Semaphore ID."""
@@ -57,6 +58,7 @@ class IpcsSemaphores(object):
         <IpcsSemaphore object at 0x7ffa907bda10>
 
     """
+
     def __init__(self, sem_s, sem_si, ps):
         pids = ps.running_pids()
         self._all_sems = {}
@@ -65,13 +67,13 @@ class IpcsSemaphores(object):
             semid = sem.semid
             pid_list = sem.pid_list
             data = sem_s.get(semid)
-            data['semid'] = semid
-            data['pid_list'] = pid_list
+            data["semid"] = semid
+            data["pid_list"] = pid_list
             # check if it is orphan
             is_orphan = False
-            if '0' not in pid_list and all(p not in pids for p in pid_list):
+            if "0" not in pid_list and all(p not in pids for p in pid_list):
                 is_orphan = True
-            data['is_orphan'] = is_orphan
+            data["is_orphan"] = is_orphan
             sem_obj = IpcsSemaphore(data)
             self._all_sems[semid] = sem_obj
             if is_orphan:

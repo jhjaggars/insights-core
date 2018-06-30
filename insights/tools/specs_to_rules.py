@@ -69,35 +69,39 @@ def main():
 
     deps = defaultdict(dict)
 
-    pspec = ''
+    pspec = ""
     for spec in sorted(specs, key=dr.get_name):
 
         info = dict(name=dr.get_simple_name(spec))
 
         f = filters.get_filters(spec)
-        info['dependents'] = []
+        info["dependents"] = []
 
         spds = None
         d = [d for d in dr.get_dependencies(spec) if is_datasource(d)]
         for dp in d:
             c = dr.get_dependencies(dp)
             for cdeps in c:
-                if is_datasource(cdeps) and '__qualname__' in cdeps.func_dict and 'DefaultSpecs' in cdeps.func_dict['__qualname__']:
+                if (
+                    is_datasource(cdeps)
+                    and "__qualname__" in cdeps.func_dict
+                    and "DefaultSpecs" in cdeps.func_dict["__qualname__"]
+                ):
                     spds = cdeps
 
         for d in dr.get_dependencies(spec):
-            cp = ''
+            cp = ""
             lines = []
 
             if d.__doc__ and "Returns the first" in d.__doc__:
-                lines = d.__doc__.replace(',', '\n')
+                lines = d.__doc__.replace(",", "\n")
                 lines = lines.splitlines()
                 head = [lines[0]]
                 top = ["<ul>"]
                 bottom = ["</ul>"]
                 if spds:
-                    lines = [l.replace('Command:', '') for l in lines]
-                    lines = [l.replace('Path:', '') for l in lines]
+                    lines = [l.replace("Command:", "") for l in lines]
+                    lines = [l.replace("Path:", "") for l in lines]
                     lines = ["<li>" + l + "</li>" for l in lines[1:]]
                     # lines = ["<li>" + spds.func_doc + ',' + l + "</li>" for l in lines[1:]]
                 else:
@@ -105,9 +109,9 @@ def main():
                 cp = "\n".join(head + top + lines + bottom)
             else:
                 if spds:
-                    d.__doc__ = d.__doc__.replace('Command:', '')
-                    d.__doc__ = d.__doc__.replace('Path:', '')
-                    d.__doc__ = spds.func_doc + ', ' + d.__doc__
+                    d.__doc__ = d.__doc__.replace("Command:", "")
+                    d.__doc__ = d.__doc__.replace("Path:", "")
+                    d.__doc__ = spds.func_doc + ", " + d.__doc__
                 cp = d.__doc__
 
         for d in dr.get_dependents(spec):
@@ -116,13 +120,16 @@ def main():
             pspec = d
 
             p = [dr.get_name(sd) for sd in dr.get_dependents(d)]
-            rules = sorted([x.rsplit('.', 2)[1] for x in p])
-            deps[info['name']][info['name'] + "_spec-def"] = cp
-            deps[info['name']][info['name'] + "_rules"] = ", ".join(rules)
-            deps[info['name']][info['name'] + "_filters"] = f
+            rules = sorted([x.rsplit(".", 2)[1] for x in p])
+            deps[info["name"]][info["name"] + "_spec-def"] = cp
+            deps[info["name"]][info["name"] + "_rules"] = ", ".join(rules)
+            deps[info["name"]][info["name"] + "_filters"] = f
 
-    report = Environment().from_string(REPORT).render(
-        report_date=datetime.date.today().strftime("%B %d, %Y"), specs=deps)
+    report = (
+        Environment()
+        .from_string(REPORT)
+        .render(report_date=datetime.date.today().strftime("%B %d, %Y"), specs=deps)
+    )
 
     print(report)
 

@@ -18,4 +18,5 @@ class ClusterConf(LogFileOutput):
     can be used to find lines containing one or more keywords.  Because of
     filters used on this file, we cannot parse this as XML.
     """
+
     pass

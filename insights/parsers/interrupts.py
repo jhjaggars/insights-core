@@ -64,7 +64,9 @@ class Interrupts(Parser):
 
     def get(self, filter):
         """list: Returns list of records containing ``filter`` in the type/device field."""
-        return [i for i in self.data if 'type_device' in i and filter in i['type_device']]
+        return [
+            i for i in self.data if "type_device" in i and filter in i["type_device"]
+        ]
 
     def __iter__(self):
         return iter(self.data)
@@ -72,7 +74,7 @@ class Interrupts(Parser):
     @property
     def num_cpus(self):
         """int: Returns total number of CPUs."""
-        return int(self.data[0]['num_cpus'])
+        return int(self.data[0]["num_cpus"])
 
     def parse_content(self, content):
         self.data = []
@@ -81,19 +83,21 @@ class Interrupts(Parser):
         except:
             raise ParseException("Invalid first line of content for /proc/interrupts")
         if len(cpu_names) < 1 or not cpu_names[0].startswith("CPU"):
-            raise ParseException("Unable to determine number of CPUs in /proc/interrupts")
+            raise ParseException(
+                "Unable to determine number of CPUs in /proc/interrupts"
+            )
         for line in content[1:]:
             parts = line.split(None, len(cpu_names) + 1)
-            one_int = {'irq': parts[0].replace(":", "")}
-            one_int['num_cpus'] = len(cpu_names)
-            one_int['counts'] = []
+            one_int = {"irq": parts[0].replace(":", "")}
+            one_int["num_cpus"] = len(cpu_names)
+            one_int["counts"] = []
             if len(parts) == len(cpu_names) + 2:
-                one_int['type_device'] = parts[-1]
+                one_int["type_device"] = parts[-1]
                 for part, cpu in zip(parts[1:-1], cpu_names):
-                    one_int['counts'].append(int(part))
+                    one_int["counts"].append(int(part))
             else:
                 for part, cpu in zip(parts[1:], cpu_names):
-                    one_int['counts'].append(int(part))
+                    one_int["counts"].append(int(part))
             self.data.append(one_int)
         if len(self.data) < 1:
             raise ParseException("No information in /proc/interrupts")

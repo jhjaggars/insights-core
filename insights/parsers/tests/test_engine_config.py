@@ -289,45 +289,49 @@ def test_engine_config_all_output():
     output = EngineConfigAll(context_wrap(ENGINE_CONFIG_ALL_OUTPUT))
 
     # Keyword with single value and version
-    assert 'MaxStorageVdsTimeoutCheckSec' in output
+    assert "MaxStorageVdsTimeoutCheckSec" in output
     # import pdb; pdb.set_trace()
-    assert output['MaxStorageVdsTimeoutCheckSec'] == ['30']
-    assert output.get('MaxStorageVdsTimeoutCheckSec') == ['30']
-    assert output.head('MaxStorageVdsTimeoutCheckSec') == '30'
-    assert output.get_version('MaxStorageVdsTimeoutCheckSec') == ['general']
+    assert output["MaxStorageVdsTimeoutCheckSec"] == ["30"]
+    assert output.get("MaxStorageVdsTimeoutCheckSec") == ["30"]
+    assert output.head("MaxStorageVdsTimeoutCheckSec") == "30"
+    assert output.get_version("MaxStorageVdsTimeoutCheckSec") == ["general"]
 
     # Keyword with mutiple values and versions
-    assert output['HotUnplugCpuSupported'] == ['{"x86":"false","ppc":"false"}',
-                                               '{"x86":"false","ppc":"false"}',
-                                               '{"x86":"true","ppc":"true"}']
-    assert output.last('HotUnplugCpuSupported') == '{"x86":"true","ppc":"true"}'  # noqa
+    assert output["HotUnplugCpuSupported"] == [
+        '{"x86":"false","ppc":"false"}',
+        '{"x86":"false","ppc":"false"}',
+        '{"x86":"true","ppc":"true"}',
+    ]
+    assert output.last("HotUnplugCpuSupported") == '{"x86":"true","ppc":"true"}'  # noqa
 
     # Keyword with no value but version
-    assert 'IPTablesConfigSiteCustom' in output
-    assert output['IPTablesConfigSiteCustom'] == []
-    assert output.get_version('IPTablesConfigSiteCustom') == ['general']
+    assert "IPTablesConfigSiteCustom" in output
+    assert output["IPTablesConfigSiteCustom"] == []
+    assert output.get_version("IPTablesConfigSiteCustom") == ["general"]
 
     # Keyword with no values but versions
-    assert output['ClusterRequiredRngSourcesDefault'] == []
-    assert output.get_version('ClusterRequiredRngSourcesDefault') == ['3.6',
-                                                                      '4.0',
-                                                                      '4.1']
-    assert 'MigrationPolicies' in output
-    assert output.get_version('MigrationPolicies') == ['3.6', '4.0', '4.1']
+    assert output["ClusterRequiredRngSourcesDefault"] == []
+    assert output.get_version("ClusterRequiredRngSourcesDefault") == [
+        "3.6",
+        "4.0",
+        "4.1",
+    ]
+    assert "MigrationPolicies" in output
+    assert output.get_version("MigrationPolicies") == ["3.6", "4.0", "4.1"]
 
     # A keyword having multi-line output is not considered at-the-moment
-    assert 'IPTablesConfig' not in output
-    assert output['IPTablesConfig'] == []
+    assert "IPTablesConfig" not in output
+    assert output["IPTablesConfig"] == []
 
     # Just another keyword
-    assert 'UserSessionTimeOutInterval' in output
-    assert output['UserSessionTimeOutInterval'] == ['30']
-    assert output.get_version('UserSessionTimeOutInterval') == ['general']
+    assert "UserSessionTimeOutInterval" in output
+    assert output["UserSessionTimeOutInterval"] == ["30"]
+    assert output.get_version("UserSessionTimeOutInterval") == ["general"]
 
     # A non existing keyword
-    assert 'IDoNotExit' not in output
-    assert output['IDoNotExit'] == []
-    assert output.get('IDoNotExit') == []
-    assert output.head('IDoNotExit') is None
-    assert output.last('IDoNotExit') is None
-    assert output.get_version('IDoNotExit') == []
+    assert "IDoNotExit" not in output
+    assert output["IDoNotExit"] == []
+    assert output.get("IDoNotExit") == []
+    assert output.head("IDoNotExit") is None
+    assert output.last("IDoNotExit") is None
+    assert output.get_version("IDoNotExit") == []

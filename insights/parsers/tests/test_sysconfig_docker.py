@@ -42,15 +42,17 @@ ADD_REGISTRY='--add-registry registry.access.redhat.com'
 
 
 def test_standard_content():
-    context = context_wrap(DOCKER_SYSCONFIG_STD, 'etc/sysconfig/docker')
+    context = context_wrap(DOCKER_SYSCONFIG_STD, "etc/sysconfig/docker")
     sysconf = DockerSysconfig(context)
 
-    assert sorted(sysconf.keys()) == sorted(['OPTIONS', 'DOCKER_CERT_PATH', 'ADD_REGISTRY'])
-    assert 'OPTIONS' in sysconf
-    assert sysconf['OPTIONS'] == '--selinux-enabled'
-    assert sysconf.options == '--selinux-enabled'
-    assert 'DOCKER_CERT_PATH' in sysconf
-    assert sysconf['DOCKER_CERT_PATH'] == '/etc/docker'
-    assert 'ADD_REGISTRY' in sysconf
-    assert sysconf['ADD_REGISTRY'] == '--add-registry registry.access.redhat.com'
+    assert sorted(sysconf.keys()) == sorted(
+        ["OPTIONS", "DOCKER_CERT_PATH", "ADD_REGISTRY"]
+    )
+    assert "OPTIONS" in sysconf
+    assert sysconf["OPTIONS"] == "--selinux-enabled"
+    assert sysconf.options == "--selinux-enabled"
+    assert "DOCKER_CERT_PATH" in sysconf
+    assert sysconf["DOCKER_CERT_PATH"] == "/etc/docker"
+    assert "ADD_REGISTRY" in sysconf
+    assert sysconf["ADD_REGISTRY"] == "--add-registry registry.access.redhat.com"
     assert sysconf.unparsed_lines == []

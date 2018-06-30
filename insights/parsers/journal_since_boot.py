@@ -42,4 +42,5 @@ class JournalSinceBoot(Syslog):
         >>> msgs.daemon_start # Token set if matching lines present in logs
         True
     """
+
     pass

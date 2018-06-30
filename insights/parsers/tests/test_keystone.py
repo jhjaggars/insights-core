@@ -28,13 +28,11 @@ generator = keystone.identity.id_generators.sha256.Generator
 def test_keystone():
     kconf = KeystoneConf(context_wrap(KEYSTONE_CONF))
     assert kconf is not None
-    assert kconf.defaults() == {'admin_token': 'ADMIN',
-                                'compute_port': '8774'}
-    assert 'identity' in kconf
-    assert 'identity_mapping' in kconf
-    assert kconf.has_option('identity', 'default_domain_id')
-    assert kconf.has_option('identity_mapping', 'driver')
-    assert not kconf.has_option('identity', 'domain_specific_drivers_enabled')
-    assert kconf.get('identity', 'default_domain_id') == 'default'
-    assert kconf.items('DEFAULT') == {'admin_token': 'ADMIN',
-                                      'compute_port': '8774'}
+    assert kconf.defaults() == {"admin_token": "ADMIN", "compute_port": "8774"}
+    assert "identity" in kconf
+    assert "identity_mapping" in kconf
+    assert kconf.has_option("identity", "default_domain_id")
+    assert kconf.has_option("identity_mapping", "driver")
+    assert not kconf.has_option("identity", "domain_specific_drivers_enabled")
+    assert kconf.get("identity", "default_domain_id") == "default"
+    assert kconf.items("DEFAULT") == {"admin_token": "ADMIN", "compute_port": "8774"}

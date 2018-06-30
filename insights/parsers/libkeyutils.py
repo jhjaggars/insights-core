@@ -39,6 +39,7 @@ class Libkeyutils(CommandParser):
         >>> shared[Libkeyutils].libraries
         ['/lib/libkeyutils.so.1', '/lib/tls/libkeyutils.so.1.6', '/lib64/libkeyutils.so']
     """
+
     def __init__(self, *args, **kwargs):
         self.libraries = []
         """list: all 'libkeyutils.so*' libraries located in either /lib or /lib64 directory and its sub-directories."""
@@ -93,8 +94,9 @@ class LibkeyutilsObjdumps(CommandParser):
         {'/lib/libkeyutils.so.1': ['libdl.so.2', 'libc.so.6', 'libsbr.so'],
          '/lib64/libkeyutils.so.1': ['libdl.so.2', 'libsbr.so.6', 'libfake.so']}
     """
-    FILE_PATTERN = re.compile(r'(.*libkeyutils.so.1):\s*file format')
-    NEED_PATTERN = re.compile(r'NEEDED\s+(.*)\s*$')
+
+    FILE_PATTERN = re.compile(r"(.*libkeyutils.so.1):\s*file format")
+    NEED_PATTERN = re.compile(r"NEEDED\s+(.*)\s*$")
 
     def __init__(self, *args, **kwargs):
         self.linked_libraries = {}

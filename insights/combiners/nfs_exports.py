@@ -61,6 +61,7 @@ class AllNFSExports(object):
             exported path, with the lines stored by defining file.
 
     """
+
     def __init__(self, nfsexports, nfsexportsd):
         self.files = []
         self.exports = {}
@@ -88,7 +89,9 @@ class AllNFSExports(object):
             # Add all raw lines from the source to raw lines.
             add_paths_to_dict(source.file_path, source.raw_lines, self.raw_lines)
             # Likewise all the ignored exports from this file.
-            add_paths_to_dict(source.file_path, source.ignored_exports, self.ignored_exports)
+            add_paths_to_dict(
+                source.file_path, source.ignored_exports, self.ignored_exports
+            )
             # For exports though we have to preserve existing host definitions
             # and ignore repeated host specs.
             for path, hosts in source.data.items():

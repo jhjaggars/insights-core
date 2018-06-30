@@ -80,33 +80,53 @@ KRB5_DCONF_PATH = "etc/krb5.conf.d/test.conf"
 
 
 def test_krb5configuration():
-    common_conf_info = krb5.Krb5Configuration(context_wrap(KRB5CONFIG, path=KRB5_CONF_PATH))
+    common_conf_info = krb5.Krb5Configuration(
+        context_wrap(KRB5CONFIG, path=KRB5_CONF_PATH)
+    )
     assert common_conf_info["libdefaults"]["dnsdsd"] == "false"
     assert "renew_lifetime" not in common_conf_info.data.keys()
     assert common_conf_info["realms"]["EXAMPLE.COM"]["kdc"] == "kerberos.example.com"
-    assert common_conf_info["realms"]["default_ccache_name"] == "KEYRING:persistent:%{uid}"
-    assert common_conf_info["libdefaults"]["default_ccache_name"] == "KEYRING:%{uid}:persistent"
-    assert common_conf_info["realms"]["kdc_default_options"] == ["default.example.com", "default2.example.com"]
+    assert (
+        common_conf_info["realms"]["default_ccache_name"] == "KEYRING:persistent:%{uid}"
+    )
+    assert (
+        common_conf_info["libdefaults"]["default_ccache_name"]
+        == "KEYRING:%{uid}:persistent"
+    )
+    assert common_conf_info["realms"]["kdc_default_options"] == [
+        "default.example.com",
+        "default2.example.com",
+    ]
     assert "realms" in common_conf_info.sections()
     assert "realmstest" not in common_conf_info.sections()
     assert common_conf_info.has_section("realms")
     assert not common_conf_info.has_option("realms", "nosuchoption")
     assert not common_conf_info.has_option("nosucsection", "nosuchoption")
     assert not common_conf_info.options("realmsno")
-    assert sorted(common_conf_info.options("logging")) == sorted(['default', 'admin_server', 'kdc'])
+    assert sorted(common_conf_info.options("logging")) == sorted(
+        ["default", "admin_server", "kdc"]
+    )
     assert common_conf_info.include == ["/etc/krb5test.conf"]
     assert common_conf_info.includedir == ["/etc/krb5.conf.d/"]
     assert common_conf_info.module == ["/etc/krb5test.conf:residual"]
 
 
 def test2_krb5configuration():
-    common_conf_info = krb5.Krb5Configuration(context_wrap(KRB5CONFIG2, path=KRB5_CONF_PATH))
+    common_conf_info = krb5.Krb5Configuration(
+        context_wrap(KRB5CONFIG2, path=KRB5_CONF_PATH)
+    )
     assert common_conf_info.data == {}
 
 
 def test_krb5Dconfiguration():
-    common_conf_info = krb5.Krb5Configuration(context_wrap(KRB5DCONFIG, path=KRB5_DCONF_PATH))
+    common_conf_info = krb5.Krb5Configuration(
+        context_wrap(KRB5DCONFIG, path=KRB5_DCONF_PATH)
+    )
     assert common_conf_info["realms"]["ticket_lifetime"] == "24h"
     assert "default_ccache_name" not in common_conf_info.data.keys()
-    assert common_conf_info["realms"]["EXAMPLE.COM"]["kdc"] == ['kerberos.example.com', 'test2.example.com', 'test3.example.com']
+    assert common_conf_info["realms"]["EXAMPLE.COM"]["kdc"] == [
+        "kerberos.example.com",
+        "test2.example.com",
+        "test3.example.com",
+    ]
     assert not common_conf_info.has_option("logging", "admin_server")

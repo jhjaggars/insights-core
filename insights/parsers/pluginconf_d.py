@@ -37,16 +37,16 @@ class PluginConfD(LegacyItemAccess, Parser):
         section_dict = {}
         key = None
         for line in get_active_lines(content):
-            if line.startswith('['):
+            if line.startswith("["):
                 section_dict = {}
                 plugin_dict[line[1:-1]] = section_dict
-            elif '=' in line:
+            elif "=" in line:
                 key, _, value = line.partition("=")
                 key = key.strip()
                 section_dict[key] = value.strip()
             else:
                 if key:
-                    section_dict[key] = ','.join([section_dict[key], line])
+                    section_dict[key] = ",".join([section_dict[key], line])
         self.data = plugin_dict
 
     def __iter__(self):
@@ -60,4 +60,5 @@ class PluginConfDIni(IniConfigFile):
     Read yum plugin config files, in INI format, using the standard INI file
     parser class.
     """
+
     pass

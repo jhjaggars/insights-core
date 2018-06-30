@@ -67,6 +67,7 @@ class SAPHostInstances(Lssap):
         ignored_lines (list): Data lines that could not be parsed because they
             did not have the right number of fields.
     """
+
     def parse_content(self, content):
         self.data = []
         self.running_inst_types = set()
@@ -78,38 +79,34 @@ class SAPHostInstances(Lssap):
             # is started and once at the end of the file.  So it's better to
             # have it as a single function than to copy and paste the code.
             # Add Lssap compatibility keys - allow override
-            if 'InstanceName' in inst and 'Instance' not in inst:
-                inst['Instance'] = inst['InstanceName']
-            if 'SapVersionInfo' in inst and 'Version' not in inst:
-                inst['Version'] = inst['SapVersionInfo']
+            if "InstanceName" in inst and "Instance" not in inst:
+                inst["Instance"] = inst["InstanceName"]
+            if "SapVersionInfo" in inst and "Version" not in inst:
+                inst["Version"] = inst["SapVersionInfo"]
             # Add inferred data to current instance dict
             # instance_type = the bit in SID before the SystemNumber
             if (
-                'InstanceName' in inst and
-                'SystemNumber' in inst and
-                inst['InstanceName'].endswith(
-                    inst['SystemNumber']
-                )
+                "InstanceName" in inst
+                and "SystemNumber" in inst
+                and inst["InstanceName"].endswith(inst["SystemNumber"])
             ):
                 # subtract len(sysnumber) characters from instance name
-                itype = inst['InstanceName'][0:-len(
-                    inst['SystemNumber']
-                )]
-                inst['instance_code'] = itype
+                itype = inst["InstanceName"][0 : -len(inst["SystemNumber"])]
+                inst["instance_code"] = itype
                 if itype in self.instance_dict:
-                    inst['instance_type'] = self.instance_dict[itype]
+                    inst["instance_type"] = self.instance_dict[itype]
                     self.running_inst_types.add(itype)
             # Now save the complete instance
             self.data.append(inst)
 
         for line in (l.strip() for l in content):
-            if line.startswith('********'):
+            if line.startswith("********"):
                 # Skip separator lines but save and reset current instance
                 if current_instance:
                     update_instance_and_append(current_instance)
                 current_instance = {}
                 continue
-            fields = line.split(' , ', 2)
+            fields = line.split(" , ", 2)
             # Ignore lines that have less than three fields in them
             if len(fields) < 3:
                 self.ignored_lines.append(line)

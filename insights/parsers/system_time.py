@@ -63,10 +63,11 @@ class NTPConfParser(Parser):
         >>> ntp.get_param('tinker', 'step') # Get list of all settings
         ['0.9']
     """
+
     def parse_content(self, content):
         data = {}
         for line in get_active_lines(content):
-            if ' ' in line:
+            if " " in line:
                 k, rest = line.split(None, 1)
                 if k in data:
                     data[k].append(rest)
@@ -77,12 +78,12 @@ class NTPConfParser(Parser):
         self.data = data
 
         # Also set up some convenience access to lists of stuff:
-        if 'server' in data:
-            self.servers = sorted(data['server'])
+        if "server" in data:
+            self.servers = sorted(data["server"])
         else:
             self.servers = []
-        if 'peer' in data:
-            self.peers = sorted(data['peer'])
+        if "peer" in data:
+            self.peers = sorted(data["peer"])
         else:
             self.peers = []
 
@@ -160,6 +161,7 @@ class ChronyConf(NTPConfParser):
 
     Uses the ``NTPConfParser`` class defined in this module.
     """
+
     pass
 
 
@@ -170,6 +172,7 @@ class NTPConf(NTPConfParser):
 
     Uses the ``NTPConfParser`` class defined in this module.
     """
+
     pass
 
 
@@ -194,21 +197,22 @@ class LocalTime(CommandParser):
         >>> localtime.data['leap_second']
         'no'
     """
+
     def parse_content(self, content):
         result = {}
         title = [
-            'version',
-            'gmt_time_flag',
-            'std_time_flag',
-            'leap_second',
-            'transition_time',
-            'abbreviation_char'
+            "version",
+            "gmt_time_flag",
+            "std_time_flag",
+            "leap_second",
+            "transition_time",
+            "abbreviation_char",
         ]
         for line in content:
-            filename, info = line.strip().split(':', 1)
-            result['name'] = filename.strip()
-            info_list = info.split(', ')
-            if len(info_list) == 7 and info_list[0].strip() == 'timezone data':
+            filename, info = line.strip().split(":", 1)
+            result["name"] = filename.strip()
+            info_list = info.split(", ")
+            if len(info_list) == 7 and info_list[0].strip() == "timezone data":
                 # A bit of a hack - version field has the data second, all
                 # other fields have the data first.
                 for idx, k in enumerate(title):
@@ -261,27 +265,34 @@ class NtpTime(CommandParser):
         263240
 
     """
+
     def parse_content(self, content):
         result = {}
-        return_code_re = re.compile(r'(?P<func>ntp_(?:get|adj)time)\(\) returns code (?P<code>\d+) ')
-        status_code_re = re.compile(r'status (?P<status>0x[0-9a-f]+) \((?P<flags>.*)\)')
-        time_data_re = re.compile(r'time (?P<timecode>[0-9a-f]{8}\.[0-9a-f]{8}) +(?P<timestamp>\w{3}, \w{3} \d+ .*),')
-        value_re = re.compile(r'(?P<keyword>[A-Za-z][A-Za-z ]+) (?P<value>\d+(?:\.\d+|x[0-9a-f]+)?) ?(?P<units>us|ppm|s|\(.*\))?')
+        return_code_re = re.compile(
+            r"(?P<func>ntp_(?:get|adj)time)\(\) returns code (?P<code>\d+) "
+        )
+        status_code_re = re.compile(r"status (?P<status>0x[0-9a-f]+) \((?P<flags>.*)\)")
+        time_data_re = re.compile(
+            r"time (?P<timecode>[0-9a-f]{8}\.[0-9a-f]{8}) +(?P<timestamp>\w{3}, \w{3} \d+ .*),"
+        )
+        value_re = re.compile(
+            r"(?P<keyword>[A-Za-z][A-Za-z ]+) (?P<value>\d+(?:\.\d+|x[0-9a-f]+)?) ?(?P<units>us|ppm|s|\(.*\))?"
+        )
         # Note that maximum and estimated error appear in both sections but
         # have the same value, so we don't bother to make them unique
         for line in content:
             # Check for function line
             match = return_code_re.search(line)
             if match:
-                function = match.group('func')
-                result[function] = match.group('code')
+                function = match.group("func")
+                result[function] = match.group("code")
                 continue
 
             # Check for status line specially
             match = status_code_re.search(line)
             if match:
-                result['status'] = match.group('status')
-                result['flags'] = match.group('flags').split(',')
+                result["status"] = match.group("status")
+                result["flags"] = match.group("flags").split(",")
                 continue
 
             # Check for time data specially
@@ -293,13 +304,13 @@ class NtpTime(CommandParser):
 
             # Otherwise, try to read comma-separated key-value groups
             for match in value_re.finditer(line):
-                value = match.group('value')
-                if '.' in value:
+                value = match.group("value")
+                if "." in value:
                     vnum = float(value)
-                elif 'x' in value:
+                elif "x" in value:
                     vnum = int(value, 16)
                 else:
                     vnum = int(value)
-                result[match.group('keyword')] = vnum
+                result[match.group("keyword")] = vnum
 
         self.data = result

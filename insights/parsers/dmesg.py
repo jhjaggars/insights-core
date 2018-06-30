@@ -46,7 +46,8 @@ class DmesgLineList(CommandParser, LogFileOutput):
         Please refer to its super-class :class:`insights.core.LogFileOutput`
 
     """
-    _line_re = re.compile(r'^(?:\[\s+(?P<timestamp>\d+\.\d+)\]\s+)?(?P<message>.*)$')
+
+    _line_re = re.compile(r"^(?:\[\s+(?P<timestamp>\d+\.\d+)\]\s+)?(?P<message>.*)$")
 
     def has_startswith(self, prefix):
         """
@@ -58,7 +59,7 @@ class DmesgLineList(CommandParser, LogFileOutput):
             (bool): Does any line start with the given prefix?
         """
         return any(
-            self._line_re.search(line).group('message').startswith(prefix)
+            self._line_re.search(line).group("message").startswith(prefix)
             for line in self.lines
         )
 
@@ -95,9 +96,10 @@ class DmesgLineList(CommandParser, LogFileOutput):
         """
         if not isinstance(timestamp, float):
             raise TypeError(
-                        "get_after needs a float type timestamp, but get '{c}'".format(
-                            c=timestamp)
-                    )
+                "get_after needs a float type timestamp, but get '{c}'".format(
+                    c=timestamp
+                )
+            )
 
         including_lines = False
         search_by_expression = self._valid_search(s)
@@ -107,9 +109,9 @@ class DmesgLineList(CommandParser, LogFileOutput):
                 continue
             # Otherwise, search all lines
             match = self._line_re.search(line)
-            if match and match.group('timestamp'):
+            if match and match.group("timestamp"):
                 # Get logtimestamp and compare to given timestamp
-                logstamp = float(match.group('timestamp'))
+                logstamp = float(match.group("timestamp"))
                 if logstamp >= timestamp:
                     including_lines = True
                     yield self._parse_line(line)

@@ -47,7 +47,7 @@ class TmpFilesD(Parser):
         self.rules = []
         for line in get_active_lines(content):
             linelist = line.split()
-            keys = ['type', 'path', 'mode', 'uid', 'gid', 'age', 'argument']
+            keys = ["type", "path", "mode", "uid", "gid", "age", "argument"]
             d = dict(zip(keys, linelist))
 
             # each key should be available  even if the tmpfile does not contain
@@ -57,7 +57,7 @@ class TmpFilesD(Parser):
             self.rules.append(d)
 
         for i in self.rules:
-            self.files.append(i['path'])
+            self.files.append(i["path"])
 
     def find_file(self, filename):
         """
@@ -70,7 +70,7 @@ class TmpFilesD(Parser):
         matched = []
 
         for rule in self.rules:
-            if filename.split('/')[-1] in rule['path'].split('/'):
+            if filename.split("/")[-1] in rule["path"].split("/"):
                 matched.append(rule)
 
         return matched

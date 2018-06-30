@@ -125,7 +125,9 @@ class NginxConf(Parser, LegacyItemAccess):
     """
 
     def parse_content(self, content):
-        list_result = UnspacedList(create_parser().parseString("\n".join(get_active_lines(content))).asList())
+        list_result = UnspacedList(
+            create_parser().parseString("\n".join(get_active_lines(content))).asList()
+        )
         self.data = self._convert_nginx_list_to_dict(list_result)
 
     def _convert_nginx_list_to_dict(self, li):
@@ -141,9 +143,11 @@ class NginxConf(Parser, LegacyItemAccess):
             """
             dict_result = {}
             for sub_item in li[1]:
-                dict_result[sub_item[0]] = self._handle_key_value(dict_result, sub_item[0], sub_item[1])
+                dict_result[sub_item[0]] = self._handle_key_value(
+                    dict_result, sub_item[0], sub_item[1]
+                )
             if len(li[0]) > 1:
-                dict_result["name"] = ' '.join(li[0][1:])
+                dict_result["name"] = " ".join(li[0][1:])
             return {li[0][0]: dict_result}
 
         def _listdepth_five(self, li):
@@ -153,11 +157,15 @@ class NginxConf(Parser, LegacyItemAccess):
             dict_result = {}
             for sub_item in li[1]:
                 if self._depth(sub_item) == 1:
-                    dict_result[sub_item[0]] = self._handle_key_value(dict_result, sub_item[0], sub_item[1])
+                    dict_result[sub_item[0]] = self._handle_key_value(
+                        dict_result, sub_item[0], sub_item[1]
+                    )
                 if self._depth(sub_item) == 3:
                     tmp_dict = _listdepth_three(self, sub_item)
                     tmp_key = list(tmp_dict.keys())[0]
-                    dict_result[tmp_key] = self._handle_key_value(dict_result, tmp_key, tmp_dict[tmp_key])
+                    dict_result[tmp_key] = self._handle_key_value(
+                        dict_result, tmp_key, tmp_dict[tmp_key]
+                    )
             return {li[0][0]: dict_result}
 
         def _listdepth_seven(self, li):
@@ -167,15 +175,21 @@ class NginxConf(Parser, LegacyItemAccess):
             dict_result = {}
             for sub_item in li[1]:
                 if self._depth(sub_item) == 1:
-                    dict_result[sub_item[0]] = self._handle_key_value(dict_result, sub_item[0], sub_item[1])
+                    dict_result[sub_item[0]] = self._handle_key_value(
+                        dict_result, sub_item[0], sub_item[1]
+                    )
                 if self._depth(sub_item) == 3:
                     tmp_dict = _listdepth_three(self, sub_item)
                     tmp_key = list(tmp_dict.keys())[0]
-                    dict_result[tmp_key] = self._handle_key_value(dict_result, tmp_key, tmp_dict[tmp_key])
+                    dict_result[tmp_key] = self._handle_key_value(
+                        dict_result, tmp_key, tmp_dict[tmp_key]
+                    )
                 if self._depth(sub_item) == 5:
                     tmp_dict = _listdepth_five(self, sub_item)
                     tmp_key = list(tmp_dict.keys())[0]
-                    dict_result[tmp_key] = self._handle_key_value(dict_result, tmp_key, tmp_dict[tmp_key])
+                    dict_result[tmp_key] = self._handle_key_value(
+                        dict_result, tmp_key, tmp_dict[tmp_key]
+                    )
             return {li[0][0]: dict_result}
 
         dict_all = {}
@@ -195,7 +209,12 @@ class NginxConf(Parser, LegacyItemAccess):
         Function to handle dict key has multi value, and return the values as list.
         """
         # As it is possible that key "server", "location", "include" and "upstream" have multi value, set the value of dict as list.
-        if "server" in key or "location" in key or "include" in key or "upstream" in key:
+        if (
+            "server" in key
+            or "location" in key
+            or "include" in key
+            or "upstream" in key
+        ):
             if key in t_dict:
                 val = t_dict[key]
                 val.append(value)

@@ -43,4 +43,4 @@ CLUSTER_CONF_INFO = """
 
 def test_cluster_conf():
     conf = ClusterConf(context_wrap(CLUSTER_CONF_INFO))
-    assert any('clusternode' in line for line in conf.lines)
+    assert any("clusternode" in line for line in conf.lines)

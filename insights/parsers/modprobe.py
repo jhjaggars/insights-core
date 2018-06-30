@@ -57,9 +57,9 @@ class ModProbe(LegacyItemAccess, Parser):
             if len(parts) > 1 and parts[0] in self.COMMAND_LIST:
                 command = parts[0]
                 # Blacklist just gives the module name - set its value to True
-                if command == 'blacklist':
+                if command == "blacklist":
                     self.data[command][parts[1]] = True
-                elif parts[0] == 'alias':
+                elif parts[0] == "alias":
                     # module name comes second for aliases
                     if len(parts) != 3:
                         self.bad_lines.append(line)

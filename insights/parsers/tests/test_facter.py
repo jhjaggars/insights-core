@@ -100,9 +100,9 @@ virtual => vmware
 def test_facter():
     fc = Facter(context_wrap(FACTS))
     assert fc.uptime_days == "42"
-    assert fc.fqdn == 'plin-w1rhns01.example.com'
-    assert fc.uuid == '4230648E-9C94-235F-1074-907C43387172'
-    assert hasattr(fc, 'no_test') is False
-    assert hasattr(fc, 'swapfree') is True
-    assert fc.get('uptime') == "42 days"
-    assert fc.get('dummy') is None
+    assert fc.fqdn == "plin-w1rhns01.example.com"
+    assert fc.uuid == "4230648E-9C94-235F-1074-907C43387172"
+    assert hasattr(fc, "no_test") is False
+    assert hasattr(fc, "swapfree") is True
+    assert fc.get("uptime") == "42 days"
+    assert fc.get("dummy") is None

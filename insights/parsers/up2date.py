@@ -15,10 +15,11 @@ class Up2Date(LegacyItemAccess, Parser):
         #serverURL=https://rhnproxy.glb.tech.markit.partners/XMLRPC
         serverURL=https://rhnproxy.glb.tech.markit.partners/XMLRPC
     """
+
     def parse_content(self, content):
         up2date_info = {}
         for line in get_active_lines(content):
-            if "[comment]" not in line and '=' in line:
-                key, val = line.split('=')
+            if "[comment]" not in line and "=" in line:
+                key, val = line.split("=")
                 up2date_info[key.strip()] = val.strip()
         self.data = up2date_info

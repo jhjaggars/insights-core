@@ -138,13 +138,21 @@ def test_docker():
     assert docker_service.data["Service"]["Environment"] == "GOTRACEBACK=crash"
     assert docker_service.data["Install"]["WantedBy"] == "multi-user.target"
     assert list(docker_service.data["Install"].keys()) == ["WantedBy"]
-    assert docker_service.data["Service"]["ExecStart"] == "/bin/sh -c '/usr/bin/docker-current daemon --authorization-plugin=rhel-push-plugin --exec-opt native.cgroupdriver=systemd $OPTIONS $DOCKER_STORAGE_OPTIONS $DOCKER_NETWORK_OPTIONS $ADD_REGISTRY $BLOCK_REGISTRY $INSECURE_REGISTRY 2>&1 | /usr/bin/forward-journald -tag docker'"
+    assert (
+        docker_service.data["Service"]["ExecStart"]
+        == "/bin/sh -c '/usr/bin/docker-current daemon --authorization-plugin=rhel-push-plugin --exec-opt native.cgroupdriver=systemd $OPTIONS $DOCKER_STORAGE_OPTIONS $DOCKER_NETWORK_OPTIONS $ADD_REGISTRY $BLOCK_REGISTRY $INSECURE_REGISTRY 2>&1 | /usr/bin/forward-journald -tag docker'"
+    )
 
 
 def test_openshift_node():
-    openshift_node_service = config.SystemdOpenshiftNode(context_wrap(SYSTEMD_OPENSHIFT_NODE))
+    openshift_node_service = config.SystemdOpenshiftNode(
+        context_wrap(SYSTEMD_OPENSHIFT_NODE)
+    )
     assert openshift_node_service.data["Unit"]["Wants"] == "docker.service"
-    assert openshift_node_service.data["Unit"]["After"] == ['docker.service', 'openvswitch.service']
+    assert openshift_node_service.data["Unit"]["After"] == [
+        "docker.service",
+        "openvswitch.service",
+    ]
 
 
 def test_systemd_common_conf():

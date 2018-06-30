@@ -27,15 +27,15 @@ def _parse_oracle(lines):
 
     for line in get_active_lines(lines):
         # Check for NULL in line to begin control char removal
-        if '\00' in line:
-            line = cleanup.sub('', line)
-        if '=' in line:
-            (key, value) = line.split('=', 1)
-            key = key.strip(whitespace + '"\'').lower()
-            if ',' in line:
-                value = [s.strip(whitespace + '"\'').lower() for s in value.split(',')]
+        if "\00" in line:
+            line = cleanup.sub("", line)
+        if "=" in line:
+            (key, value) = line.split("=", 1)
+            key = key.strip(whitespace + "\"'").lower()
+            if "," in line:
+                value = [s.strip(whitespace + "\"'").lower() for s in value.split(",")]
             else:
-                value = value.strip(whitespace + '"\'').lower()
+                value = value.strip(whitespace + "\"'").lower()
             config[key] = value
 
     return config

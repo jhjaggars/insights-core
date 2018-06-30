@@ -112,16 +112,16 @@ def test_ipcs_semaphores():
     sems = IpcsS(context_wrap(IPCS_S))
     ps = PsAuxww(context_wrap(PsAuxcww_OUT))
     rst = IpcsSemaphores(sems, [sem1, sem2, sem3, sem4, sem5, sem6], ps)
-    rst.get_sem('65536').pid_list == ['0', '2265', '4390', '6151', '6152']
+    rst.get_sem("65536").pid_list == ["0", "2265", "4390", "6151", "6152"]
     rst.count_of_all_sems() == 6
-    rst.count_of_all_sems(owner='apache') == 5
+    rst.count_of_all_sems(owner="apache") == 5
     rst.count_of_orphan_sems() == 5
     rst.count_of_orphan_sems() == 3
-    rst.count_of_orphan_sems('postgres') == 0
+    rst.count_of_orphan_sems("postgres") == 0
     i = 0
     for sem in rst:
         i += 1
     assert i == rst.count_of_all_sems()
-    rst.orphan_sems() == ['622502', '622602', '655371']
-    rst.orphan_sems('apache') == ['622502', '622602', '655371']
-    rst.orphan_sems('postgres') == []
+    rst.orphan_sems() == ["622502", "622602", "655371"]
+    rst.orphan_sems("apache") == ["622502", "622602", "655371"]
+    rst.orphan_sems("postgres") == []

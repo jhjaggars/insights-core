@@ -118,170 +118,234 @@ def test_single_directory():
     # Mainly just testing that we can read a single directory and
     # recognise it via the path rather than the directory in the output.
     # Testing of the main functionality is mostly done below.
-    ctx = context_wrap(SINGLE_DIRECTORY, path='ls_-la_.etc.pki.tls')
+    ctx = context_wrap(SINGLE_DIRECTORY, path="ls_-la_.etc.pki.tls")
     dirs = FileListing(ctx)
 
-    assert '/etc/pki/tls' in dirs
-    assert '/etc/pki/tls' in dirs.listings
-    assert '/etc/pki/tls/certs' not in dirs
-    assert '/etc/pki' not in dirs
-    assert '/etc' not in dirs
-    assert dirs.listings['/etc/pki/tls']['name'] == '/etc/pki/tls'
+    assert "/etc/pki/tls" in dirs
+    assert "/etc/pki/tls" in dirs.listings
+    assert "/etc/pki/tls/certs" not in dirs
+    assert "/etc/pki" not in dirs
+    assert "/etc" not in dirs
+    assert dirs.listings["/etc/pki/tls"]["name"] == "/etc/pki/tls"
 
-    assert dirs.files_of('/etc/pki/tls') == ['cert.pem', 'openssl.cnf']
-    assert dirs.dirs_of('/etc/pki/tls') == ['.', '..', 'certs', 'misc', 'private']
+    assert dirs.files_of("/etc/pki/tls") == ["cert.pem", "openssl.cnf"]
+    assert dirs.dirs_of("/etc/pki/tls") == [".", "..", "certs", "misc", "private"]
 
 
 def test_multiple_directories():
-    dirs = FileListing(context_wrap(MULTIPLE_DIRECTORIES, path='ls_-la_.etc'))
+    dirs = FileListing(context_wrap(MULTIPLE_DIRECTORIES, path="ls_-la_.etc"))
 
-    assert '/etc/sysconfig' in dirs
-    assert '/etc/sysconfig' in dirs.listings
-    assert '/etc/rc.d/rc3.d' in dirs
-    assert '/etc/rc.d/rc4.d' not in dirs
+    assert "/etc/sysconfig" in dirs
+    assert "/etc/sysconfig" in dirs.listings
+    assert "/etc/rc.d/rc3.d" in dirs
+    assert "/etc/rc.d/rc4.d" not in dirs
 
-    esc = dirs.listings['/etc/sysconfig']
-    assert sorted(esc.keys()) == sorted(['entries', 'files', 'dirs', 'specials', 'total', 'raw_list', 'name'])
+    esc = dirs.listings["/etc/sysconfig"]
+    assert sorted(esc.keys()) == sorted(
+        ["entries", "files", "dirs", "specials", "total", "raw_list", "name"]
+    )
 
-    assert dirs.files_of('/etc/sysconfig') == ['ebtables-config', 'firewalld', 'grub']
-    assert dirs.dirs_of('/etc/sysconfig') == ['.', '..', 'cbq', 'console']
-    assert dirs.specials_of('/etc/sysconfig') == []
+    assert dirs.files_of("/etc/sysconfig") == ["ebtables-config", "firewalld", "grub"]
+    assert dirs.dirs_of("/etc/sysconfig") == [".", "..", "cbq", "console"]
+    assert dirs.specials_of("/etc/sysconfig") == []
 
     # Testing the main features
-    listing = dirs.listing_of('/etc/sysconfig')
-    assert listing['..'] == {
-        'type': 'd', 'perms': 'rwxr-xr-x.', 'links': 77, 'owner': '0',
-        'group': '0', 'size': 8192, 'date': 'Jul 13 03:55', 'name': '..',
-        'raw_entry': 'drwxr-xr-x. 77 0 0 8192 Jul 13 03:55 ..',
-        'dir': '/etc/sysconfig'
+    listing = dirs.listing_of("/etc/sysconfig")
+    assert listing[".."] == {
+        "type": "d",
+        "perms": "rwxr-xr-x.",
+        "links": 77,
+        "owner": "0",
+        "group": "0",
+        "size": 8192,
+        "date": "Jul 13 03:55",
+        "name": "..",
+        "raw_entry": "drwxr-xr-x. 77 0 0 8192 Jul 13 03:55 ..",
+        "dir": "/etc/sysconfig",
     }
-    assert listing['cbq'] == {
-        'type': 'd', 'perms': 'rwxr-xr-x.', 'links': 2, 'owner': '0',
-        'group': '0', 'size': 41, 'date': 'Jul  6 23:32', 'name': 'cbq',
-        'raw_entry': 'drwxr-xr-x.  2 0 0   41 Jul  6 23:32 cbq',
-        'dir': '/etc/sysconfig'
+    assert listing["cbq"] == {
+        "type": "d",
+        "perms": "rwxr-xr-x.",
+        "links": 2,
+        "owner": "0",
+        "group": "0",
+        "size": 41,
+        "date": "Jul  6 23:32",
+        "name": "cbq",
+        "raw_entry": "drwxr-xr-x.  2 0 0   41 Jul  6 23:32 cbq",
+        "dir": "/etc/sysconfig",
     }
-    assert listing['firewalld'] == {
-        'type': '-', 'perms': 'rw-r--r--.', 'links': 1, 'owner': '0',
-        'group': '0', 'size': 72, 'date': 'Sep 15  2015',
-        'name': 'firewalld', 'raw_entry':
-        '-rw-r--r--.  1 0 0   72 Sep 15  2015 firewalld',
-        'dir': '/etc/sysconfig'
+    assert listing["firewalld"] == {
+        "type": "-",
+        "perms": "rw-r--r--.",
+        "links": 1,
+        "owner": "0",
+        "group": "0",
+        "size": 72,
+        "date": "Sep 15  2015",
+        "name": "firewalld",
+        "raw_entry": "-rw-r--r--.  1 0 0   72 Sep 15  2015 firewalld",
+        "dir": "/etc/sysconfig",
     }
-    assert listing['grub'] == {
-        'type': 'l', 'perms': 'rwxrwxrwx.', 'links': 1, 'owner': '0',
-        'group': '0', 'size': 17, 'date': 'Jul  6 23:32', 'name': 'grub',
-        'link': '/etc/default/grub', 'raw_entry':
-        'lrwxrwxrwx.  1 0 0   17 Jul  6 23:32 grub -> /etc/default/grub',
-        'dir': '/etc/sysconfig'
-    }
-
-    listing = dirs.listing_of('/etc/rc.d/rc3.d')
-    assert listing['..'] == {
-        'type': 'd', 'perms': 'rwxr-xr-x.', 'links': 10, 'owner': '0',
-        'group': '0', 'size': 4096, 'date': 'Sep 16  2015', 'name': '..',
-        'raw_entry': 'drwxr-xr-x. 10 0 0 4096 Sep 16  2015 ..',
-        'dir': '/etc/rc.d/rc3.d'
-    }
-    assert listing['K50netconsole'] == {
-        'type': 'l', 'perms': 'rwxrwxrwx.', 'links': 1, 'owner': '0',
-        'group': '0', 'size': 20, 'date': 'Jul  6 23:32',
-        'name': 'K50netconsole', 'link': '../init.d/netconsole', 'raw_entry':
-        'lrwxrwxrwx.  1 0 0   20 Jul  6 23:32 K50netconsole -> ../init.d/netconsole',
-        'dir': '/etc/rc.d/rc3.d'
-    }
-
-    assert dirs.total_of('/etc/sysconfig') == 96
-    assert dirs.total_of('/etc/rc.d/rc3.d') == 4
-
-    assert dirs.dir_contains('/etc/sysconfig', 'firewalld')
-    assert dirs.dir_entry('/etc/sysconfig', 'grub') == {
-        'type': 'l', 'perms': 'rwxrwxrwx.', 'links': 1, 'owner': '0',
-        'group': '0', 'size': 17, 'date': 'Jul  6 23:32', 'name': 'grub',
-        'link': '/etc/default/grub', 'raw_entry':
-        'lrwxrwxrwx.  1 0 0   17 Jul  6 23:32 grub -> /etc/default/grub',
-        'dir': '/etc/sysconfig'
+    assert listing["grub"] == {
+        "type": "l",
+        "perms": "rwxrwxrwx.",
+        "links": 1,
+        "owner": "0",
+        "group": "0",
+        "size": 17,
+        "date": "Jul  6 23:32",
+        "name": "grub",
+        "link": "/etc/default/grub",
+        "raw_entry": "lrwxrwxrwx.  1 0 0   17 Jul  6 23:32 grub -> /etc/default/grub",
+        "dir": "/etc/sysconfig",
     }
 
-    assert dirs.raw_directory('/etc/sysconfig') == MULTIPLE_DIRECTORIES.split('\n')[3:10]
-
-    assert dirs.path_entry('/etc/sysconfig/cbq') == {
-        'type': 'd', 'perms': 'rwxr-xr-x.', 'links': 2, 'owner': '0',
-        'group': '0', 'size': 41, 'date': 'Jul  6 23:32', 'name': 'cbq',
-        'raw_entry': 'drwxr-xr-x.  2 0 0   41 Jul  6 23:32 cbq',
-        'dir': '/etc/sysconfig'
+    listing = dirs.listing_of("/etc/rc.d/rc3.d")
+    assert listing[".."] == {
+        "type": "d",
+        "perms": "rwxr-xr-x.",
+        "links": 10,
+        "owner": "0",
+        "group": "0",
+        "size": 4096,
+        "date": "Sep 16  2015",
+        "name": "..",
+        "raw_entry": "drwxr-xr-x. 10 0 0 4096 Sep 16  2015 ..",
+        "dir": "/etc/rc.d/rc3.d",
     }
-    assert dirs.path_entry('no_slash') is None
-    assert dirs.path_entry('/') is None
-    assert dirs.path_entry('/foo') is None
-    assert dirs.path_entry('/etc/sysconfig/notfound') is None
+    assert listing["K50netconsole"] == {
+        "type": "l",
+        "perms": "rwxrwxrwx.",
+        "links": 1,
+        "owner": "0",
+        "group": "0",
+        "size": 20,
+        "date": "Jul  6 23:32",
+        "name": "K50netconsole",
+        "link": "../init.d/netconsole",
+        "raw_entry": "lrwxrwxrwx.  1 0 0   20 Jul  6 23:32 K50netconsole -> ../init.d/netconsole",
+        "dir": "/etc/rc.d/rc3.d",
+    }
+
+    assert dirs.total_of("/etc/sysconfig") == 96
+    assert dirs.total_of("/etc/rc.d/rc3.d") == 4
+
+    assert dirs.dir_contains("/etc/sysconfig", "firewalld")
+    assert dirs.dir_entry("/etc/sysconfig", "grub") == {
+        "type": "l",
+        "perms": "rwxrwxrwx.",
+        "links": 1,
+        "owner": "0",
+        "group": "0",
+        "size": 17,
+        "date": "Jul  6 23:32",
+        "name": "grub",
+        "link": "/etc/default/grub",
+        "raw_entry": "lrwxrwxrwx.  1 0 0   17 Jul  6 23:32 grub -> /etc/default/grub",
+        "dir": "/etc/sysconfig",
+    }
+
+    assert (
+        dirs.raw_directory("/etc/sysconfig") == MULTIPLE_DIRECTORIES.split("\n")[3:10]
+    )
+
+    assert dirs.path_entry("/etc/sysconfig/cbq") == {
+        "type": "d",
+        "perms": "rwxr-xr-x.",
+        "links": 2,
+        "owner": "0",
+        "group": "0",
+        "size": 41,
+        "date": "Jul  6 23:32",
+        "name": "cbq",
+        "raw_entry": "drwxr-xr-x.  2 0 0   41 Jul  6 23:32 cbq",
+        "dir": "/etc/sysconfig",
+    }
+    assert dirs.path_entry("no_slash") is None
+    assert dirs.path_entry("/") is None
+    assert dirs.path_entry("/foo") is None
+    assert dirs.path_entry("/etc/sysconfig/notfound") is None
 
 
 def test_complicated_directory():
     dirs = FileListing(context_wrap(COMPLICATED_FILES))
 
     # Test the things we expect to be different:
-    listing = dirs.listing_of('/tmp')
-    assert listing['config-3.10.0-229.14.1.el7.x86_64']['type'] == '-'
-    assert listing['menu.lst']['type'] == 'l'
-    assert listing['menu.lst']['link'] == './grub.conf'
-    assert dirs.dir_entry('/tmp', 'dm-10') == {
-        'type': 'b', 'perms': 'rw-rw----.', 'links': 1, 'owner': '0',
-        'group': '6', 'major': 253, 'minor': 10, 'date': 'Aug  4 16:56',
-        'name': 'dm-10', 'dir': '/tmp', 'raw_entry':
-        'brw-rw----.  1 0 6 253,  10 Aug  4 16:56 dm-10'
+    listing = dirs.listing_of("/tmp")
+    assert listing["config-3.10.0-229.14.1.el7.x86_64"]["type"] == "-"
+    assert listing["menu.lst"]["type"] == "l"
+    assert listing["menu.lst"]["link"] == "./grub.conf"
+    assert dirs.dir_entry("/tmp", "dm-10") == {
+        "type": "b",
+        "perms": "rw-rw----.",
+        "links": 1,
+        "owner": "0",
+        "group": "6",
+        "major": 253,
+        "minor": 10,
+        "date": "Aug  4 16:56",
+        "name": "dm-10",
+        "dir": "/tmp",
+        "raw_entry": "brw-rw----.  1 0 6 253,  10 Aug  4 16:56 dm-10",
     }
-    assert listing['dm-10']['type'] == 'b'
-    assert listing['dm-10']['major'] == 253
-    assert listing['dm-10']['minor'] == 10
-    assert listing['control']['type'] == 'c'
-    assert listing['control']['major'] == 10
-    assert listing['control']['minor'] == 236
-    assert listing['geany_socket.c46453c2']['type'] == 's'
-    assert listing['geany_socket.c46453c2']['size'] == 0
-    assert listing['link with spaces']['type'] == 'l'
-    assert listing['link with spaces']['link'] == '../file with spaces'
+    assert listing["dm-10"]["type"] == "b"
+    assert listing["dm-10"]["major"] == 253
+    assert listing["dm-10"]["minor"] == 10
+    assert listing["control"]["type"] == "c"
+    assert listing["control"]["major"] == 10
+    assert listing["control"]["minor"] == 236
+    assert listing["geany_socket.c46453c2"]["type"] == "s"
+    assert listing["geany_socket.c46453c2"]["size"] == 0
+    assert listing["link with spaces"]["type"] == "l"
+    assert listing["link with spaces"]["link"] == "../file with spaces"
 
     # Check that things that _shouldn't_ be there _aren't_
-    assert 'size' not in listing['dm-10']
-    assert 'size' not in listing['control']
+    assert "size" not in listing["dm-10"]
+    assert "size" not in listing["control"]
 
     # Tricky file names
-    assert 'File name with spaces in it!' in listing
-    assert 'Unicode ÅÍÎÏÓÔÒÚÆ☃ madness.txt' in listing
-    assert 'file_name_ending_with_colon:' in listing
-    assert dirs.dir_contains('/tmp', 'File name with spaces in it!')
-    assert dirs.dir_contains('/tmp', 'Unicode ÅÍÎÏÓÔÒÚÆ☃ madness.txt')
-    assert dirs.dir_contains('/tmp', 'file_name_ending_with_colon:')
+    assert "File name with spaces in it!" in listing
+    assert "Unicode ÅÍÎÏÓÔÒÚÆ☃ madness.txt" in listing
+    assert "file_name_ending_with_colon:" in listing
+    assert dirs.dir_contains("/tmp", "File name with spaces in it!")
+    assert dirs.dir_contains("/tmp", "Unicode ÅÍÎÏÓÔÒÚÆ☃ madness.txt")
+    assert dirs.dir_contains("/tmp", "file_name_ending_with_colon:")
 
     # Grey area - commas in size for ordinary files, and devices without
     # major or minor numbers
-    assert 'comma in size currently valid' in listing
+    assert "comma in size currently valid" in listing
     # For ordinary files, commas in size leave size unconverted
-    assert listing['comma in size currently valid']['size'] == '253,  10'
-    assert 'major' not in listing['comma in size currently valid']
-    assert 'minor' not in listing['comma in size currently valid']
+    assert listing["comma in size currently valid"]["size"] == "253,  10"
+    assert "major" not in listing["comma in size currently valid"]
+    assert "minor" not in listing["comma in size currently valid"]
     # For devices missing a comma in their 'size', size is also unconverted
-    assert 'block dev with no comma also valid' in listing
-    assert listing['block dev with no comma also valid']['size'] == '1048576'
-    assert 'major' not in listing['block dev with no comma also valid']
-    assert 'minor' not in listing['block dev with no comma also valid']
+    assert "block dev with no comma also valid" in listing
+    assert listing["block dev with no comma also valid"]["size"] == "1048576"
+    assert "major" not in listing["block dev with no comma also valid"]
+    assert "minor" not in listing["block dev with no comma also valid"]
 
     # Extended ACLs
-    assert 'additional_ACLs' in listing
-    assert listing['additional_ACLs']['perms'] == 'rwxr-xr-x+'
+    assert "additional_ACLs" in listing
+    assert listing["additional_ACLs"]["perms"] == "rwxr-xr-x+"
 
 
 def test_selinux_directory():
     dirs = FileListing(context_wrap(SELINUX_DIRECTORY), selinux=True)
 
     # Test that one entry is exactly what we expect it to be.
-    assert dirs.dir_entry('/boot', 'grub2') == {
-        'type': 'd', 'perms': 'rwxr-xr-x.', 'owner': 'root', 'group': 'root',
-        'se_user': 'system_u', 'se_role': 'object_r', 'se_type': 'boot_t',
-        'se_mls': 's0', 'name': 'grub2', 'raw_entry':
-        'drwxr-xr-x. root root system_u:object_r:boot_t:s0      grub2',
-        'dir': '/boot'
+    assert dirs.dir_entry("/boot", "grub2") == {
+        "type": "d",
+        "perms": "rwxr-xr-x.",
+        "owner": "root",
+        "group": "root",
+        "se_user": "system_u",
+        "se_role": "object_r",
+        "se_type": "boot_t",
+        "se_mls": "s0",
+        "name": "grub2",
+        "raw_entry": "drwxr-xr-x. root root system_u:object_r:boot_t:s0      grub2",
+        "dir": "/boot",
     }
 
 
@@ -289,10 +353,18 @@ def test_files_created_with_selinux_disabled():
     dirs = FileListing(context_wrap(FILES_CREATED_WITH_SELINUX_DISABLED))
 
     # Test that one entry is exactly what we expect it to be.
-    assert dirs.dir_entry('/dev/mapper', 'lv_cpwtk001_data01') == {
-        'group': '0', 'name': 'lv_cpwtk001_data01', 'links': 1, 'perms': 'rwxrwxrwx',
-        'raw_entry': 'lrwxrwxrwx 1 0 0 7 Apr 27 05:34 lv_cpwtk001_data01 -> ../dm-7', 'owner': '0',
-        'link': '../dm-7', 'date': 'Apr 27 05:34', 'type': 'l', 'dir': '/dev/mapper', 'size': 7
+    assert dirs.dir_entry("/dev/mapper", "lv_cpwtk001_data01") == {
+        "group": "0",
+        "name": "lv_cpwtk001_data01",
+        "links": 1,
+        "perms": "rwxrwxrwx",
+        "raw_entry": "lrwxrwxrwx 1 0 0 7 Apr 27 05:34 lv_cpwtk001_data01 -> ../dm-7",
+        "owner": "0",
+        "link": "../dm-7",
+        "date": "Apr 27 05:34",
+        "type": "l",
+        "dir": "/dev/mapper",
+        "size": 7,
     }
 
 
@@ -301,33 +373,33 @@ def test_bad_directory():
 
     # None of those entries should parse.  So we should have the raw lines,
     # but no parsed entries
-    bad_listing = [s.strip() for s in BAD_DIRECTORY_ENTRIES.split('\n')[5:] if s]
-    assert dirs.raw_directory('/badness') == bad_listing
-    assert dirs.listing_of('/badness') == {}
+    bad_listing = [s.strip() for s in BAD_DIRECTORY_ENTRIES.split("\n")[5:] if s]
+    assert dirs.raw_directory("/badness") == bad_listing
+    assert dirs.listing_of("/badness") == {}
 
 
 def test_single_directory_with_special_path():
     def _content_asserts(dirs, path):
         assert path in dirs
         assert path in dirs.listings
-        assert '/etc/pki/tls/certs' not in dirs
-        assert '/etc' not in dirs
-        assert dirs.listings[path]['name'] == path
+        assert "/etc/pki/tls/certs" not in dirs
+        assert "/etc" not in dirs
+        assert dirs.listings[path]["name"] == path
 
-        assert dirs.files_of(path) == ['cert.pem', 'openssl.cnf']
-        assert dirs.dirs_of(path) == ['.', '..', 'certs', 'misc', 'private']
+        assert dirs.files_of(path) == ["cert.pem", "openssl.cnf"]
+        assert dirs.dirs_of(path) == [".", "..", "certs", "misc", "private"]
 
-    ctx = context_wrap(SINGLE_DIRECTORY, path='ls_-la_.etc.pki.tls')
-    _content_asserts(FileListing(ctx), '/etc/pki/tls')
+    ctx = context_wrap(SINGLE_DIRECTORY, path="ls_-la_.etc.pki.tls")
+    _content_asserts(FileListing(ctx), "/etc/pki/tls")
 
-    ctx = context_wrap(SINGLE_DIRECTORY, path='ls_-la_.etc.pki')
-    _content_asserts(FileListing(ctx), '/etc/pki')
+    ctx = context_wrap(SINGLE_DIRECTORY, path="ls_-la_.etc.pki")
+    _content_asserts(FileListing(ctx), "/etc/pki")
 
-    ctx = context_wrap(SINGLE_DIRECTORY, path='ls_-la_.')
-    _content_asserts(FileListing(ctx), '/')
+    ctx = context_wrap(SINGLE_DIRECTORY, path="ls_-la_.")
+    _content_asserts(FileListing(ctx), "/")
 
-    ctx = context_wrap(SINGLE_DIRECTORY, path='ls_-la_')
-    _content_asserts(FileListing(ctx), '/')
+    ctx = context_wrap(SINGLE_DIRECTORY, path="ls_-la_")
+    _content_asserts(FileListing(ctx), "/")
 
-    ctx = context_wrap(SINGLE_DIRECTORY, path='ls_-la')
-    _content_asserts(FileListing(ctx), '/')
+    ctx = context_wrap(SINGLE_DIRECTORY, path="ls_-la")
+    _content_asserts(FileListing(ctx), "/")

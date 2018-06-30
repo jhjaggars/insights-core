@@ -11,7 +11,7 @@ from .. import Parser, parser, LegacyItemAccess
 from ..parsers import parse_fixed_table, ParseException
 from insights.specs import Specs
 
-HEADER_SUBSTITUTE = [('Soft Limit', 'Soft_Limit'), ('Hard Limit', 'Hard_Limit')]
+HEADER_SUBSTITUTE = [("Soft Limit", "Soft_Limit"), ("Hard Limit", "Hard_Limit")]
 
 
 class Limits(LegacyItemAccess):
@@ -99,7 +99,7 @@ class ProcLimits(Parser):
     """
 
     def __contains__(self, key):
-        return any(key == row['Limit'] for row in self.data)
+        return any(key == row["Limit"] for row in self.data)
 
     def __len__(self):
         return len(self.data)
@@ -109,15 +109,22 @@ class ProcLimits(Parser):
             yield row
 
     def parse_content(self, content):
-        if len(content) == 0 or 'No such file or directory' in content[0]:
-            raise ParseException("Error: ", content[0] if content else 'empty file')
+        if len(content) == 0 or "No such file or directory" in content[0]:
+            raise ParseException("Error: ", content[0] if content else "empty file")
         self.data = parse_fixed_table(content, header_substitute=HEADER_SUBSTITUTE)
         for row in self.data:
-            row['Limit'] = row['Limit'].lower().replace(' ', '_')
-            setattr(self, row['Limit'],
-                    Limits({'hard_limit': row['Hard_Limit'],
-                            'soft_limit': row['Soft_Limit'],
-                            'units': row['Units']}))
+            row["Limit"] = row["Limit"].lower().replace(" ", "_")
+            setattr(
+                self,
+                row["Limit"],
+                Limits(
+                    {
+                        "hard_limit": row["Hard_Limit"],
+                        "soft_limit": row["Soft_Limit"],
+                        "units": row["Units"],
+                    }
+                ),
+            )
 
 
 @parser(Specs.httpd_limits)
@@ -125,6 +132,7 @@ class HttpdLimits(ProcLimits):
     """
     Class for parsing the ``limits`` file of the ``httpd`` process.
     """
+
     pass
 
 
@@ -133,4 +141,5 @@ class MysqldLimits(ProcLimits):
     """
     Class for parsing the ``limits`` file of the ``mysqld`` process.
     """
+
     pass

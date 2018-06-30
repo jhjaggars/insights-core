@@ -54,6 +54,7 @@ class TeamdctlStateDump(CommandParser, JSONParser):
     """
     Class to parse the output of ``teamdctl {team interface} state dump``.
     """
+
     @property
     @defaults()
     def runner_type(self):

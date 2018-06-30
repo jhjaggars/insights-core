@@ -46,25 +46,25 @@ def test_len():
 def test_present():
     yl = YumLog(context_wrap(OKAY))
 
-    e = yl.present_packages.get('wget')
-    assert e.pkg.name == 'wget'
-    assert e.pkg.version == '1.14'
+    e = yl.present_packages.get("wget")
+    assert e.pkg.name == "wget"
+    assert e.pkg.version == "1.14"
 
-    e = yl.present_packages.get('openssl-libs')
-    assert e.pkg.name == 'openssl-libs'
-    assert e.pkg.version == '1.0.1e'
+    e = yl.present_packages.get("openssl-libs")
+    assert e.pkg.name == "openssl-libs"
+    assert e.pkg.version == "1.0.1e"
 
 
 def test_error():
     yl = YumLog(context_wrap(ERROR))
 
-    e = yl.present_packages.get('wget')
-    assert e.pkg.name == 'wget'
-    assert e.pkg.version == '1.14'
+    e = yl.present_packages.get("wget")
+    assert e.pkg.name == "wget"
+    assert e.pkg.version == "1.14"
 
-    e = yl.present_packages.get('openssl-libs')
-    assert e.pkg.name == 'openssl-libs'
-    assert e.pkg.version == '1.0.1e'
+    e = yl.present_packages.get("openssl-libs")
+    assert e.pkg.name == "openssl-libs"
+    assert e.pkg.version == "1.0.1e"
 
     assert len(yl) == 8
 

@@ -21,6 +21,7 @@ class AllLimitsConf(object):
         limits(list): a list of the original LimitsConf parser results.
         rules(list): the entire list of rules.
     """
+
     def __init__(self, limits):
         rules = []
         domains = set([])
@@ -34,7 +35,7 @@ class AllLimitsConf(object):
             # Make sure that we keep only the last rule for this combination
             # of domain, type and item, according to https://access.redhat.com/solutions/199993
             for rule in limits.rules:
-                rule_tuple = (rule['domain'], rule['type'], rule['item'])
+                rule_tuple = (rule["domain"], rule["type"], rule["item"])
                 if rule_tuple in rule_tuples_found:
                     row_number = rule_tuples_found[rule_tuple]
                     rules[row_number] = rule

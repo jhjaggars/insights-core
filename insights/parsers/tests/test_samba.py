@@ -2,7 +2,7 @@ from insights.parsers import samba
 from insights.tests import context_wrap
 from doctest import testmod
 
-SAMBA_CONFIG_DOCUMENTATION = '''
+SAMBA_CONFIG_DOCUMENTATION = """
 # This is the main Samba configuration file. You should read the
 # smb.conf(5) manual page in order to understand the options listed
 #...
@@ -37,13 +37,14 @@ SAMBA_CONFIG_DOCUMENTATION = '''
    writable = yes
    printable = no
    write list = +staff
-'''
+"""
 
 
 def test_documentation():
-    failed, total = testmod(samba, globs={
-        'conf': samba.SambaConfig(context_wrap(SAMBA_CONFIG_DOCUMENTATION)),
-    })
+    failed, total = testmod(
+        samba,
+        globs={"conf": samba.SambaConfig(context_wrap(SAMBA_CONFIG_DOCUMENTATION))},
+    )
     assert failed == 0
 
 
@@ -195,36 +196,36 @@ this another option should also be in global = 1
 def test_match():
     config = samba.SambaConfig(context_wrap(SAMBA_CONFIG))
 
-    assert config.get('global', 'this option should be in global') == 'yes'
-    assert config.get('global', 'this option should also be in global') == 'true'
-    assert config.get('global', 'this another option should also be in global') == '1'
-    assert config.get('global', 'workgroup') == 'MYGROUP'
-    assert config.get('global', 'workgroup') == 'MYGROUP'
-    assert config.get('global', 'server string') == 'Samba Server Version %v'
-    assert not config.has_option('global', 'netbios name')
-    assert config.get('global', 'log file') == '/var/log/samba/log.%m'
-    assert config.get('global', 'max log size') == '50'
+    assert config.get("global", "this option should be in global") == "yes"
+    assert config.get("global", "this option should also be in global") == "true"
+    assert config.get("global", "this another option should also be in global") == "1"
+    assert config.get("global", "workgroup") == "MYGROUP"
+    assert config.get("global", "workgroup") == "MYGROUP"
+    assert config.get("global", "server string") == "Samba Server Version %v"
+    assert not config.has_option("global", "netbios name")
+    assert config.get("global", "log file") == "/var/log/samba/log.%m"
+    assert config.get("global", "max log size") == "50"
 
-    assert config.get('global', 'security') == 'user'
-    assert config.get('global', 'passdb backend') == 'tdbsam'
+    assert config.get("global", "security") == "user"
+    assert config.get("global", "passdb backend") == "tdbsam"
 
-    assert config.get('global', 'load printers') == 'yes'
-    assert config.get('global', 'cups options') == 'raw'
+    assert config.get("global", "load printers") == "yes"
+    assert config.get("global", "cups options") == "raw"
 
-    assert not config.has_option('global', 'printcap name')
+    assert not config.has_option("global", "printcap name")
 
-    assert config.get('homes', 'comment') == 'Home Directories'
-    assert config.get('homes', 'browseable') == 'no'
-    assert config.get('homes', 'writable') == 'yes'
-    assert not config.has_option('homes', 'valid users')
+    assert config.get("homes", "comment") == "Home Directories"
+    assert config.get("homes", "browseable") == "no"
+    assert config.get("homes", "writable") == "yes"
+    assert not config.has_option("homes", "valid users")
 
-    assert config.get('printers', 'comment') == 'All Printers'
-    assert config.get('printers', 'path') == '/var/spool/samba'
-    assert config.get('printers', 'browseable') == 'no'
-    assert config.get('printers', 'guest ok') == 'no'
-    assert config.get('printers', 'writable') == 'no'
-    assert config.get('printers', 'printable') == 'yes'
+    assert config.get("printers", "comment") == "All Printers"
+    assert config.get("printers", "path") == "/var/spool/samba"
+    assert config.get("printers", "browseable") == "no"
+    assert config.get("printers", "guest ok") == "no"
+    assert config.get("printers", "writable") == "no"
+    assert config.get("printers", "printable") == "yes"
 
-    assert 'netlogin' not in config
-    assert 'Profiles' not in config
-    assert 'public' not in config
+    assert "netlogin" not in config
+    assert "Profiles" not in config
+    assert "public" not in config

@@ -41,4 +41,5 @@ from insights.specs import Specs
 @parser(Specs.rhsm_conf)
 class RHSMConf(IniConfigFile):
     """Parses content of "/etc/rhsm/rhsm.conf". """
+
     pass

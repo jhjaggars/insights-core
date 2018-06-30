@@ -11,9 +11,7 @@ from insights.specs import Specs
 # Currently, only selinux related(AVC type) audit logs are interested.
 # Add this filter in parser directly to filter out too many other types logs.
 # Also, filters can be changed to meet any further requirments.
-filter_list = [
-    'type=AVC',
-]
+filter_list = ["type=AVC"]
 add_filter(Specs.audit_log, filter_list)
 
 
@@ -46,6 +44,7 @@ class AuditLog(LogFileOutput):
         }]
         >>> assert len(list(log.get_after(timestamp=date.fromtimestamp(1506047401.407)))) == 3
     """
+
     def _parse_line(self, line):
         """
         Parse a log line into a info dictionary.
@@ -76,35 +75,39 @@ class AuditLog(LogFileOutput):
             If the line is not regular, for some reason, then as many fields as
             possible are pulled from the line.
         """
-        info = {'raw_message': line, 'is_valid': False}
+        info = {"raw_message": line, "is_valid": False}
         linesp = shlex.split(line)
 
-        if (len(linesp) < 2 or
-                not (linesp[0] and linesp[0].startswith('type=')) or
-                not (linesp[1] and linesp[1].startswith('msg=audit('))):
+        if (
+            len(linesp) < 2
+            or not (linesp[0] and linesp[0].startswith("type="))
+            or not (linesp[1] and linesp[1].startswith("msg=audit("))
+        ):
             return info
 
-        timestamp_id = linesp[1].lstrip('msg=audit(').rstrip('):')
-        timestamp_id_sp = timestamp_id.split(':')
+        timestamp_id = linesp[1].lstrip("msg=audit(").rstrip("):")
+        timestamp_id_sp = timestamp_id.split(":")
         if len(timestamp_id_sp) != 2:
             return info
 
-        info['type'] = linesp[0].lstrip('type=')
-        info['timestamp'] = timestamp_id_sp[0]
-        info['msg_ID'] = timestamp_id_sp[1]
+        info["type"] = linesp[0].lstrip("type=")
+        info["timestamp"] = timestamp_id_sp[0]
+        info["msg_ID"] = timestamp_id_sp[1]
 
         for index in range(len(linesp) - 1, 1, -1):
-            itemsp = linesp[index].split('=', 1)
+            itemsp = linesp[index].split("=", 1)
             if len(itemsp) < 2:
-                unparsed1 = (line.rsplit(linesp[index + 1])[0]
-                             if index + 1 < len(linesp)
-                             else line)
+                unparsed1 = (
+                    line.rsplit(linesp[index + 1])[0]
+                    if index + 1 < len(linesp)
+                    else line
+                )
                 unparsed2 = unparsed1.split(linesp[1])[-1]
                 info["unparsed"] = unparsed2.strip()
                 break
             info[itemsp[0]] = itemsp[1]
 
-        info['is_valid'] = True
+        info["is_valid"] = True
         return info
 
     def get_after(self, timestamp, s=None):
@@ -129,7 +132,7 @@ class AuditLog(LogFileOutput):
                 continue
             info = self._parse_line(line)
             try:
-                logtime = date.fromtimestamp(float(info.get('timestamp', 0)))
+                logtime = date.fromtimestamp(float(info.get("timestamp", 0)))
                 if logtime > timestamp:
                     yield info
             except:

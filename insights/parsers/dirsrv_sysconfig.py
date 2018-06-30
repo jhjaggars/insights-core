@@ -37,4 +37,5 @@ class DirsrvSysconfig(SysconfigOptions):
     """
     Parse the `dirsrv` service's start-up configuration.
     """
+
     set_properties = True

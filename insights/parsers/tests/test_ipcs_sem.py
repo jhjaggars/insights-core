@@ -41,16 +41,24 @@ semnum     value      ncount     zcount     pid
 def test_ipcs_s():
     sem = IpcsS(context_wrap(IPCS_S))
 
-    assert '131074' in sem
-    assert '11074' not in sem
-    assert sem.get('262150') == {'owner': 'postgres', 'perms': '600',
-                                 'nsems': '17', 'key': '0x0052e2c4'}
-    assert sem['622602'] == {'owner': 'apache', 'perms': '600',
-                             'nsems': '1', 'key': '0x00000000'}
+    assert "131074" in sem
+    assert "11074" not in sem
+    assert sem.get("262150") == {
+        "owner": "postgres",
+        "perms": "600",
+        "nsems": "17",
+        "key": "0x0052e2c4",
+    }
+    assert sem["622602"] == {
+        "owner": "apache",
+        "perms": "600",
+        "nsems": "1",
+        "key": "0x00000000",
+    }
 
 
 def test_ipcs_si():
     sem = IpcsSI(context_wrap(IPCS_S_I))
 
-    assert sem.semid == '65536'
-    assert sem.pid_list == ['0', '2265', '4390', '6151', '6152']
+    assert sem.semid == "65536"
+    assert sem.pid_list == ["0", "2265", "4390", "6151", "6152"]

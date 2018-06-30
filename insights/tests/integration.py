@@ -36,6 +36,10 @@ def generate_tests(metafunc, test_func, package_names, pattern=None):
                 ts = islice(ts, 0, 1)
             for t in ts:
                 args.append(t)
-                input_data_name = t[2].name if not isinstance(t[2], list) else "multi-node"
+                input_data_name = (
+                    t[2].name if not isinstance(t[2], list) else "multi-node"
+                )
                 ids.append("#".join([get_name(f), input_data_name]))
-        metafunc.parametrize("component,compare_func,input_data,expected", args, ids=ids)
+        metafunc.parametrize(
+            "component,compare_func,input_data,expected", args, ids=ids
+        )

@@ -44,12 +44,12 @@ class Satellite6Version(Parser):
         self.full = self.release = None
         self.version = None
         for line in content:
-            if line.strip().upper().startswith('VERSION'):
+            if line.strip().upper().startswith("VERSION"):
                 self.full = line.split()[-1].strip('"')
                 self.version = self.full
                 break
         if self.version is None:
-            raise ParseException('Cannot parse satellite version')
+            raise ParseException("Cannot parse satellite version")
 
     @property
     def major(self):

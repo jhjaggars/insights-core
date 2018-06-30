@@ -44,4 +44,4 @@ class CoroSyncConfig(SysconfigOptions):
     @property
     def options(self):
         """ (str): The value of the ``COROSYNC_OPTIONS`` variable."""
-        return self.data.get('COROSYNC_OPTIONS', '')
+        return self.data.get("COROSYNC_OPTIONS", "")

@@ -42,18 +42,18 @@ class CurrentClockSource(Parser):
         """
         bool: does the clock source contain 'kvm-clock'?
         """
-        return 'kvm-clock' in self.data
+        return "kvm-clock" in self.data
 
     @property
     def is_tsc(self):
         """
         bool: does the clock source contain 'tsc'?
         """
-        return 'tsc' in self.data
+        return "tsc" in self.data
 
     @property
     def is_vmi_timer(self):
         """
         bool: does the clock source contain 'vmi-timer'?
         """
-        return 'vmi-timer' in self.data
+        return "vmi-timer" in self.data

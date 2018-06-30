@@ -57,6 +57,7 @@ class Dcbtool(LegacyItemAccess, CommandParser):
         data (dict): A dictionary of the content of the command output.
         is_on: (bool): Is the status of the interface 'On'?
     """
+
     def parse_content(self, content):
         self.data = {}
         if "Connection refused" in content[0]:
@@ -67,4 +68,4 @@ class Dcbtool(LegacyItemAccess, CommandParser):
             key = key.lower().replace(" ", "_")
             self.data[key] = value.strip()
 
-        self.is_on = (self.data['status'] == 'On')
+        self.is_on = self.data["status"] == "On"

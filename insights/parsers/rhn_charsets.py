@@ -34,18 +34,18 @@ class RHNCharSets(LegacyItemAccess, CommandParser):
         for line in content:
             line = line.strip()
             # skip empty and useless lines
-            if not line or line.startswith(('----', '(', 'PARAMETER')):
+            if not line or line.startswith(("----", "(", "PARAMETER")):
                 continue
-            if '_encoding' in line:
-                db_backend = 'postgresql'
-                in_server = line.startswith('server_')
-                in_client = line.startswith('client_')
-            elif db_backend == 'postgresql':
+            if "_encoding" in line:
+                db_backend = "postgresql"
+                in_server = line.startswith("server_")
+                in_client = line.startswith("client_")
+            elif db_backend == "postgresql":
                 if in_server:
-                    db_set['server_encoding'] = line
+                    db_set["server_encoding"] = line
                 elif in_client:
-                    db_set['client_encoding'] = line
-            elif line.startswith('NLS_'):
+                    db_set["client_encoding"] = line
+            elif line.startswith("NLS_"):
                 line_splits = line.split()
                 if len(line_splits) == 2:
                     db_set[line_splits[0]] = line_splits[1]

@@ -35,22 +35,22 @@ def blank_line(fh, number=1):
 
 
 def print_info(info, fh):
-    fh.write("* :py:obj:`{}`\n".format(info['name']))
+    fh.write("* :py:obj:`{}`\n".format(info["name"]))
     blank_line(fh)
 
-    if info['dependents']:
+    if info["dependents"]:
         fh.write("  * Dependents:\n")
         blank_line(fh)
-        for d in info['dependents']:
+        for d in info["dependents"]:
             fh.write("    * :py:obj:`{}`\n".format(d))
     else:
         fh.write("  * Dependents: None\n")
     blank_line(fh)
 
-    if info['dependencies']:
+    if info["dependencies"]:
         fh.write("  * Dependencies:\n")
         blank_line(fh)
-        for d in info['dependencies']:
+        for d in info["dependencies"]:
             fh.write("    * :py:obj:`{}`\n".format(d))
     else:
         fh.write("  * Dependencies: None\n")
@@ -58,19 +58,19 @@ def print_info(info, fh):
 
 
 def print_spec_info(info, fh):
-    fh.write("* :py:obj:`{}`\n".format(info['name']))
+    fh.write("* :py:obj:`{}`\n".format(info["name"]))
     blank_line(fh)
 
-    if info['dependents']:
+    if info["dependents"]:
         fh.write("  * Dependents:\n")
         blank_line(fh)
-        for d in info['dependents']:
-            fh.write("    * :py:obj:`{}`\n".format(d['name']))
+        for d in info["dependents"]:
+            fh.write("    * :py:obj:`{}`\n".format(d["name"]))
             blank_line(fh)
-            if d['dependents']:
+            if d["dependents"]:
                 fh.write("      * Sub-Dependents:\n")
                 blank_line(fh)
-                for sd in d['dependents']:
+                for sd in d["dependents"]:
                     fh.write("        * :py:obj:`{}`\n".format(sd))
             else:
                 fh.write("      * Sub-Dependents: None\n")
@@ -84,15 +84,9 @@ def component_info(component):
     dependents = dr.get_dependents(component)
     dependencies = dr.get_dependencies(component)
     return {
-        'name': dr.get_name(component),
-        'dependents': [
-            dr.get_name(c)
-            for c in dependents
-        ],
-        'dependencies': [
-            dr.get_name(c)
-            for c in dependencies
-        ]
+        "name": dr.get_name(component),
+        "dependents": [dr.get_name(c) for c in dependents],
+        "dependencies": [dr.get_name(c) for c in dependencies],
     }
 
 
@@ -105,9 +99,14 @@ def main(filename):
 
     parsers = sorted([c for c in dr.DELEGATES if is_parser(c)], key=dr.get_name)
     combiners = sorted([c for c in dr.DELEGATES if is_combiner(c)], key=dr.get_name)
-    specs = sorted([c for c in dr.DELEGATES
-                    if is_datasource(c) and dr.get_module_name(c) == 'insights.specs'],
-                   key=dr.get_name)
+    specs = sorted(
+        [
+            c
+            for c in dr.DELEGATES
+            if is_datasource(c) and dr.get_module_name(c) == "insights.specs"
+        ],
+        key=dr.get_name,
+    )
 
     with open(filename, "w") as fh:
         fh.write("Components Cross-Reference\n")
@@ -117,12 +116,14 @@ def main(filename):
         fh.write("----------------\n")
         for spec in specs:
             info = dict(name=dr.get_name(spec))
-            info['dependents'] = []
+            info["dependents"] = []
             for d in dr.get_dependents(spec):
-                info['dependents'].append({
-                    'name': dr.get_name(d),
-                    'dependents': [dr.get_name(sd) for sd in dr.get_dependents(d)]
-                })
+                info["dependents"].append(
+                    {
+                        "name": dr.get_name(d),
+                        "dependents": [dr.get_name(sd) for sd in dr.get_dependents(d)],
+                    }
+                )
             print_spec_info(info, fh)
 
         blank_line(fh)
@@ -140,7 +141,9 @@ def main(filename):
 
 def parse_args():
     p = argparse.ArgumentParser()
-    p.add_argument("out_filename", help="Name of the output file to write the cross-reference")
+    p.add_argument(
+        "out_filename", help="Name of the output file to write the cross-reference"
+    )
     return p.parse_args()
 
 

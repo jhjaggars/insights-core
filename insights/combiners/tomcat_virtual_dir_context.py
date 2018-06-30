@@ -13,8 +13,10 @@ Examples::
      }
 """
 from ..core.plugins import combiner
-from ..parsers.tomcat_virtual_dir_context import TomcatVirtualDirContextFallback, \
-    TomcatVirtualDirContextTargeted
+from ..parsers.tomcat_virtual_dir_context import (
+    TomcatVirtualDirContextFallback,
+    TomcatVirtualDirContextTargeted,
+)
 
 
 @combiner([TomcatVirtualDirContextFallback, TomcatVirtualDirContextTargeted])
@@ -22,10 +24,15 @@ class TomcatVirtualDirContextCombined(object):
     """
     Combiner for VirtualDirContext usage in Tomcat config files.
     """
+
     def __init__(self, tomcat_vdc_fallback, tomcat_vdc_targeted):
         self.data = {}
-        fallback = tomcat_vdc_fallback if tomcat_vdc_fallback else None  # Returns one parser
-        targeted = tomcat_vdc_targeted if tomcat_vdc_targeted else []  # Returns list of parsers
+        fallback = (
+            tomcat_vdc_fallback if tomcat_vdc_fallback else None
+        )  # Returns one parser
+        targeted = (
+            tomcat_vdc_targeted if tomcat_vdc_targeted else []
+        )  # Returns list of parsers
         for parser in [fallback] + targeted:
             if parser:
                 for key in parser.data:

@@ -33,7 +33,7 @@ def determine_hostname(display_name=None):
         try:
             socket_ex = socket.gethostbyname_ex(socket_gethostname)[0]
         except (LookupError, socket.gaierror):
-            socket_ex = ''
+            socket_ex = ""
 
         gethostname_len = len(socket_gethostname)
         fqdn_len = len(socket_fqdn)
@@ -99,35 +99,43 @@ def write_to_disk(filename, delete=False, content=get_time()):
         if os.path.lexists(filename):
             os.remove(filename)
     else:
-        with open(filename, 'wb') as f:
-            f.write(content.encode('utf-8'))
+        with open(filename, "wb") as f:
+            f.write(content.encode("utf-8"))
 
 
-def generate_machine_id(new=False,
-                        destination_file=constants.machine_id_file):
+def generate_machine_id(new=False, destination_file=constants.machine_id_file):
     """
     Generate a machine-id if /etc/insights-client/machine-id does not exist
     """
     machine_id = None
     machine_id_file = None
-    logging_name = 'machine-id'
+    logging_name = "machine-id"
 
     if os.path.isfile(destination_file) and not new:
-        logger.debug('Found %s', destination_file)
-        with open(destination_file, 'r') as machine_id_file:
+        logger.debug("Found %s", destination_file)
+        with open(destination_file, "r") as machine_id_file:
             machine_id = machine_id_file.read()
     else:
-        logger.debug('Could not find %s file, creating', logging_name)
+        logger.debug("Could not find %s file, creating", logging_name)
         machine_id = str(uuid.uuid4())
         logger.debug("Creating %s", destination_file)
         write_to_disk(destination_file, content=machine_id)
 
     # update the ansible machine id facts file
     if os.path.isdir(constants.insights_ansible_facts_dir):
-        if not (os.path.isfile(constants.insights_ansible_machine_id_file) and machine_id) or new:
-            machine_id_json = {'machine-id': machine_id}
-            with open(constants.insights_ansible_machine_id_file, 'w') as handler:
-                logger.debug('Writing Ansible machine-id facts file %s', constants.insights_ansible_machine_id_file)
+        if (
+            not (
+                os.path.isfile(constants.insights_ansible_machine_id_file)
+                and machine_id
+            )
+            or new
+        ):
+            machine_id_json = {"machine-id": machine_id}
+            with open(constants.insights_ansible_machine_id_file, "w") as handler:
+                logger.debug(
+                    "Writing Ansible machine-id facts file %s",
+                    constants.insights_ansible_machine_id_file,
+                )
                 handler.write(json.dumps(machine_id_json))
 
     return str(machine_id).strip()
@@ -163,8 +171,9 @@ def validate_remove_file(remove_file=constants.collection_remove_file):
     # Make sure permissions are 600
     mode = stat.S_IMODE(os.stat(remove_file).st_mode)
     if not mode == 0o600:
-        logger.error("ERROR: Invalid remove file permissions"
-                     "Expected 0600 got %s" % oct(mode))
+        logger.error(
+            "ERROR: Invalid remove file permissions" "Expected 0600 got %s" % oct(mode)
+        )
         return False
     else:
         logger.debug("Correct file permissions")
@@ -173,8 +182,8 @@ def validate_remove_file(remove_file=constants.collection_remove_file):
         parsedconfig = RawConfigParser()
         parsedconfig.read(remove_file)
         rm_conf = {}
-        for item, value in parsedconfig.items('remove'):
-            rm_conf[item] = value.strip().split(',')
+        for item, value in parsedconfig.items("remove"):
+            rm_conf[item] = value.strip().split(",")
         # Using print here as this could contain sensitive information
         logger.debug("Remove file parsed contents")
         logger.debug(rm_conf)
@@ -183,9 +192,9 @@ def validate_remove_file(remove_file=constants.collection_remove_file):
 
 
 def write_data_to_file(data, filepath):
-    '''
+    """
     Write data to file
-    '''
+    """
     try:
         os.makedirs(os.path.dirname(filepath), 0o700)
     except OSError:
@@ -195,36 +204,34 @@ def write_data_to_file(data, filepath):
 
 
 def magic_plan_b(filename):
-    '''
+    """
     Use this in instances where
     python-magic is MIA and can't be installed
     for whatever reason
-    '''
-    cmd = shlex.split('file --mime-type --mime-encoding ' + filename)
+    """
+    cmd = shlex.split("file --mime-type --mime-encoding " + filename)
     stdout, stderr = Popen(cmd, stdout=PIPE).communicate()
     stdout = stdout.decode("utf-8")
-    mime_str = stdout.split(filename + ': ')[1].strip()
+    mime_str = stdout.split(filename + ": ")[1].strip()
     return mime_str
 
 
 def run_command_get_output(cmd):
-    proc = Popen(shlex.split(cmd),
-                 stdout=PIPE, stderr=STDOUT)
+    proc = Popen(shlex.split(cmd), stdout=PIPE, stderr=STDOUT)
     stdout, stderr = proc.communicate()
 
-    return {
-        'status': proc.returncode,
-        'output': stdout.decode('utf-8', 'ignore')
-    }
+    return {"status": proc.returncode, "output": stdout.decode("utf-8", "ignore")}
 
 
 def modify_config_file(updates):
-    '''
+    """
     Update the config file with certain things
-    '''
-    cmd = '/bin/sed '
+    """
+    cmd = "/bin/sed "
     for key in updates:
-        cmd = cmd + '-e \'s/^#*{key}.*=.*$/{key}={value}/\' '.format(key=key, value=updates[key])
+        cmd = cmd + "-e 's/^#*{key}.*=.*$/{key}={value}/' ".format(
+            key=key, value=updates[key]
+        )
     cmd = cmd + constants.default_conf_file
     status = run_command_get_output(cmd)
-    write_to_disk(constants.default_conf_file, content=status['output'])
+    write_to_disk(constants.default_conf_file, content=status["output"])

@@ -41,4 +41,5 @@ class PulpWorkerDefaults(SysconfigOptions):
     """
     Parse the ``/etc/default/pulp_workers`` file.
     """
+
     pass

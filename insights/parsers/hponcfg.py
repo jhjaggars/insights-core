@@ -41,9 +41,9 @@ Examples:
 from .. import parser, get_active_lines, CommandParser
 from insights.specs import Specs
 
-DRIVER_NAME = 'driver_name'
-DEVICE_TYPE = 'device_type'
-FIRMWARE_REVISION = 'firmware_revision'
+DRIVER_NAME = "driver_name"
+DEVICE_TYPE = "device_type"
+FIRMWARE_REVISION = "firmware_revision"
 
 
 @parser(Specs.hponcfg_g)
@@ -65,23 +65,27 @@ class HponConf(CommandParser):
 
                 line = next(line_iter)
 
-                if 'Firmware Revision' in line:
-                    line = line.replace('Firmware Revision', '').replace('Device type', '').replace('Driver name', '')
-                    val = [x.strip() for x in line.split('=') if x.strip()]
+                if "Firmware Revision" in line:
+                    line = (
+                        line.replace("Firmware Revision", "")
+                        .replace("Device type", "")
+                        .replace("Driver name", "")
+                    )
+                    val = [x.strip() for x in line.split("=") if x.strip()]
                     self.data[FIRMWARE_REVISION] = val[0]
                     self.data[DEVICE_TYPE] = val[1]
                     self.data[DRIVER_NAME] = val[2]
 
-                if 'Host Information' in line:
+                if "Host Information" in line:
                     line = next(line_iter).strip()
-                    val = line.split('Server Name:')
+                    val = line.split("Server Name:")
                     if len(val) > 1:
-                        self.data['server_name'] = val[1].strip()
+                        self.data["server_name"] = val[1].strip()
 
                     line = next(line_iter).strip()
-                    val = line.split('Server Number:')
+                    val = line.split("Server Number:")
                     if len(val) > 1:
-                        self.data['server_number'] = val[1].strip()
+                        self.data["server_number"] = val[1].strip()
 
             except StopIteration:
                 break

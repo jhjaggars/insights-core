@@ -119,10 +119,11 @@ class BlockDevice(object):
     those that are not valid names in Python.  All other valid
     names may be accessed as ``obj.column_name``.
     """
+
     def __init__(self, data):
         self.data = data
         for k, v in data.items():
-            k = re.sub(r'[-:\.]', "_", k)
+            k = re.sub(r"[-:\.]", "_", k)
             setattr(self, k, v)
             setattr(self, k.lower(), v)
 
@@ -143,16 +144,19 @@ class BlockDevice(object):
         return self.data.get(k, default)
 
     def __str__(self):
-        if 'TYPE' in self.data and 'MOUNTPOINT' in self.data:
-            return '{type}:{name}({mnt})'.format(
-                type=self.data['TYPE'], name=self.data['NAME'],
-                mnt=self.data['MOUNTPOINT']
+        if "TYPE" in self.data and "MOUNTPOINT" in self.data:
+            return "{type}:{name}({mnt})".format(
+                type=self.data["TYPE"],
+                name=self.data["NAME"],
+                mnt=self.data["MOUNTPOINT"],
             )
         else:
             # As long as the regular expression in LsBlock works, we must end
             # up with NAME and TYPE records here.  In LSBlockPairs this is
             # enforced with an explicit check.
-            return '{type}:{name}'.format(type=self.data['TYPE'], name=self.data['NAME'])
+            return "{type}:{name}".format(
+                type=self.data["TYPE"], name=self.data["NAME"]
+            )
 
 
 class BlockDevices(CommandParser):
@@ -223,8 +227,11 @@ class LSBlock(BlockDevices):
     Note:
         See the discussion of the key ``PARENT_NAMES`` above.
     """
+
     def parse_content(self, content):
-        r = re.compile(r"([\s\|\`\-]*)(\S+.*) (\d+:\d+)\s+(\d)\s+(\d+(\.\d)?[A-Z])\s+(\d)\s+([a-z]+)(.*)")
+        r = re.compile(
+            r"([\s\|\`\-]*)(\S+.*) (\d+:\d+)\s+(\d)\s+(\d+(\.\d)?[A-Z])\s+(\d)\s+([a-z]+)(.*)"
+        )
         device_list = []
         parents = [None] * MAX_GENERATIONS
         for line in content[1:]:
@@ -235,18 +242,18 @@ class LSBlock(BlockDevices):
                 name = name_match.group(2).strip()
                 generation = len(name_match.group(1)) // 2
                 parents[generation] = name
-                device['NAME'] = name
-                device['MAJ_MIN'] = name_match.group(3)
-                device['REMOVABLE'] = bool(int(name_match.group(4)))
-                device['SIZE'] = name_match.group(5)
-                device['READ_ONLY'] = bool(int(name_match.group(7)))
+                device["NAME"] = name
+                device["MAJ_MIN"] = name_match.group(3)
+                device["REMOVABLE"] = bool(int(name_match.group(4)))
+                device["SIZE"] = name_match.group(5)
+                device["READ_ONLY"] = bool(int(name_match.group(7)))
                 # TYPE is enforced by the regex, no need to check here
-                device['TYPE'] = name_match.group(8)
+                device["TYPE"] = name_match.group(8)
                 mountpoint = name_match.group(9).strip()
                 if len(mountpoint) > 0:
-                    device['MOUNTPOINT'] = mountpoint
+                    device["MOUNTPOINT"] = mountpoint
                 if generation > 0:
-                    device['PARENT_NAMES'] = parents[:generation]
+                    device["PARENT_NAMES"] = parents[:generation]
                 device_list.append(device)
 
         self.rows = [BlockDevice(d) for d in device_list]
@@ -297,14 +304,15 @@ class LSBlockPairs(BlockDevices):
         in the ``LsBlockPairs`` output and cannot always be correctly
         inferred from the other data present.
     """
+
     def parse_content(self, content):
         self.rows = []
         self.failed_device_paths = set()
         if "invalid option" in content[0] and "lsblk:" in content[0]:
             raise ParseException(content[0])
         for line in content:
-            if ' TYPE=' not in line:
-                if 'failed to get device path' in line:
+            if " TYPE=" not in line:
+                if "failed to get device path" in line:
                     self.failed_device_paths.add(line.split(":")[1].strip())
                     continue
                 else:
@@ -312,13 +320,17 @@ class LSBlockPairs(BlockDevices):
                         "TYPE not found in LsBlockPairs line '{l}'".format(l=line)
                     )
 
-            d = dict((k, v) for k, v in re.findall(r'(\S+)=\"(.*?)\"\s?', line) if len(v) > 0)
+            d = dict(
+                (k, v) for k, v in re.findall(r"(\S+)=\"(.*?)\"\s?", line) if len(v) > 0
+            )
 
             def str2bool(s):
                 return bool(int(s))
 
-            for original, replace, transform in [("RM", "REMOVABLE", str2bool),
-                                                 ("RO", "READ_ONLY", str2bool)]:
+            for original, replace, transform in [
+                ("RM", "REMOVABLE", str2bool),
+                ("RO", "READ_ONLY", str2bool),
+            ]:
                 if original in d:
                     d[replace] = transform(d[original]) if transform else d[original]
                     del d[original]

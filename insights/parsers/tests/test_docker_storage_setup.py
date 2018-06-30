@@ -38,7 +38,7 @@ def test_constructor():
     context = context_wrap(DOCKER_STORAGE_SETUP1, DOCKER_STORAGE_SETUP_PATH)
     result = DockerStorageSetup(context)
 
-    assert 'POOL_AUTOEXTEND_THRESHOLD' in result.data
+    assert "POOL_AUTOEXTEND_THRESHOLD" in result.data
     assert "20" == result.data["POOL_AUTOEXTEND_PERCENT"]
     assert "name" not in result.data
     assert "##name" not in result.data

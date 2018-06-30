@@ -14,10 +14,10 @@ OPTIONS="-U 0 -l 127.0.0.1"
 
 
 def test_sysconfig_memcached():
-    context = context_wrap(MEMCACHED_CONFIG, 'etc/sysconfig/memcached')
+    context = context_wrap(MEMCACHED_CONFIG, "etc/sysconfig/memcached")
     conf = MemcachedSysconfig(context)
 
-    assert 'OPTIONS' in conf
-    assert 'FOO' not in conf
-    assert conf.get('OPTIONS') == '-U 0 -l 127.0.0.1'
-    assert conf.get('USER') == 'memcached'
+    assert "OPTIONS" in conf
+    assert "FOO" not in conf
+    assert conf.get("OPTIONS") == "-U 0 -l 127.0.0.1"
+    assert conf.get("USER") == "memcached"

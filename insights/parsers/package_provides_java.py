@@ -59,10 +59,12 @@ class PackageProvidesJava(CommandParser):
 
     def parse_content(self, content):
         if len(content) == 0:
-            raise ParseException("Error: ", 'there is not java application running')
+            raise ParseException("Error: ", "there is not java application running")
         l = content[0].split()
         if len(l) != 2:
-            raise SkipException("Error: ",
-                                'current running java command is not provided by package installed through yum or rpm')
+            raise SkipException(
+                "Error: ",
+                "current running java command is not provided by package installed through yum or rpm",
+            )
         self.command = l[0]
         self.package = l[1]

@@ -32,17 +32,17 @@ def test_httpd_limits():
     results = HttpdLimits(context_wrap(PROC_LIMITS))
     assert len(results) == 16
     assert "max_processes" in results
-    assert results.max_processes.hard_limit == '99'
-    assert results.max_processes.soft_limit == '9'
-    assert results.max_processes.units == 'processes'
-    assert results.max_nice_priority.hard_limit == '0'
-    assert results.max_nice_priority.units == ''
+    assert results.max_processes.hard_limit == "99"
+    assert results.max_processes.soft_limit == "9"
+    assert results.max_processes.units == "processes"
+    assert results.max_nice_priority.hard_limit == "0"
+    assert results.max_nice_priority.units == ""
     for r in results:
-        if 'Max cpu time' == r['Limit']:
-            assert r['Hard_Limit'] == 'unlimited'
-            assert r['Soft_Limit'] == 'unlimited'
-        if 'Max realtime timeout' == r['Limit']:
-            assert r['Units'] == 'us'
+        if "Max cpu time" == r["Limit"]:
+            assert r["Hard_Limit"] == "unlimited"
+            assert r["Soft_Limit"] == "unlimited"
+        if "Max realtime timeout" == r["Limit"]:
+            assert r["Units"] == "us"
 
 
 def test_proc_limits_err():
@@ -51,12 +51,12 @@ def test_proc_limits_err():
         assert PROC_LIMITS_ERR in str(pe)
 
     with pytest.raises(ParseException) as pe:
-        HttpdLimits(context_wrap(''))
-        assert 'empty file' in str(pe)
+        HttpdLimits(context_wrap(""))
+        assert "empty file" in str(pe)
 
 
 def test_mysqld_limits():
     results = MysqldLimits(context_wrap(PROC_LIMITS))
-    assert results.max_open_files.hard_limit == '4096'
-    assert results.max_open_files.soft_limit == '1024'
+    assert results.max_open_files.hard_limit == "4096"
+    assert results.max_open_files.soft_limit == "1024"
     assert len(results) == 16

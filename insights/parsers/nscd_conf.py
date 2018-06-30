@@ -87,13 +87,14 @@ from collections import defaultdict, namedtuple
 from .. import Parser, parser, get_active_lines
 from insights.specs import Specs
 
-NscdConfLine = namedtuple('NscdConfLine', ['attribute', 'service', 'value'])
+NscdConfLine = namedtuple("NscdConfLine", ["attribute", "service", "value"])
 """namedtuple: Represents one line of information from the conf file."""
 
 
 @parser(Specs.nscd_conf)
 class NscdConf(Parser):
     """Class for parsing contents of the ``/etc/nscd.conf`` file."""
+
     def parse_content(self, content):
         self.data = []
         for line in get_active_lines(content):
@@ -126,9 +127,12 @@ class NscdConf(Parser):
         """list: Returns list of conf lines containing ``attribute`` and
         optional ``service`` if present.
         """
-        return [conf for conf in self.data
-                if attribute in conf.attribute and
-                (not service or (service and service in conf.service))]
+        return [
+            conf
+            for conf in self.data
+            if attribute in conf.attribute
+            and (not service or (service and service in conf.service))
+        ]
 
     def __iter__(self):
         for line in self.data:

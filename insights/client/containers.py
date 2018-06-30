@@ -23,8 +23,8 @@ logger = logging.getLogger(__name__)
 def run_command_very_quietly(cmdline):  # shhhhhhhh
     # this takes a string (not an array)
     # need to redirect stdout and stderr to /dev/null
-    with open(os.devnull, 'w') as devnull:
-        cmd = shlex.split(cmdline.encode('utf8'))
+    with open(os.devnull, "w") as devnull:
+        cmd = shlex.split(cmdline.encode("utf8"))
         proc = subprocess.Popen(cmd, stdout=devnull, stderr=subprocess.STDOUT)
         returncode = proc.wait()
         return returncode
@@ -88,8 +88,9 @@ except Exception as e:
     HaveDockerException = e
 
 # if HaveDocker:
-if ((DockerIsRunning and UseDocker and HaveDocker) or
-        (DockerIsRunning and UseAtomic and HaveAtomic)):
+if (DockerIsRunning and UseDocker and HaveDocker) or (
+    DockerIsRunning and UseAtomic and HaveAtomic
+):
     import tempfile
     import shutil
     import json
@@ -102,7 +103,7 @@ if ((DockerIsRunning and UseDocker and HaveDocker) or
         return returncode
 
     def run_command_capture_output(cmdline):
-        cmd = shlex.split(cmdline.encode('utf8'))
+        cmd = shlex.split(cmdline.encode("utf8"))
         proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (out, err) = proc.communicate()
         return out
@@ -118,19 +119,22 @@ if ((DockerIsRunning and UseDocker and HaveDocker) or
 
     def get_targets(config):
         targets = []
-        logger.debug('Getting targets to scan...')
+        logger.debug("Getting targets to scan...")
         for d in _docker_all_image_ids():
-            logger.debug('Checking if %s equals %s.' % (d, config.analyze_image_id))
+            logger.debug("Checking if %s equals %s." % (d, config.analyze_image_id))
             # pull the sha256: off the id to compare short IDs
-            if (config.analyze_image_id == d or
-               d.split('sha256:')[-1].startswith(config.analyze_image_id)):
-                logger.debug('%s equals %s' % (d, config.analyze_image_id))
-                targets.append({'type': 'docker_image', 'name': d})
+            if config.analyze_image_id == d or d.split("sha256:")[-1].startswith(
+                config.analyze_image_id
+            ):
+                logger.debug("%s equals %s" % (d, config.analyze_image_id))
+                targets.append({"type": "docker_image", "name": d})
                 return targets  # return the first one that matches
-        logger.debug('Done collecting targets')
+        logger.debug("Done collecting targets")
         logger.debug(targets)
         if len(targets) == 0:
-            logger.error("There was an error collecting targets. No image was found matching this ID.")
+            logger.error(
+                "There was an error collecting targets. No image was found matching this ID."
+            )
             sys.exit(constants.sig_kill_bad)
         return targets
 
@@ -170,7 +174,7 @@ if ((DockerIsRunning and UseDocker and HaveDocker) or
             try:
                 logger.debug("Closing Id %s On %s" % (self.image_id, self.mount_point))
                 # If using device mapper, unmount the bind-mount over the directory
-                if self.driver == 'devicemapper':
+                if self.driver == "devicemapper":
                     Mount.unmount_path(self.mount_point)
 
                 DockerMount(self.mount_point).unmount(self.cid)
@@ -181,17 +185,23 @@ if ((DockerIsRunning and UseDocker and HaveDocker) or
     def open_image(image_id):
         global HaveAtomicException
         if HaveAtomicException and UseAtomic:
-            logger.debug("atomic is either not installed or not accessable %s" %
-                         HaveAtomicException)
+            logger.debug(
+                "atomic is either not installed or not accessable %s"
+                % HaveAtomicException
+            )
             HaveAtomicException = None
 
         if use_atomic_mount():
             mount_point = tempfile.mkdtemp()
-            logger.debug("Opening Image Id %s On %s using atomic" % (image_id, mount_point))
+            logger.debug(
+                "Opening Image Id %s On %s using atomic" % (image_id, mount_point)
+            )
             if runcommand(shlex.split("atomic mount") + [image_id, mount_point]) == 0:
                 return AtomicTemporaryMountPoint(image_id, mount_point)
             else:
-                logger.error('Could not mount Image Id %s On %s' % (image_id, mount_point))
+                logger.error(
+                    "Could not mount Image Id %s On %s" % (image_id, mount_point)
+                )
                 shutil.rmtree(mount_point, ignore_errors=True)
                 return None
 
@@ -201,34 +211,51 @@ if ((DockerIsRunning and UseDocker and HaveDocker) or
                 return None
 
             mount_point = tempfile.mkdtemp()
-            logger.debug("Opening Image Id %s On %s using docker client" % (image_id, mount_point))
+            logger.debug(
+                "Opening Image Id %s On %s using docker client"
+                % (image_id, mount_point)
+            )
             # docker mount creates a temp image
             # we have to use this temp image id to remove the device
             mount_point, cid = DockerMount(mount_point).mount(image_id)
-            if driver == 'devicemapper':
-                DockerMount.mount_path(os.path.join(mount_point, "rootfs"), mount_point, bind=True)
+            if driver == "devicemapper":
+                DockerMount.mount_path(
+                    os.path.join(mount_point, "rootfs"), mount_point, bind=True
+                )
             if cid:
                 return DockerTemporaryMountPoint(driver, image_id, mount_point, cid)
             else:
-                logger.error('Could not mount Image Id %s On %s' % (image_id, mount_point))
+                logger.error(
+                    "Could not mount Image Id %s On %s" % (image_id, mount_point)
+                )
                 shutil.rmtree(mount_point, ignore_errors=True)
                 return None
 
     def open_container(container_id):
         global HaveAtomicException
         if HaveAtomicException and UseAtomic:
-            logger.debug("atomic is either not installed or not accessable %s" %
-                         HaveAtomicException)
+            logger.debug(
+                "atomic is either not installed or not accessable %s"
+                % HaveAtomicException
+            )
             HaveAtomicException = None
 
         if use_atomic_mount():
             mount_point = tempfile.mkdtemp()
-            logger.debug("Opening Container Id %s On %s using atomic" %
-                         (container_id, mount_point))
-            if runcommand(shlex.split("atomic mount") + [container_id, mount_point]) == 0:
+            logger.debug(
+                "Opening Container Id %s On %s using atomic"
+                % (container_id, mount_point)
+            )
+            if (
+                runcommand(shlex.split("atomic mount") + [container_id, mount_point])
+                == 0
+            ):
                 return AtomicTemporaryMountPoint(container_id, mount_point)
             else:
-                logger.error('Could not mount Container Id %s On %s' % (container_id, mount_point))
+                logger.error(
+                    "Could not mount Container Id %s On %s"
+                    % (container_id, mount_point)
+                )
                 shutil.rmtree(mount_point, ignore_errors=True)
                 return None
 
@@ -238,23 +265,33 @@ if ((DockerIsRunning and UseDocker and HaveDocker) or
                 return None
 
             mount_point = tempfile.mkdtemp()
-            logger.debug("Opening Container Id %s On %s using docker client" %
-                         (container_id, mount_point))
+            logger.debug(
+                "Opening Container Id %s On %s using docker client"
+                % (container_id, mount_point)
+            )
             # docker mount creates a temp image
             # we have to use this temp image id to remove the device
             mount_point, cid = DockerMount(mount_point).mount(container_id)
-            if driver == 'devicemapper':
-                DockerMount.mount_path(os.path.join(mount_point, "rootfs"), mount_point, bind=True)
+            if driver == "devicemapper":
+                DockerMount.mount_path(
+                    os.path.join(mount_point, "rootfs"), mount_point, bind=True
+                )
             if cid:
                 return DockerTemporaryMountPoint(driver, container_id, mount_point, cid)
             else:
-                logger.error('Could not mount Container Id %s On %s' % (container_id, mount_point))
+                logger.error(
+                    "Could not mount Container Id %s On %s"
+                    % (container_id, mount_point)
+                )
                 shutil.rmtree(mount_point, ignore_errors=True)
                 return None
 
     def _docker_inspect_image(docker_name, docker_type):
-        a = json.loads(run_command_capture_output(
-            "docker inspect --type %s %s" % (docker_type, docker_name)))
+        a = json.loads(
+            run_command_capture_output(
+                "docker inspect --type %s %s" % (docker_type, docker_name)
+            )
+        )
         if len(a) == 0:
             return None
         else:
@@ -268,7 +305,7 @@ if ((DockerIsRunning and UseDocker and HaveDocker) or
             atomic_docker = "docker"
         for each in run_command_capture_output(atomic_docker + " info").splitlines():
             if each.startswith(x):
-                return each[len(x):].strip()
+                return each[len(x) :].strip()
         return ""
 
     def _docker_all_image_ids():
@@ -278,7 +315,9 @@ if ((DockerIsRunning and UseDocker and HaveDocker) or
             atomic_docker = "atomic images list"
         else:
             atomic_docker = "docker images"
-        for each in run_command_capture_output(atomic_docker + " --quiet --no-trunc").splitlines():
+        for each in run_command_capture_output(
+            atomic_docker + " --quiet --no-trunc"
+        ).splitlines():
             if each not in l:
                 l.append(each)
         return l
@@ -289,10 +328,13 @@ if ((DockerIsRunning and UseDocker and HaveDocker) or
             atomic_docker = "atomic"
         else:
             atomic_docker = "docker"
-        for each in run_command_capture_output(atomic_docker + " ps --all --quiet --no-trunc").splitlines():
+        for each in run_command_capture_output(
+            atomic_docker + " ps --all --quiet --no-trunc"
+        ).splitlines():
             if each not in l:
                 l.append(each)
         return l
+
 
 else:
     # If we can't import docker or atomic then we stub out all the main functions to report errors
@@ -304,19 +346,38 @@ else:
         the_exception = HaveDockerException
 
     def get_targets(config):
-        logger.error('Could not connect to ' + the_verbiage + ' to collect from images and containers')
-        logger.error(the_verbiage + ' is either not installed or not accessable: %s' %
-                     (the_exception if the_exception else ''))
+        logger.error(
+            "Could not connect to "
+            + the_verbiage
+            + " to collect from images and containers"
+        )
+        logger.error(
+            the_verbiage
+            + " is either not installed or not accessable: %s"
+            % (the_exception if the_exception else "")
+        )
         return []
 
     def open_image(image_id):
-        logger.error('Could not connect to ' + the_verbiage + ' to examine image %s' % image_id)
-        logger.error(the_verbiage + ' is either not installed or not accessable: %s' %
-                     (the_exception if the_exception else ''))
+        logger.error(
+            "Could not connect to " + the_verbiage + " to examine image %s" % image_id
+        )
+        logger.error(
+            the_verbiage
+            + " is either not installed or not accessable: %s"
+            % (the_exception if the_exception else "")
+        )
         return None
 
     def open_container(container_id):
-        logger.error('Could not connect to ' + the_verbiage + ' to examine container %s' % container_id)
-        logger.error(the_verbiage + ' is either not installed or not accessable: %s' %
-                     (the_exception if the_exception else ''))
+        logger.error(
+            "Could not connect to "
+            + the_verbiage
+            + " to examine container %s" % container_id
+        )
+        logger.error(
+            the_verbiage
+            + " is either not installed or not accessable: %s"
+            % (the_exception if the_exception else "")
+        )
         return None

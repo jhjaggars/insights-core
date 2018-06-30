@@ -1,4 +1,4 @@
-'''
+"""
 VirtWhat - Command ``virt-what``
 ================================
 
@@ -26,11 +26,11 @@ Note:
 
         virt-what: virt-what-cpuid-helper program not found in $PATH
 
-'''
+"""
 from .. import parser, CommandParser
 from insights.specs import Specs
 
-BAREMETAL = 'baremetal'
+BAREMETAL = "baremetal"
 
 
 @parser(Specs.virt_what)
@@ -46,7 +46,7 @@ class VirtWhat(CommandParser):
     """
 
     def __init__(self, *args, **kwargs):
-        self.generic = ''
+        self.generic = ""
         self.errors = []
         self.specifics = []
         super(VirtWhat, self).__init__(*args, **kwargs)

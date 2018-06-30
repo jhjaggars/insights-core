@@ -2,7 +2,7 @@ from insights.parsers.netconsole import NetConsole
 from insights.tests import context_wrap
 
 
-netconsole = '''
+netconsole = """
 # This is the configuration file for the netconsole service.  By starting
 # this service you allow a remote syslog daemon to record console output
 # from this system.
@@ -23,11 +23,11 @@ SYSLOGPORT=514
 # The MAC address of the remote syslog server (only set this if it can't
 # be automatically determined)
 # SYSLOGMACADDR=
-'''.strip()
+""".strip()
 
 
 def test_netconsole():
     result = NetConsole(context_wrap(netconsole))
-    assert result["LOCALPORT"] == '6666'
+    assert result["LOCALPORT"] == "6666"
     assert result.get("DEV") is None
-    assert result['SYSLOGPORT'] == "514"
+    assert result["SYSLOGPORT"] == "514"

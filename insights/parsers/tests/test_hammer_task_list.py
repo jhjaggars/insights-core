@@ -3,7 +3,7 @@ from ...tests import context_wrap
 
 import doctest
 
-hammer_task_list_csv_data = '''
+hammer_task_list_csv_data = """
 ID,Name,Owner,Started at,Ended at,State,Result,Task action,Task errors
 92b732ea-7423-4644-8890-80e054f1799a,,foreman_api_admin,2016/11/11 07:18:32,2016/11/11 07:18:34,stopped,success,Refresh repository,""
 e9cb6455-a433-467e-8404-7d01bd726689,,foreman_api_admin,2016/11/11 07:18:28,2016/11/11 07:18:31,stopped,success,Refresh repository,""
@@ -22,13 +22,11 @@ cffa5990-23ba-49f5-828b-ae0c77e8257a,,foreman_admin,2016/11/11 06:55:53,2016/11/
 07780e8f-dd81-49c4-a792-c4d4d162eb10,,foreman_admin,2016/11/11 06:55:50,2016/11/11 06:55:51,stopped,error,Update for host sat62disc.example.org,"There was an issue with the backend service candlepin: 404 Resource Not Found, There was an issue with the backend service candlepin: 404 Resource Not Found"
 749a17a1-a8cb-46f0-98f6-017576481df8,,foreman_admin,2016/11/11 06:51:28,2016/11/11 06:51:29,stopped,error,Update for host sat62disc.example.org,"There was an issue with the backend service candlepin: 404 Resource Not Found, There was an issue with the backend service candlepin: 404 Resource Not Found"
 d8f41819-b492-46e5-b0e3-ead3b4b6810c,,foreman_admin,2016/11/11 06:51:22,2016/11/11 06:51:28,stopped,error,Package Profile Update,500 Internal Server Error
-'''
+"""
 
 
 def test_HTL_doc_examples():
     tasks = hammer_task_list.HammerTaskList(context_wrap(hammer_task_list_csv_data))
-    globs = {
-        'tasks': tasks
-    }
+    globs = {"tasks": tasks}
     failed, tested = doctest.testmod(hammer_task_list, globs=globs)
     assert failed == 0

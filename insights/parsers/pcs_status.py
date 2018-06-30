@@ -119,8 +119,21 @@ class PCSStatus(CommandParser):
         self.bad_nodes = []
         # according this file  https://github.com/ClusterLabs/pacemaker/blob/d078ca4a9ac72fc96073a215da2eed48939536f5/tools/crm_mon.c
         key_oneline = (
-            "Cluster name", "Stack", "Current DC", "Online", "RemoteOnline", "OFFLINE", "RemoteOFFLINE", "GuestOnline")
-        key_nextline = ("Full list of resources", "Failed Actions", "PCSD Status", "Daemon Status")
+            "Cluster name",
+            "Stack",
+            "Current DC",
+            "Online",
+            "RemoteOnline",
+            "OFFLINE",
+            "RemoteOFFLINE",
+            "GuestOnline",
+        )
+        key_nextline = (
+            "Full list of resources",
+            "Failed Actions",
+            "PCSD Status",
+            "Daemon Status",
+        )
         key_nextline_start = 0
         multiple_lines = []
         for line in content:
@@ -130,11 +143,15 @@ class PCSStatus(CommandParser):
                 else:
                     self.data["WARNING"] = [line.strip()]
                 continue
-            if (line.startswith("RemoteNode") or line.startswith("GuestNode") or line.startswith("Node")):
+            if (
+                line.startswith("RemoteNode")
+                or line.startswith("GuestNode")
+                or line.startswith("Node")
+            ):
                 linesplit = line.split()
                 bad_node = {}
-                bad_node['name'] = linesplit[1][0:-1]
-                bad_node['status'] = line.split(':')[1][1:]
+                bad_node["name"] = linesplit[1][0:-1]
+                bad_node["status"] = line.split(":")[1][1:]
                 self.bad_nodes.append(bad_node)
             if line.startswith(key_nextline):
                 key_nextline_start = 1
@@ -152,7 +169,7 @@ class PCSStatus(CommandParser):
                     self.data["Resources configured"] = linesplit[0]
                 elif "resources configured" in line:
                     if "and" in line:  # 3 nodes and 3 resources configured
-                        self.data['Nodes configured'] = linesplit[0]
+                        self.data["Nodes configured"] = linesplit[0]
                         self.data["Resources configured"] = linesplit[3]
             else:  # key_nextline_start > 0
                 if line.strip():

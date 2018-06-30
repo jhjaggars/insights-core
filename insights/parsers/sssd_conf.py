@@ -40,12 +40,12 @@ class SSSD_Config(IniConfigFile):
         Returns the list of domains defined in the 'sssd' section.  This is
         used to refer to the domain-specific sections of the configuration.
         """
-        if self.has_option('sssd', 'domains'):
-            domains = self.get('sssd', 'domains')
+        if self.has_option("sssd", "domains"):
+            domains = self.get("sssd", "domains")
             # Return a blank list if no domains listed.
             if not domains:
                 return []
-            return domains.split(',')
+            return domains.split(",")
         else:
             return []
 
@@ -56,7 +56,7 @@ class SSSD_Config(IniConfigFile):
         This then looks for the equivalent 'domain/{domain}' section of the
         config file.
         """
-        full_domain = 'domain/' + domain
+        full_domain = "domain/" + domain
         if full_domain not in self:
             return {}
         return self.items(full_domain)

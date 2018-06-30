@@ -93,7 +93,7 @@ class InitScript(Parser):
         except IndexError:
             raise EmptyFileException(self.file_path)
 
-        key = {'start': 0, 'stop': 0, 'status': 0}
+        key = {"start": 0, "stop": 0, "status": 0}
         for line in content:
             if COMMENT_REGEX.match(line):
                 continue
@@ -103,4 +103,6 @@ class InitScript(Parser):
         confidence += len([v for v in key.values() if v != 0])
 
         if confidence < 3:
-            raise NotInitscriptException("path: %s, confidence: %d" % (self.file_path, confidence))
+            raise NotInitscriptException(
+                "path: %s, confidence: %d" % (self.file_path, confidence)
+            )

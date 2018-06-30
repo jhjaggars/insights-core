@@ -68,6 +68,7 @@ class ZiplConf(LegacyItemAccess, Parser):
     Raises:
         ParseException: when the first active line is not a section
     """
+
     def __init__(self, *args, **kwargs):
         self._images = {}
         self._dumptofses = {}
@@ -77,19 +78,19 @@ class ZiplConf(LegacyItemAccess, Parser):
         self.data = {}
         lines = get_active_lines(content)
         line0 = lines[0]
-        if line0.startswith('[') and line0.endswith(']'):
+        if line0.startswith("[") and line0.endswith("]"):
             current = line0[1:-1]
             self.data[current] = {}
             for line in lines[1:]:
-                if line.startswith('[') and line.endswith(']'):
+                if line.startswith("[") and line.endswith("]"):
                     current = line[1:-1]
                     self.data[current] = {}
-                elif line.startswith(':'):
+                elif line.startswith(":"):
                     current = line
                     self.data[current] = {}
                 else:
-                    if '=' in line:
-                        k, v = [s.strip() for s in line.split('=', 1)]
+                    if "=" in line:
+                        k, v = [s.strip() for s in line.split("=", 1)]
                         if k == "image":
                             self._images[current] = v
                         elif k == "dumptofs":
@@ -98,7 +99,7 @@ class ZiplConf(LegacyItemAccess, Parser):
                     else:
                         self.data[current][line] = True
         else:
-            raise ParseException('Invalid zipl configuration file is found.')
+            raise ParseException("Invalid zipl configuration file is found.")
 
     @property
     def images(self):

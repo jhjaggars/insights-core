@@ -93,7 +93,7 @@ def parse_interface(line):
         "physical_name": physical_name if virtual else None,
         "virtual": virtual,
         "flags": split_content[2].strip("<>").split(","),
-        "addr": []
+        "addr": [],
     }
     # extract properties
     for i in range(3, len(split_content), 2):
@@ -116,12 +116,14 @@ def parse_inet(line, d):
     split_content = line.split()
     p2p = "peer" in split_content
     addr, mask = split_content[3 if p2p else 1].split("/")
-    d["addr"].append({
-        "addr": addr,
-        "mask": mask,
-        "local_addr": split_content[1] if p2p else None,
-        "p2p": p2p
-    })
+    d["addr"].append(
+        {
+            "addr": addr,
+            "mask": mask,
+            "local_addr": split_content[1] if p2p else None,
+            "p2p": p2p,
+        }
+    )
 
 
 def parse_rx_stats(line, d):
@@ -320,30 +322,27 @@ class RouteDevices(CommandParser):
         True
 
     """
+
     SAVED_TYPES = set(["unicast", "multicast"])
 
     # Why have types we ignore?
-    IGNORE_TYPES = set(["broadcast",
-                        "throw",
-                        "local",
-                        "unreachable",
-                        "prohibit",
-                        "blackhole",
-                        "nat"])
+    IGNORE_TYPES = set(
+        ["broadcast", "throw", "local", "unreachable", "prohibit", "blackhole", "nat"]
+    )
 
     @property
     def by_prefix(self):
         """
         (Route): The dictionary of routes by prefix  (e.g. '192.168.0.0/24').
         """
-        return self.routes.get('by_prefix', {})
+        return self.routes.get("by_prefix", {})
 
     @property
     def defaults(self):
         """
         (list): The list of default routes.
         """
-        return self.routes.get('by_prefix', {}).get('default', [])
+        return self.routes.get("by_prefix", {}).get("default", [])
 
     def __contains__(self, prefix):
         """
@@ -362,11 +361,11 @@ class RouteDevices(CommandParser):
         Read the routing table and construct the routes and data properties.
         """
         self.data = defaultdict(list)
-        prev_line = ''
+        prev_line = ""
         for line in content:
             # Seems to not get blank lines here...
             # Leading spaces indicate a line continued from the previous
-            if line.startswith('    '):
+            if line.startswith("    "):
                 prev_line += line
             else:
                 if prev_line:
@@ -380,14 +379,14 @@ class RouteDevices(CommandParser):
         all_routes = [r for routes in self.data.values() for r in routes]
         # For some reason, if we try to construct the by_prefix property
         # as a defaultdict(list) here we break the tests.  Leaving it as is...
-        self.routes['by_prefix'] = self.data
+        self.routes["by_prefix"] = self.data
         self.by_device = defaultdict(list)
         self.by_type = defaultdict(list)
         self.by_table = defaultdict(list)
         for route in all_routes:
-            table_type = route.type if route.type else 'None'
-            dev = route.dev if route.dev else 'None'
-            table = route.table if route.table else 'None'
+            table_type = route.type if route.type else "None"
+            dev = route.dev if route.dev else "None"
+            table = route.table if route.table else "None"
             self.by_device[dev].append(route)
             self.by_type[table_type].append(route)
             self.by_table[table].append(route)
@@ -396,29 +395,29 @@ class RouteDevices(CommandParser):
     def parse_line(self, line):
         parts = deque(line.split(None))
         route = self.parse_route(parts)
-        if route and (route.prefix != 'default' or not route.table):
+        if route and (route.prefix != "default" or not route.table):
             self.data[route.prefix].append(route)
 
     def parse_route(self, parts):
-        required_parts = ['via', 'dev', 'type', 'netmask', 'prefix', 'table']
+        required_parts = ["via", "dev", "type", "netmask", "prefix", "table"]
         route = dict((part, None) for part in required_parts)
         table_type = None
         if parts[0] in self.IGNORE_TYPES:
             return None
         if parts[0] in self.SAVED_TYPES:
             table_type = parts.popleft()
-        route['type'] = table_type
+        route["type"] = table_type
         prefix = parts.popleft()
-        route['netmask'] = 255
-        if '/' in prefix:
-            route['netmask'] = int(prefix.split('/')[1])
-        route['prefix'] = prefix
+        route["netmask"] = 255
+        if "/" in prefix:
+            route["netmask"] = int(prefix.split("/")[1])
+        route["prefix"] = prefix
         self.parse_info_spec(parts, route)
         self.parse_node_spec(parts, route)
         return Route(route)
 
     def parse_info_spec(self, parts, route):
-        keys = ['via', 'dev']
+        keys = ["via", "dev"]
         for k in keys:
             route[k] = None
         if not parts:
@@ -430,8 +429,8 @@ class RouteDevices(CommandParser):
 
     def parse_node_spec(self, parts, route):
         while parts:
-            if parts[0] == 'cache':
-                route['cache'] = True
+            if parts[0] == "cache":
+                route["cache"] = True
                 parts.popleft()
                 continue
             if len(parts) == 1:
@@ -458,7 +457,7 @@ class RouteDevices(CommandParser):
         """
         if ip is None:
             return
-        routes = self.by_type.get('None', [])
+        routes = self.by_type.get("None", [])
         addr = ipaddress.ip_address(six.u(ip))
         # Iterate through by descending netmask, so first found is most precise
         for route in sorted(routes, key=lambda r: r.netmask, reverse=True):
@@ -520,12 +519,12 @@ class IpNeighParser(CommandParser):
     """
 
     VALID_NUD_STATES = {
-        'PERMANENT': 0,
-        'NOARP': 1,
-        'REACHABLE': 2,
-        'STALE': 3,
-        'DELAY': 4,
-        'FAILED': 5,
+        "PERMANENT": 0,
+        "NOARP": 1,
+        "REACHABLE": 2,
+        "STALE": 3,
+        "DELAY": 4,
+        "FAILED": 5,
     }
 
     def parse_content(self, content):
@@ -549,46 +548,45 @@ class IpNeighParser(CommandParser):
             split_result = line.split()
             # Need at least IP address, something, and reachability
             if len(split_result) < 2:
-                self.unparsed_lines.append({
-                    'line': line,
-                    'reason': "not enough words"
-                })
+                self.unparsed_lines.append({"line": line, "reason": "not enough words"})
                 continue
             # Total words needs to be even: beginning + 2*keyvals + ending
             if len(split_result) % 2 == 1:
-                self.unparsed_lines.append({
-                    'line': line,
-                    'reason': "odd number of words"
-                })
+                self.unparsed_lines.append(
+                    {"line": line, "reason": "odd number of words"}
+                )
                 continue
             # Don't parse this line if the first thing isn't an
             # IP address
             try:
                 addr = ipaddress.ip_address(six.u(split_result[0]))
             except ValueError:
-                self.unparsed_lines.append({
-                    'line': line,
-                    'reason': "can't convert address '" + split_result[0] + "'"
-                })
+                self.unparsed_lines.append(
+                    {
+                        "line": line,
+                        "reason": "can't convert address '" + split_result[0] + "'",
+                    }
+                )
                 continue
             # Don't parse this line if the last item doesn't seem to be a
             # neighbour unreachability state
             if split_result[-1] not in self.VALID_NUD_STATES:
-                self.unparsed_lines.append({
-                    'line': line,
-                    'reason': split_result[-1] + " is not a valid state"
-                })
+                self.unparsed_lines.append(
+                    {"line": line, "reason": split_result[-1] + " is not a valid state"}
+                )
                 continue
 
             # OK, good to go, split everything in the middle up
             key_value_content = split_result[1:-1]
             if len(key_value_content) >= 2:
-                entry = dict((k, v) for k, v in zip(key_value_content[0::2],
-                                                    key_value_content[1::2]))
+                entry = dict(
+                    (k, v)
+                    for k, v in zip(key_value_content[0::2], key_value_content[1::2])
+                )
             else:
                 entry = {}
             entry["nud"] = split_result[-1]
-            entry['addr'] = addr  # save the object
+            entry["addr"] = addr  # save the object
             self.data[split_result[0]] = entry
 
     def __contains__(self, item):
@@ -609,6 +607,7 @@ class Ipv4Neigh(IpNeighParser):
     """
     Class to parse ``ip -4 neigh show nud all`` command output.
     """
+
     pass
 
 
@@ -617,6 +616,7 @@ class Ipv6Neigh(IpNeighParser):
     """
     Class to parse ``ip -6 neigh show nud all`` command output.
     """
+
     pass
 
 
@@ -706,4 +706,5 @@ class IpLinkInfo(IpAddr):
         TX packets: 12
         TX dropped: 0
     """
+
     pass

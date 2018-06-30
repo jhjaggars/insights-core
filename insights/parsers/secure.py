@@ -37,4 +37,5 @@ class Secure(Syslog):
         >>> len(list(secure.get_after(datetime(2017, 8, 25, 0, 0, 0))))
         2
     """
-    time_format = '%b %d %H:%M:%S'
+
+    time_format = "%b %d %H:%M:%S"

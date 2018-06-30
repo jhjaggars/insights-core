@@ -30,13 +30,14 @@ SMARTPDC_SETTINGS = """
 
 def test_smartpdc_settings():
     smartpdc_settings = SmartpdcSettings(context_wrap(SMARTPDC_SETTINGS))
-    assert smartpdc_settings.data[':listen'] == '0.0.0.0'
-    assert ("/etc/foreman-proxy/foreman_ssl_ca.pem" in smartpdc_settings.data[':foreman_ssl_ca']) is True
+    assert smartpdc_settings.data[":listen"] == "0.0.0.0"
+    assert (
+        "/etc/foreman-proxy/foreman_ssl_ca.pem"
+        in smartpdc_settings.data[":foreman_ssl_ca"]
+    ) is True
 
 
 def test_ls_smartpdc_settings_doc_examples():
-    env = {
-        'smartpdc_settings': SmartpdcSettings(context_wrap(SMARTPDC_SETTINGS)),
-    }
+    env = {"smartpdc_settings": SmartpdcSettings(context_wrap(SMARTPDC_SETTINGS))}
     failed, total = doctest.testmod(smartpdc_settings, globs=env)
     assert failed == 0

@@ -67,6 +67,7 @@ class BrctlShow(CommandParser):
     Parse the output of the command "brctl show" to get bridge
     interface info table
     """
+
     @property
     def group_by_iface(self):
         """
@@ -79,13 +80,13 @@ class BrctlShow(CommandParser):
         self._group_by_iface = {}
         self.data = []
         if "\t" in content[0]:
-            head_line = list(filter(None, [v.strip() for v in content[0].split('\t')]))
+            head_line = list(filter(None, [v.strip() for v in content[0].split("\t")]))
         else:
-            head_line = list(filter(None, [v.strip() for v in content[0].split('  ')]))
+            head_line = list(filter(None, [v.strip() for v in content[0].split("  ")]))
         iface = head_line[3] if len(head_line) >= 3 else None
         if iface:
             for line in content[1:]:
-                if not line.startswith((' ', '\t')):
+                if not line.startswith((" ", "\t")):
                     iface_lst = []
                     br_mapping = {}
                     br_mapping = dict(zip(head_line, line.split()))
@@ -99,7 +100,8 @@ class BrctlShow(CommandParser):
                     iface_lst.append(line.strip())
                     br_mapping[iface] = iface_lst
             for entry in self.data:
-                self._group_by_iface[entry['bridge name']] = \
-                    dict((k, v) for (k, v) in entry.items() if k != 'bridge name')
+                self._group_by_iface[entry["bridge name"]] = dict(
+                    (k, v) for (k, v) in entry.items() if k != "bridge name"
+                )
         else:
             raise ParseException("Invalid Data Found")

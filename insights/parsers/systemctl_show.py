@@ -67,7 +67,7 @@ class SystemctlShow(LegacyItemAccess, CommandParser):
         data = split_kv_pairs(content, use_partition=False)
 
         """Remove empty key"""
-        self.data = dict((k, v) for k, v in data.items() if not v == '')
+        self.data = dict((k, v) for k, v in data.items() if not v == "")
 
 
 @parser(Specs.systemctl_cinder_volume)
@@ -97,6 +97,7 @@ class SystemctlShowCinderVolume(SystemctlShow):
         '4096'
 
     """
+
     pass
 
 
@@ -127,6 +128,7 @@ class SystemctlShowMariaDB(SystemctlShow):
         '4096'
 
     """
+
     pass
 
 
@@ -161,6 +163,7 @@ class SystemctlShowPulpWorkers(SystemctlShow):
         '4096'
 
     """
+
     pass
 
 
@@ -194,6 +197,7 @@ class SystemctlShowPulpResourceManager(SystemctlShow):
         '4096'
 
     """
+
     pass
 
 
@@ -227,6 +231,7 @@ class SystemctlShowPulpCelerybeat(SystemctlShow):
         '4096'
 
     """
+
     pass
 
 
@@ -262,6 +267,7 @@ class SystemctlShowHttpd(SystemctlShow):
         '4096'
 
     """
+
     pass
 
 
@@ -295,6 +301,7 @@ class SystemctlShowQpidd(SystemctlShow):
         '4096'
 
     """
+
     pass
 
 
@@ -326,6 +333,7 @@ class SystemctlShowQdrouterd(SystemctlShow):
         '4096'
 
     """
+
     pass
 
 
@@ -357,4 +365,5 @@ class SystemctlShowSmartpdc(SystemctlShow):
         '4096'
 
     """
+
     pass

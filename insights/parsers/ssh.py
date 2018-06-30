@@ -56,7 +56,7 @@ from insights.specs import Specs
 import re
 
 # optional whitespace, at least one non-whitespace (the keyword), at least one whitespace (space), a plus literal, anything
-PLUS_PATTERN = re.compile(r'^\s*\S+\s+\+.*$')
+PLUS_PATTERN = re.compile(r"^\s*\S+\s+\+.*$")
 
 
 @parser(Specs.sshd_config)
@@ -70,7 +70,7 @@ class SshDConfig(Parser):
             file, each keyword has been converted to lowercase.
     """
 
-    KeyValue = namedtuple('KeyValue', ['keyword', 'value', 'kw_lower', 'line'])
+    KeyValue = namedtuple("KeyValue", ["keyword", "value", "kw_lower", "line"])
     """namedtuple: Represent name value pair as a namedtuple with case ."""
 
     # Note about "+" options. In some openssh versions and for some keywords,
@@ -84,10 +84,8 @@ class SshDConfig(Parser):
         self.lines = []
         for line in get_active_lines(content):
             line_splits = [s.strip() for s in line.split(None, 1)]
-            kw, val = line_splits[0], line_splits[1] if len(line_splits) == 2 else ''
-            self.lines.append(self.KeyValue(
-                kw, val, kw.lower(), line
-            ))
+            kw, val = line_splits[0], line_splits[1] if len(line_splits) == 2 else ""
+            self.lines.append(self.KeyValue(kw, val, kw.lower(), line))
         self.keywords = set([k.kw_lower for k in self.lines])
 
     def __contains__(self, keyword):
@@ -126,7 +124,7 @@ class SshDConfig(Parser):
         kw = keyword.lower()
         return [kv for kv in self.lines if kv.kw_lower == kw]
 
-    def get_values(self, keyword, default='', join_with=None, split_on=None):
+    def get_values(self, keyword, default="", join_with=None, split_on=None):
         """
         Get all the values assigned to this keyword.
 
@@ -157,7 +155,7 @@ class SshDConfig(Parser):
         else:
             return val_str.split(split_on)
 
-    def get_line(self, keyword, default=''):
+    def get_line(self, keyword, default=""):
         """
         (str): Get the line with the last declarations of this keyword in the
         configuration file, optionally pretending that we had a line with the

@@ -88,6 +88,7 @@ class MongodbConf(Parser, LegacyItemAccess):
     Attributes:
         is_yaml (boolean): True if this is a yaml format file.
     """
+
     def parse_content(self, content):
         a_content = get_active_lines(content)
         if not a_content:
@@ -95,11 +96,11 @@ class MongodbConf(Parser, LegacyItemAccess):
         self.is_yaml = self._file_type_is_yaml(a_content)
         try:
             if self.is_yaml:
-                self.data = yaml.safe_load('\n'.join(content))
+                self.data = yaml.safe_load("\n".join(content))
             else:
                 self.data = split_kv_pairs(content, use_partition=True)
         except Exception as e:
-            raise ParseException('mongod conf parse failed: %s', e)
+            raise ParseException("mongod conf parse failed: %s", e)
 
     def _file_type_is_yaml(self, content):
         """
@@ -123,9 +124,9 @@ class MongodbConf(Parser, LegacyItemAccess):
         key-value pair conf.
         """
         if self.is_yaml:
-            return self.get('net', {}).get('bindIp')
+            return self.get("net", {}).get("bindIp")
         else:
-            return self.get('bind_ip')
+            return self.get("bind_ip")
 
     @property
     def port(self):
@@ -134,9 +135,9 @@ class MongodbConf(Parser, LegacyItemAccess):
         key-value pair conf.
         """
         if self.is_yaml:
-            return self.get('net', {}).get('port')
+            return self.get("net", {}).get("port")
         else:
-            return self.get('port')
+            return self.get("port")
 
     @property
     def dbpath(self):
@@ -145,9 +146,9 @@ class MongodbConf(Parser, LegacyItemAccess):
         if a key-value pair conf.
         """
         if self.is_yaml:
-            return self.get('storage', {}).get('dbPath')
+            return self.get("storage", {}).get("dbPath")
         else:
-            return self.get('dbpath')
+            return self.get("dbpath")
 
     @property
     def fork(self):
@@ -156,9 +157,9 @@ class MongodbConf(Parser, LegacyItemAccess):
         `fork` if a key-value pair conf.
         """
         if self.is_yaml:
-            return self.get('processManagement', {}).get('fork')
+            return self.get("processManagement", {}).get("fork")
         else:
-            return self.get('fork')
+            return self.get("fork")
 
     @property
     def pidfilepath(self):
@@ -167,9 +168,9 @@ class MongodbConf(Parser, LegacyItemAccess):
         and `pidFilePath` if a key-value pair conf.
         """
         if self.is_yaml:
-            return self.get('processManagement', {}).get('pidFilePath')
+            return self.get("processManagement", {}).get("pidFilePath")
         else:
-            return self.get('pidfilepath')
+            return self.get("pidfilepath")
 
     @property
     def syslog(self):
@@ -180,9 +181,9 @@ class MongodbConf(Parser, LegacyItemAccess):
         Return None means value is not specified in configuration file.
         """
         if self.is_yaml:
-            return self.get('systemLog', {}).get('destination')
+            return self.get("systemLog", {}).get("destination")
         else:
-            return self.get('syslog')
+            return self.get("syslog")
 
     @property
     def logpath(self):
@@ -191,6 +192,6 @@ class MongodbConf(Parser, LegacyItemAccess):
         if a key-value pair conf.
         """
         if self.is_yaml:
-            return self.get('systemLog', {}).get('path')
+            return self.get("systemLog", {}).get("path")
         else:
-            return self.get('logpath')
+            return self.get("logpath")

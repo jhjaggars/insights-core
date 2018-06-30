@@ -17,7 +17,7 @@ def test__assert_type_gzip_no_tar():
 
     try:
         archive_path = os.path.join(tmp_dir, "file.log.gz")
-        with closing(gzip.open(archive_path, 'wb')) as f:
+        with closing(gzip.open(archive_path, "wb")) as f:
             f.write(b"testing contents")
 
         tar_ex = archives.TarExtractor()
@@ -31,9 +31,9 @@ def test__assert_type_gzip_no_tar():
 def test_with_zip():
     tmp_dir = tempfile.mkdtemp()
 
-    d = os.path.join(tmp_dir, 'sys', 'kernel')
+    d = os.path.join(tmp_dir, "sys", "kernel")
     os.makedirs(d)
-    with open(os.path.join(d, 'kexec_crash_size'), "w") as f:
+    with open(os.path.join(d, "kexec_crash_size"), "w") as f:
         f.write("ohyeahbaby")
 
     try:
@@ -57,7 +57,10 @@ def test_with_zip():
 
     try:
         with extract("/tmp/test.zip") as ex:
-            assert any(f.endswith("/sys/kernel/kexec_crash_size") for f in archives.get_all_files(ex.tmp_dir))
+            assert any(
+                f.endswith("/sys/kernel/kexec_crash_size")
+                for f in archives.get_all_files(ex.tmp_dir)
+            )
 
     finally:
         os.unlink("/tmp/test.zip")

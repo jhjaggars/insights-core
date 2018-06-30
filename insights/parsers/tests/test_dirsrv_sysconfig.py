@@ -15,15 +15,15 @@ KRB5_KTNAME=/etc/dirsrv/ds.keytab
 """
 
 
-class TestDirsrvSysconfig():
+class TestDirsrvSysconfig:
     def test_dirsrv_sysconfig(self):
         syscfg = DirsrvSysconfig(context_wrap(SYSCONFIG))
         # Standard access through data
-        assert 'PID_TIME' not in syscfg.data
-        assert syscfg.data['KRB5CCNAME'] == '/tmp/krb5cc_995'
-        assert syscfg.data['KRB5_KTNAME'] == '/etc/dirsrv/ds.keytab'
+        assert "PID_TIME" not in syscfg.data
+        assert syscfg.data["KRB5CCNAME"] == "/tmp/krb5cc_995"
+        assert syscfg.data["KRB5_KTNAME"] == "/etc/dirsrv/ds.keytab"
         # pseudo-dictionary accessor
-        assert syscfg['KRB5CCNAME'] == '/tmp/krb5cc_995'
-        assert syscfg['KRB5_KTNAME'] == '/etc/dirsrv/ds.keytab'
+        assert syscfg["KRB5CCNAME"] == "/tmp/krb5cc_995"
+        assert syscfg["KRB5_KTNAME"] == "/etc/dirsrv/ds.keytab"
         # No unparsed lines
         assert syscfg.unparsed_lines == []

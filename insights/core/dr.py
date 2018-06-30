@@ -164,6 +164,7 @@ def observer(component_type=ANY_TYPE):
     def inner(func):
         add_observer(func, component_type)
         return func
+
     return inner
 
 
@@ -184,13 +185,14 @@ class SkipComponent(Exception):
     This class should be raised by components that want to be taken out of
     dependency resolution.
     """
+
     pass
 
 
 def get_name(component):
     if six.callable(component):
         name = getattr(component, "__qualname__", component.__name__)
-        return '.'.join([component.__module__, name])
+        return ".".join([component.__module__, name])
     return str(component)
 
 
@@ -240,6 +242,7 @@ def walk_dependencies(root, visitor):
         visitor (function): signature is `func(component, parent)`.  The
             call on root is `visitor(root, None)`.
     """
+
     def visit(parent, visitor):
         for d in get_dependencies(parent):
             visitor(d, parent)
@@ -397,6 +400,7 @@ class Broker(object):
         def inner(func):
             self.add_observer(func, component_type)
             return func
+
         return inner
 
     def add_observer(self, o, component_type=ANY_TYPE):
@@ -461,9 +465,14 @@ class Broker(object):
             return default
 
     def print_component(self, component_type):
-        print(json.dumps(
-            dict((get_name(c), self[c])
-                 for c in sorted(self.get_by_type(component_type), key=get_name))))
+        print(
+            json.dumps(
+                dict(
+                    (get_name(c), self[c])
+                    for c in sorted(self.get_by_type(component_type), key=get_name)
+                )
+            )
+        )
 
 
 def get_missing_requirements(func, requires, d):
@@ -567,6 +576,7 @@ class TypeSetMeta(type):
     The metaclass that converts RegistryPoint markers to regisry point
     datasources and hooks implementations for them into the registry.
     """
+
     def __new__(cls, name, bases, dct):
         return super(TypeSetMeta, cls).__new__(cls, name, bases, dct)
 
@@ -589,12 +599,14 @@ class TypeSet(six.with_metaclass(TypeSetMeta)):
     pass
 
 
-def new_component_type(auto_requires=[],
-                       auto_optional=[],
-                       group=GROUPS.single,
-                       executor=default_executor,
-                       type_metadata={},
-                       delegate_class=Delegate):
+def new_component_type(
+    auto_requires=[],
+    auto_optional=[],
+    group=GROUPS.single,
+    executor=default_executor,
+    type_metadata={},
+    delegate_class=Delegate,
+):
     """
     Factory that creates component decorators.
 
@@ -648,6 +660,7 @@ def new_component_type(auto_requires=[],
             delegate.type = component_type or decorator
             register_component(delegate)
             return func
+
         return _f
 
     return decorator
@@ -671,7 +684,11 @@ def run(components=COMPONENTS[GROUPS.single], broker=None):
     for component in run_order(components):
         start = time.time()
         try:
-            if component not in broker and component in DELEGATES and ENABLED[component]:
+            if (
+                component not in broker
+                and component in DELEGATES
+                and ENABLED[component]
+            ):
                 log.info("Trying %s" % get_name(component))
                 result = DELEGATES[component](broker)
                 broker[component] = result

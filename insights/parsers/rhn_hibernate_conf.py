@@ -4,7 +4,6 @@ from insights.specs import Specs
 
 @parser(Specs.rhn_hibernate_conf)
 class RHNHibernateConf(LegacyItemAccess, Parser):
-
     def parse_content(self, content):
         """
         Parses rhn_hibernate.conf and returns a dict.
@@ -15,7 +14,7 @@ class RHNHibernateConf(LegacyItemAccess, Parser):
         """
         hb_dict = {}
         for line in get_active_lines(content):
-            if '=' in line:
-                key, _, value = line.partition('=')
+            if "=" in line:
+                key, _, value = line.partition("=")
                 hb_dict[key.strip()] = value.strip()
         self.data = hb_dict

@@ -80,11 +80,34 @@ class UnitFiles(Parser):
         """
         # 'static' means 'on' to fulfill dependency of something else that is on
         # man systemctl - "is-enabled" knows these states
-        valid_states = set(['enabled', 'enabled-runtime', 'linked', 'linked-runtime', 'masked',
-                            'masked-runtime', 'static', 'indirect', 'disabled', 'generated',
-                            'transient', 'bad', 'invalid'])
+        valid_states = set(
+            [
+                "enabled",
+                "enabled-runtime",
+                "linked",
+                "linked-runtime",
+                "masked",
+                "masked-runtime",
+                "static",
+                "indirect",
+                "disabled",
+                "generated",
+                "transient",
+                "bad",
+                "invalid",
+            ]
+        )
         # man systemctl - "is-enabled" considers these to be enabled
-        on_states = set(['enabled', 'enabled-runtime', 'static', 'indirect', 'generated', 'transient'])
+        on_states = set(
+            [
+                "enabled",
+                "enabled-runtime",
+                "static",
+                "indirect",
+                "generated",
+                "transient",
+            ]
+        )
 
         for line in get_active_lines(content):
             parts = line.split(None)  # AWK like split, strips whitespaces
@@ -146,6 +169,7 @@ class ListUnits(Parser):
         >>> conf.unit_list['random.service']
         {'LOAD': None, 'ACTIVE': None, 'SUB': None, 'UNIT': None}
     """
+
     def __init__(self, *args, **kwargs):
         self.unit_list = {}
         """dict: Dictionary service detail like active, running, exited, dead"""
@@ -160,21 +184,46 @@ class ListUnits(Parser):
         """
         # 'static' means 'on' to fulfill dependency of something else that is on
         # man systemctl - "is-enabled" knows these states
-        valid_states = set(['invalid', 'loaded', 'inactive', 'active',
-                            'exited', 'running', 'failed', 'mounted', 'waiting', 'plugged'])
+        valid_states = set(
+            [
+                "invalid",
+                "loaded",
+                "inactive",
+                "active",
+                "exited",
+                "running",
+                "failed",
+                "mounted",
+                "waiting",
+                "plugged",
+            ]
+        )
 
-        valid_units = set(['service', 'socket', 'device', 'mount', 'automount', 'swap', 'target',
-                           'path', 'timer', 'slice', 'scope'])
+        valid_units = set(
+            [
+                "service",
+                "socket",
+                "device",
+                "mount",
+                "automount",
+                "swap",
+                "target",
+                "path",
+                "timer",
+                "slice",
+                "scope",
+            ]
+        )
 
         for line in get_active_lines(content):
             parts = line.split(None)  # AWK like split, strips whitespaces
             if any(part in valid_states for part in parts):
                 service_details = {}
-                service_details['LOAD'] = parts[1]
-                service_details['ACTIVE'] = parts[2]
-                service_details['SUB'] = parts[3]
+                service_details["LOAD"] = parts[1]
+                service_details["ACTIVE"] = parts[2]
+                service_details["SUB"] = parts[3]
                 if any(unit in parts[0] for unit in valid_units):
-                    service_details['UNIT'] = parts[0]
+                    service_details["UNIT"] = parts[0]
                     self.unit_list[parts[0]] = service_details
 
     def get_service_details(self, service_name):
@@ -190,7 +239,7 @@ class ListUnits(Parser):
 
             {'LOAD': 'loaded', 'ACTIVE': 'active', 'SUB': 'running', 'UNIT': 'neutron-dhcp-agent.service'}
         """
-        empty_details = {'LOAD': None, 'ACTIVE': None, 'SUB': None, 'UNIT': None}
+        empty_details = {"LOAD": None, "ACTIVE": None, "SUB": None, "UNIT": None}
         return self.unit_list.get(service_name, empty_details)
 
     def is_loaded(self, service_name):
@@ -203,7 +252,7 @@ class ListUnits(Parser):
         Returns:
             bool: True if service is loaded False if not loaded
         """
-        return self.get_service_details(service_name)['LOAD'] == 'loaded'
+        return self.get_service_details(service_name)["LOAD"] == "loaded"
 
     def is_active(self, service_name):
         """
@@ -215,7 +264,7 @@ class ListUnits(Parser):
         Returns:
             bool: True if service is active False if inactive
         """
-        return self.get_service_details(service_name)['ACTIVE'] == 'active'
+        return self.get_service_details(service_name)["ACTIVE"] == "active"
 
     def is_running(self, service_name):
         """
@@ -227,4 +276,4 @@ class ListUnits(Parser):
         Returns:
             bool: True if service is running False in all other states.
         """
-        return self.get_service_details(service_name)['SUB'] == 'running'
+        return self.get_service_details(service_name)["SUB"] == "running"

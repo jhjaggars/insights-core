@@ -94,15 +94,15 @@ use = egg:swift#catch_errors
 
 def test_proxy_server_conf():
     result = SwiftProxyServerConf(context_wrap(proxy_server_conf))
-    assert 'filter:ceilometer' in result
-    assert 'filter:staticweb' in result
-    assert result.items('filter:ceilometer').get('url_test') == ''
-    assert result.getint('DEFAULT', 'bind_port') == 8080
+    assert "filter:ceilometer" in result
+    assert "filter:staticweb" in result
+    assert result.items("filter:ceilometer").get("url_test") == ""
+    assert result.getint("DEFAULT", "bind_port") == 8080
 
 
 def test_object_expirer_conf():
     result = SwiftObjectExpirerConf(context_wrap(object_expirer))
-    assert 'filter:cache' in result
-    assert 'object-expirer' in result
-    assert result.get('filter:cache', 'memcache_servers') == '172.16.64.60:11211'
-    assert result.getint('object-expirer', 'report_interval') == 300
+    assert "filter:cache" in result
+    assert "object-expirer" in result
+    assert result.get("filter:cache", "memcache_servers") == "172.16.64.60:11211"
+    assert result.getint("object-expirer", "report_interval") == 300

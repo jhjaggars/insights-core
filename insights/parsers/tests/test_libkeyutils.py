@@ -1,7 +1,7 @@
 from insights.parsers.libkeyutils import Libkeyutils, LibkeyutilsObjdumps
 from insights.tests import context_wrap
 
-SEARCH_NOT_FOUND = '''
+SEARCH_NOT_FOUND = """
 /lib/libkeyutils.so.1
 /lib/libkeyutils.so.1.6
 /lib/debug/usr/lib64/libkeyutils.so.1.5.debug
@@ -10,9 +10,9 @@ SEARCH_NOT_FOUND = '''
 /lib64/libkeyutils.so.1
 /lib64/libkeyutils.so.1.6
 /lib64/libkeyutils.so
-'''
+"""
 
-SEARCH_FOUND_1 = '''
+SEARCH_FOUND_1 = """
 /lib/libkeyutils.so.1
 /lib/tls/libkeyutils.so.1.6
 /lib/debug/usr/lib64/libkeyutils.so.1.5.debug
@@ -21,9 +21,9 @@ SEARCH_FOUND_1 = '''
 /lib64/libkeyutils.so.1
 /lib64/libkeyutils.so.1.6
 /lib64/libkeyutils.so
-'''
+"""
 
-SEARCH_FOUND_2 = '''
+SEARCH_FOUND_2 = """
 /lib/libkeyutils.so.1
 /lib/tls/libkeyutils.so.1.6
 /lib/debug/usr/lib64/libkeyutils.so.1.5.debug
@@ -32,9 +32,9 @@ SEARCH_FOUND_2 = '''
 /lib64/tls/libkeyutils.so.1
 /lib64/libkeyutils.so.1.6
 /lib64/libkeyutils.so
-'''
+"""
 
-DUMP_NOT_FOUND = '''
+DUMP_NOT_FOUND = """
 
 /lib/libkeyutils.so.1:     file format elf32-i386
 /lib/libkeyutils.so.1
@@ -288,9 +288,9 @@ Idx Name          Size      VMA               LMA               File off  Algn
                   CONTENTS, READONLY
 SYMBOL TABLE:
 no symbols
-'''  # noqa
+"""  # noqa
 
-DUMP_FOUND_1 = '''
+DUMP_FOUND_1 = """
 
 /lib/libkeyutils.so.1:     file format elf32-i386
 /lib/libkeyutils.so.1
@@ -545,9 +545,9 @@ Idx Name          Size      VMA               LMA               File off  Algn
                   CONTENTS, READONLY
 SYMBOL TABLE:
 no symbols
-'''  # noqa
+"""  # noqa
 
-DUMP_FOUND_2 = '''
+DUMP_FOUND_2 = """
 
 /lib/libkeyutils.so.1:     file format elf32-i386
 /lib/libkeyutils.so.1
@@ -803,41 +803,38 @@ Idx Name          Size      VMA               LMA               File off  Algn
                   CONTENTS, READONLY
 SYMBOL TABLE:
 no symbols
-'''  # noqa
+"""  # noqa
 
 
 def test_libkeyutils():
     libkeyutils_search = Libkeyutils(context_wrap(SEARCH_NOT_FOUND))
-    assert libkeyutils_search.libraries == SEARCH_NOT_FOUND.strip().split('\n')
+    assert libkeyutils_search.libraries == SEARCH_NOT_FOUND.strip().split("\n")
 
     libkeyutils_search = Libkeyutils(context_wrap(SEARCH_FOUND_1))
-    assert libkeyutils_search.libraries == SEARCH_FOUND_1.strip().split('\n')
+    assert libkeyutils_search.libraries == SEARCH_FOUND_1.strip().split("\n")
 
     libkeyutils_search = Libkeyutils(context_wrap(SEARCH_FOUND_2))
-    assert libkeyutils_search.libraries == SEARCH_FOUND_2.strip().split('\n')
+    assert libkeyutils_search.libraries == SEARCH_FOUND_2.strip().split("\n")
 
 
 def test_libkeyutilsobjdumps():
     libkeyutils_dumps = LibkeyutilsObjdumps(context_wrap(DUMP_NOT_FOUND))
     assert len(libkeyutils_dumps.linked_libraries) == 2
-    assert libkeyutils_dumps.linked_libraries == {'/lib/libkeyutils.so.1':
-                                                  ['libdl.so.2', 'libc.so.6'],
-                                                  '/lib64/libkeyutils.so.1':
-                                                  ['libdl.so.2', 'libc.so.6'],
-                                                  }
+    assert libkeyutils_dumps.linked_libraries == {
+        "/lib/libkeyutils.so.1": ["libdl.so.2", "libc.so.6"],
+        "/lib64/libkeyutils.so.1": ["libdl.so.2", "libc.so.6"],
+    }
 
     libkeyutils_dumps = LibkeyutilsObjdumps(context_wrap(DUMP_FOUND_1))
     assert len(libkeyutils_dumps.linked_libraries) == 2
-    assert libkeyutils_dumps.linked_libraries == {'/lib/libkeyutils.so.1':
-                                                  ['libdl.so.2', 'libc.so.6', 'libsbr.so'],
-                                                  '/lib64/libkeyutils.so.1':
-                                                  ['libdl.so.2', 'libc.so.6'],
-                                                  }
+    assert libkeyutils_dumps.linked_libraries == {
+        "/lib/libkeyutils.so.1": ["libdl.so.2", "libc.so.6", "libsbr.so"],
+        "/lib64/libkeyutils.so.1": ["libdl.so.2", "libc.so.6"],
+    }
 
     libkeyutils_dumps = LibkeyutilsObjdumps(context_wrap(DUMP_FOUND_2))
     assert len(libkeyutils_dumps.linked_libraries) == 2
-    assert libkeyutils_dumps.linked_libraries == {'/lib/libkeyutils.so.1':
-                                                  ['libdl.so.2', 'libc.so.6', 'libsbr.so'],
-                                                  '/lib64/libkeyutils.so.1':
-                                                  ['libdl.so.2', 'libsbr.so.6', 'libfake.so'],
-                                                  }
+    assert libkeyutils_dumps.linked_libraries == {
+        "/lib/libkeyutils.so.1": ["libdl.so.2", "libc.so.6", "libsbr.so"],
+        "/lib64/libkeyutils.so.1": ["libdl.so.2", "libsbr.so.6", "libfake.so"],
+    }

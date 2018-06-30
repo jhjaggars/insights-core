@@ -3,7 +3,7 @@ from insights.tests import context_wrap
 
 import pytest
 
-ANACONDA_LOG = '''
+ANACONDA_LOG = """
 02:22:11,538 DEBUG   : readNetInfo /tmp/s390net not found, early return
 02:22:11,538 INFO    : anaconda version 13.21.149 on x86_64 starting
 02:22:14,695 DEBUG   : Saving module iscsi_boot_sysfs
@@ -53,7 +53,7 @@ ANACONDA_LOG = '''
 
 02:22:37,877 INFO    : no /etc/zfcp.conf; not configuring zfcp
 02:22:38,120 INFO    : created new libuser.conf at /tmp/libuser.vg7G_T with instPath="/mnt/sysimage"
-'''
+"""
 
 
 class FakeAnacondaLog(Scannable):
@@ -63,32 +63,32 @@ class FakeAnacondaLog(Scannable):
 
 
 def warnings(line):
-    if 'WARNING' in line:
+    if "WARNING" in line:
         return line[23:]
 
 
 def has_fcoe_edd(line):
-    return '/usr/libexec/fcoe/fcoe_edd.sh' in line
+    return "/usr/libexec/fcoe/fcoe_edd.sh" in line
 
 
 def has_kernel_panic(line):
-    return 'kernel panic' in line
+    return "kernel panic" in line
 
 
-FakeAnacondaLog.any('has_fcoe', has_fcoe_edd)
-FakeAnacondaLog.any('panic', has_kernel_panic)
-FakeAnacondaLog.collect('warnings', warnings)
+FakeAnacondaLog.any("has_fcoe", has_fcoe_edd)
+FakeAnacondaLog.any("panic", has_kernel_panic)
+FakeAnacondaLog.collect("warnings", warnings)
 
 
 def test_scannable():
-    ctx = context_wrap(ANACONDA_LOG, path='/root/anaconda.log')
+    ctx = context_wrap(ANACONDA_LOG, path="/root/anaconda.log")
     log = FakeAnacondaLog(ctx)
 
-    assert hasattr(log, 'has_fcoe')
+    assert hasattr(log, "has_fcoe")
     assert log.has_fcoe is True
-    assert hasattr(log, 'panic')
+    assert hasattr(log, "panic")
     assert log.panic is False
-    assert hasattr(log, 'warnings')
+    assert hasattr(log, "warnings")
     assert type(log.warnings) == list
     assert len(log.warnings) == 1
     assert log.warnings[0] == "'/usr/libexec/fcoe/fcoe_edd.sh' specified as full path"
@@ -96,5 +96,5 @@ def test_scannable():
 
 def test_duplicate_scanner():
     with pytest.raises(ValueError) as exc:
-        assert FakeAnacondaLog.collect('warnings', lambda x: x + 'extra stuff')
-    assert 'is already a registered scanner key' in str(exc)
+        assert FakeAnacondaLog.collect("warnings", lambda x: x + "extra stuff")
+    assert "is already a registered scanner key" in str(exc)

@@ -27,13 +27,11 @@ interface=lo
 
 def test_qpidd_conf():
     qpidd_conf = QpiddConf(context_wrap(QPIDD_CONF))
-    assert qpidd_conf['auth'] == 'no'
-    assert ('require-encryption' in qpidd_conf) is True
+    assert qpidd_conf["auth"] == "no"
+    assert ("require-encryption" in qpidd_conf) is True
 
 
 def test_qpidd_conf_doc_examples():
-    env = {
-        'qpidd_conf': QpiddConf(context_wrap(QPIDD_CONF)),
-    }
+    env = {"qpidd_conf": QpiddConf(context_wrap(QPIDD_CONF))}
     failed, total = doctest.testmod(qpidd_conf, globs=env)
     assert failed == 0

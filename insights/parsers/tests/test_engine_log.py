@@ -10,12 +10,17 @@ ENGINE_LOG = """
 2016-05-18 14:00:51,317 ERROR [org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector] (DefaultQuartzScheduler_Worker-95) [5bc194fa] Correlation ID: null, Call Stack: null, Custom Event ID: -1, Message: VM ADLG8201 has paused due to storage I/O problem.
 """
 
-matched_lines = ['2016-05-18 14:00:51,318 ERROR [org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector] (DefaultQuartzScheduler_Worker-95) [5bc194fa] Correlation ID: null, Call Stack: null, Custom Event ID: -1, Message: VM ADLG8201 has paused due to storage I/O problem.',
-                '2016-05-18 14:00:51,317 ERROR [org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector] (DefaultQuartzScheduler_Worker-95) [5bc194fa] Correlation ID: null, Call Stack: null, Custom Event ID: -1, Message: VM ADLG8201 has paused due to storage I/O problem.']
+matched_lines = [
+    "2016-05-18 14:00:51,318 ERROR [org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector] (DefaultQuartzScheduler_Worker-95) [5bc194fa] Correlation ID: null, Call Stack: null, Custom Event ID: -1, Message: VM ADLG8201 has paused due to storage I/O problem.",
+    "2016-05-18 14:00:51,317 ERROR [org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector] (DefaultQuartzScheduler_Worker-95) [5bc194fa] Correlation ID: null, Call Stack: null, Custom Event ID: -1, Message: VM ADLG8201 has paused due to storage I/O problem.",
+]
 
 
 def test_engine_log():
     engine_log_obj = EngineLog(context_wrap(ENGINE_LOG))
     assert "storage I/O problem." in engine_log_obj
-    assert matched_lines == [i['raw_message'] for i in engine_log_obj.get('has paused due to storage I/O problem')]
+    assert matched_lines == [
+        i["raw_message"]
+        for i in engine_log_obj.get("has paused due to storage I/O problem")
+    ]
     assert len(list(engine_log_obj.get_after(datetime(2016, 5, 18, 14, 0, 0)))) == 3

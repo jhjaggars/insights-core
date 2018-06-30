@@ -96,7 +96,7 @@ rhel_release_map = {
     "3.10.0-327": "7.2",
     "3.10.0-514": "7.3",
     "3.10.0-693": "7.4",
-    "3.10.0-862": "7.5"
+    "3.10.0-862": "7.5",
 }
 
 release_to_kernel_map = dict((v, k) for k, v in rhel_release_map.items())
@@ -167,26 +167,27 @@ class Uname(CommandParser):
       release numbers.
 
     """
+
     keys = [
-        'os',
-        'hw_platform',
-        'processor',
-        'machine',
-        'kernel_date',
-        'kernel_type',
-        'kernel',
-        'name',
-        'nodename',
-        'version',
-        'release',
-        'release_arch',
-        'arch',
-        'ver_rel',
-        'rhel_release',
-        '_lv_release',
-        '_rel_maj',
-        '_sv_version',
-        '_lv_version'
+        "os",
+        "hw_platform",
+        "processor",
+        "machine",
+        "kernel_date",
+        "kernel_type",
+        "kernel",
+        "name",
+        "nodename",
+        "version",
+        "release",
+        "release_arch",
+        "arch",
+        "ver_rel",
+        "rhel_release",
+        "_lv_release",
+        "_rel_maj",
+        "_sv_version",
+        "_lv_version",
     ]
 
     defaults = dict.fromkeys(keys)
@@ -214,42 +215,42 @@ class Uname(CommandParser):
         """
         # Remove extra whitespace prior to parsing, preserve original line
         if not content:
-            raise UnameError('Empty uname line', '')
+            raise UnameError("Empty uname line", "")
 
         data = {}
         uname_list = [line for line in content if line.startswith("Linux")]
         if not uname_list:
-            raise UnameError("Uname string appears invalid", '')
+            raise UnameError("Uname string appears invalid", "")
         uname_line = uname_list[0]
-        uname_parts = uname_line.split(' ')
+        uname_parts = uname_line.split(" ")
         if len(uname_parts) < 3:
             raise UnameError("Uname string appears invalid", uname_line)
         else:
-            data['kernel'] = uname_parts[2]
-            data['name'] = uname_parts[0]
-            data['nodename'] = uname_parts[1]
-        has_arch = "el" not in data['kernel'].split(".")[-1]
+            data["kernel"] = uname_parts[2]
+            data["name"] = uname_parts[0]
+            data["nodename"] = uname_parts[1]
+        has_arch = "el" not in data["kernel"].split(".")[-1]
         try:
-            data = self.parse_nvr(data['kernel'], data, arch=has_arch)
+            data = self.parse_nvr(data["kernel"], data, arch=has_arch)
         except UnameError as error:
             error.uname_line = uname_line
             raise error
 
         # Additional uname content parsing, may not be as reliable
         if len(uname_parts) >= 15:
-            data['os'] = uname_parts[-1]
-            data['hw_platform'] = uname_parts[-2]
-            data['processor'] = uname_parts[-3]
-            data['machine'] = uname_parts[-4]
-            data['kernel_date'] = " ".join(uname_parts[-10:-4])
-            data['kernel_type'] = uname_parts[-11]
+            data["os"] = uname_parts[-1]
+            data["hw_platform"] = uname_parts[-2]
+            data["processor"] = uname_parts[-3]
+            data["machine"] = uname_parts[-4]
+            data["kernel_date"] = " ".join(uname_parts[-10:-4])
+            data["kernel_type"] = uname_parts[-11]
         else:
-            data['os'] = None
-            data['hw_platform'] = None
-            data['processor'] = None
-            data['machine'] = None
-            data['kernel_date'] = None
-            data['kernel_type'] = None
+            data["os"] = None
+            data["hw_platform"] = None
+            data["processor"] = None
+            data["machine"] = None
+            data["kernel_date"] = None
+            data["kernel_type"] = None
         self.data = data
 
     @classmethod
@@ -261,16 +262,19 @@ class Uname(CommandParser):
             - `kernel` - the kernel version and release string.
         """
         data = cls.parse_nvr(kernel, arch=False)
-        content = ["{name} {nodename} {kernel} {kernel_type} {kernel_date} {machine} {processor} {hw_platform} {os}".format(
-            name="Linux",
-            nodename=data['nodename'],
-            kernel=kernel,
-            kernel_type=data['kernel_type'],
-            kernel_date=data['kernel_date'],
-            machine=data['machine'],
-            processor=data['processor'],
-            hw_platform=data['hw_platform'],
-            os=data['os'])]
+        content = [
+            "{name} {nodename} {kernel} {kernel_type} {kernel_date} {machine} {processor} {hw_platform} {os}".format(
+                name="Linux",
+                nodename=data["nodename"],
+                kernel=kernel,
+                kernel_type=data["kernel_type"],
+                kernel_date=data["kernel_date"],
+                machine=data["machine"],
+                processor=data["processor"],
+                hw_platform=data["hw_platform"],
+                os=data["os"],
+            )
+        ]
         return cls(Context(content=content, path=None))
 
     @classmethod
@@ -281,7 +285,7 @@ class Uname(CommandParser):
         :Parameters:
             - `uname_str` - the string output of `uname -a`
         """
-        if len(uname_str.split(' ')) == 1:
+        if len(uname_str.split(" ")) == 1:
             uname_str = "Linux " + "hostname " + uname_str
         return cls(Context(content=[uname_str.strip()], path=None))
 
@@ -299,7 +303,7 @@ class Uname(CommandParser):
             - `release`: RHEL release version.
         """
         if isinstance(release, tuple):
-            release = '.'.join(release)
+            release = ".".join(release)
         nvr = release_to_kernel_map.get(release)
         # return cls(Context(content=[nvr], path=None))
         return cls.from_kernel(nvr)
@@ -318,35 +322,37 @@ class Uname(CommandParser):
         :Exceptions:
             - `UnameError`: Raised on errors in evaluating the uname content.
         """
-        if len(nvr.split('-')) < 2:
+        if len(nvr.split("-")) < 2:
             raise UnameError("Too few parts in the uname version-release", nvr)
 
         if data is None:
             data = dict(cls.defaults)
 
-        data['version'], data['release_arch'] = nvr.split('-', 1)
+        data["version"], data["release_arch"] = nvr.split("-", 1)
         if arch:
             try:
-                data['release'], data['arch'] = data['release_arch'].rsplit('.', 1)
+                data["release"], data["arch"] = data["release_arch"].rsplit(".", 1)
             except ValueError:
-                data['release'] = data['release_arch']
-                data['arch'] = None
+                data["release"] = data["release_arch"]
+                data["arch"] = None
         else:
-            data['release'] = data['release_arch']
-            data['arch'] = None
-        data['_rel_maj'] = data['release'].split(".")[0]
-        rhel_key = "-".join([data['version'], data['_rel_maj']])
-        rhel_release = rhel_release_map.get(rhel_key, '-1.-1')
-        data['rhel_release'] = rhel_release.split('.')
+            data["release"] = data["release_arch"]
+            data["arch"] = None
+        data["_rel_maj"] = data["release"].split(".")[0]
+        rhel_key = "-".join([data["version"], data["_rel_maj"]])
+        rhel_release = rhel_release_map.get(rhel_key, "-1.-1")
+        data["rhel_release"] = rhel_release.split(".")
         try:
-            data['_sv_version'] = StrictVersion(data['version'])
+            data["_sv_version"] = StrictVersion(data["version"])
         except ValueError:
-            data['_sv_version'] = None
+            data["_sv_version"] = None
         # LooseVersion doesn't raise errors, it just goes with what it gets
-        data['_lv_version'] = LooseVersion(data['version'])
-        num_sections = 7 if 'rt' in data['release'] else 5
-        data['_lv_release'] = LooseVersion(pad_release(data['release'], num_sections=num_sections))
-        data['ver_rel'] = '%s-%s' % (data['version'], data['release'])
+        data["_lv_version"] = LooseVersion(data["version"])
+        num_sections = 7 if "rt" in data["release"] else 5
+        data["_lv_release"] = LooseVersion(
+            pad_release(data["release"], num_sections=num_sections)
+        )
+        data["ver_rel"] = "%s-%s" % (data["version"], data["release"])
         return data
 
     def _best_version(self, other):
@@ -361,7 +367,10 @@ class Uname(CommandParser):
 
     def __str__(self):
         return "version: %s; release: %s; rel_maj: %s; lv_release: %s" % (
-            self.version, self.release, self._rel_maj, self._lv_release
+            self.version,
+            self.release,
+            self._rel_maj,
+            self._lv_release,
         )
 
     def __repr__(self):
@@ -416,7 +425,7 @@ class Uname(CommandParser):
 
         See the `__eq__` operator for a detailed description.
         """
-        return not(self == other)
+        return not (self == other)
 
     def __lt__(self, other):
         """
@@ -432,8 +441,9 @@ class Uname(CommandParser):
 
         s_version, o_version = self._best_version(other_uname)
 
-        return s_version < o_version or \
-            (s_version == o_version and self._lv_release < other_uname._lv_release)
+        return s_version < o_version or (
+            s_version == o_version and self._lv_release < other_uname._lv_release
+        )
 
     def __le__(self, other):
         """
@@ -458,8 +468,9 @@ class Uname(CommandParser):
 
         s_version, o_version = self._best_version(other_uname)
 
-        return s_version > o_version or \
-            (s_version == o_version and self._lv_release > other_uname._lv_release)
+        return s_version > o_version or (
+            s_version == o_version and self._lv_release > other_uname._lv_release
+        )
 
     def __ge__(self, other):
         """
@@ -530,11 +541,13 @@ class Uname(CommandParser):
 
     @property
     def redhat_release(self):
-        return RedhatRelease(major=int(self.rhel_release[0]), minor=int(self.rhel_release[1]))
+        return RedhatRelease(
+            major=int(self.rhel_release[0]), minor=int(self.rhel_release[1])
+        )
 
 
 def pad_release(release_to_pad, num_sections=4):
-    '''
+    """
     Pad out package and kernel release versions so that
     ``LooseVersion`` comparisons will be correct.
 
@@ -553,13 +566,15 @@ def pad_release(release_to_pad, num_sections=4):
 
     If the number of sections of the release to be padded is
     greater than num_sections, a ``ValueError`` will be raised.
-    '''
-    parts = release_to_pad.split('.')
+    """
+    parts = release_to_pad.split(".")
 
     if len(parts) > num_sections:
-        raise ValueError("Too many sections encountered ({found} > {num} in release string {rel}".format(
-            found=len(parts), num=num_sections, rel=release_to_pad
-        ))
+        raise ValueError(
+            "Too many sections encountered ({found} > {num} in release string {rel}".format(
+                found=len(parts), num=num_sections, rel=release_to_pad
+            )
+        )
 
     pad_count = num_sections - len(parts)
-    return ".".join(parts[:-1] + ['0'] * pad_count + parts[-1:])
+    return ".".join(parts[:-1] + ["0"] * pad_count + parts[-1:])

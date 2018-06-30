@@ -15,7 +15,7 @@ from .. import LegacyItemAccess
 from collections import namedtuple
 
 
-ModProbeValue = namedtuple("ModProbeValue", ['value', 'source'])
+ModProbeValue = namedtuple("ModProbeValue", ["value", "source"])
 """
 A value from a ModProbe source
 """
@@ -72,6 +72,7 @@ class AllModProbe(LegacyItemAccess):
         {'eth1394': ModProbeValue(['/bin/true'], '/etc/modprobe.conf'),
          'ipv6': ModProbeValue(['/bin/true'], '/etc/modprobe.conf.d/no_ipv6.conf')}
     """
+
     def __init__(self, modprobe):
         self.data = {}
         self.bad_lines = []
@@ -88,10 +89,15 @@ class AllModProbe(LegacyItemAccess):
                         self.data[section][name][0].append(value)
                     else:
                         # create new tuple
-                        self.data[section][name] = ModProbeValue(value=value, source=filename)
+                        self.data[section][name] = ModProbeValue(
+                            value=value, source=filename
+                        )
             # Copy bad lines, if any
             if mod.bad_lines:
                 self.bad_lines.extend(
-                    [ModProbeValue(value=line, source=filename) for line in mod.bad_lines]
+                    [
+                        ModProbeValue(value=line, source=filename)
+                        for line in mod.bad_lines
+                    ]
                 )
         super(AllModProbe, self).__init__()

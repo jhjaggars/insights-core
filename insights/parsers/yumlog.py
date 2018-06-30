@@ -62,7 +62,7 @@ from collections import defaultdict, namedtuple
 from insights.specs import Specs
 
 
-Entry = namedtuple('Entry', field_names='idx timestamp state pkg')
+Entry = namedtuple("Entry", field_names="idx timestamp state pkg")
 """namedtuple: Represents a line in ``/var/log/yum.log``."""
 
 
@@ -70,13 +70,13 @@ Entry = namedtuple('Entry', field_names='idx timestamp state pkg')
 class YumLog(Parser):
     """Class for parsing /var/log/yum.log"""
 
-    ERASED = 'Erased'
+    ERASED = "Erased"
     """Package Erased"""
 
-    INSTALLED = 'Installed'
+    INSTALLED = "Installed"
     """Package Installed"""
 
-    UPDATED = 'Updated'
+    UPDATED = "Updated"
     """Package Updated"""
 
     STATES = set([ERASED, INSTALLED, UPDATED])
@@ -112,20 +112,20 @@ class YumLog(Parser):
             if not any(s in line for s in self.STATES):
                 continue
             try:
-                line = line.replace(': 100', '')
+                line = line.replace(": 100", "")
                 month, day, time, state, pkg = line.split()[:5]
-                timestamp = ' '.join([month, day, time])
-                state = state.rstrip(':')
-                pkg = pkg.split(':')[-1].strip()
+                timestamp = " ".join([month, day, time])
+                state = state.rstrip(":")
+                pkg = pkg.split(":")[-1].strip()
                 if state == self.ERASED:
-                    pkg = InstalledRpm({'name': pkg})
+                    pkg = InstalledRpm({"name": pkg})
                 else:
                     pkg = InstalledRpm.from_package(pkg)
                 e = Entry(idx, timestamp, state, pkg)
                 self.data.append(e)
                 self.pkgs[pkg.name].append(e)
             except:
-                raise ParseException('YumLog could not parse', line)
+                raise ParseException("YumLog could not parse", line)
 
         self.pkgs = dict(self.pkgs)
 

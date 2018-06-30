@@ -1,4 +1,4 @@
-'''
+"""
 NetConsole - file ``/etc/sysconfig/netconsole``
 ===============================================
 
@@ -24,7 +24,7 @@ Examples:
     >>> 'DEV' in config # Direct access to options
     False
 
-'''
+"""
 
 from .. import parser, SysconfigOptions, LegacyItemAccess
 from insights.specs import Specs
@@ -32,8 +32,9 @@ from insights.specs import Specs
 
 @parser(Specs.netconsole)
 class NetConsole(SysconfigOptions, LegacyItemAccess):
-    '''
+    """
     Contents of the ``/etc/sysconfig/netconsole`` file.  Uses the
     ``SysconfigOptions`` shared parser class.
-    '''
+    """
+
     pass

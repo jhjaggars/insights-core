@@ -22,7 +22,7 @@ T4 = """
 virt-what: virt-what-cpuid-helper program not found in $PATH
 """.strip()
 
-DMIDECODE = '''
+DMIDECODE = """
 # dmidecode 2.11
 SMBIOS 2.7 present.
 188 structures occupying 5463 bytes.
@@ -126,9 +126,9 @@ Processor Information
 
 Handle 0x0037, DMI type 127, 4 bytes.
 End Of Table
-'''
+"""
 
-DMIDECODE_V = '''
+DMIDECODE_V = """
 # dmidecode 2.12
 SMBIOS 2.4 present.
 364 structures occupying 16870 bytes.
@@ -177,9 +177,9 @@ System Information
 \tWake-up Type: Power Switch
 \tSKU Number: Not Specified
 \tFamily: Not Specified
-'''
+"""
 
-DMIDECODE_AWS = '''
+DMIDECODE_AWS = """
 # dmidecode 2.12-dmifs
 SMBIOS 2.4 present.
 11 structures occupying 310 bytes.
@@ -222,9 +222,9 @@ Chassis Information
 \tPower Supply State: Safe
 \tThermal State: Safe
 \tSecurity Status: Unknown
-'''
+"""
 
-DMIDECODE_KVM = '''
+DMIDECODE_KVM = """
 # dmidecode 3.0
 Scanning /dev/mem for entry point.
 SMBIOS 2.8 present.
@@ -271,7 +271,7 @@ Chassis Information
 \tHeight: Unspecified
 \tNumber Of Power Cords: Unspecified
 \tContained Elements: 0
-'''
+"""
 
 DMIDECODE_FAIL = "# dmidecode 2.11\n# No SMBIOS nor DMI entry point found, sorry.\n"
 
@@ -301,8 +301,8 @@ def test_vw_virt_what_specific():
     assert ret.is_virtual is True
     assert ret.is_physical is False
     assert ret.generic == "xen"
-    assert 'xen-dom0' in ret
-    assert 'aws' in ret
+    assert "xen-dom0" in ret
+    assert "aws" in ret
 
 
 def test_vw_dmidecode_1():
@@ -312,7 +312,7 @@ def test_vw_dmidecode_1():
     assert ret.is_virtual is True
     assert ret.is_physical is False
     assert ret.generic == "xen"
-    assert 'aws' in ret
+    assert "aws" in ret
 
 
 def test_vw_dmidecode_2():

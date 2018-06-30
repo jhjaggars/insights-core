@@ -33,4 +33,4 @@ class Up2dateLog(LogFileOutput):
         "[Thu Feb  1 02:46:35 2018] rhn_register A socket error occurred: (-3, 'Temporary failure in name resolution'), attempt #1"
     """
 
-    time_format = '%a %b %d %H:%M:%S %Y'
+    time_format = "%a %b %d %H:%M:%S %Y"

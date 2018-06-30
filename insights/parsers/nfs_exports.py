@@ -159,19 +159,23 @@ class NFSExportsBase(Parser):
         """
         deprecated(
             NFSExportsBase.reconstitute,
-            'Please use the `raw_lines` dictionary property of the parser instance'
+            "Please use the `raw_lines` dictionary property of the parser instance",
         )
-        return "  ".join([path] + ["%s(%s)" % (host, ",".join(options))
-                         for host, options in d.items()])
+        return "  ".join(
+            [path]
+            + ["%s(%s)" % (host, ",".join(options)) for host, options in d.items()]
+        )
 
 
 @parser(Specs.nfs_exports)
 class NFSExports(NFSExportsBase):
     """Subclass to attach ``nfs_exports`` spec to"""
+
     pass
 
 
 @parser(Specs.nfs_exports_d)
 class NFSExportsD(NFSExportsBase):
     """Subclass to attach ``nfs_exports.d`` spec to"""
+
     pass

@@ -58,8 +58,16 @@ class NfnetLinkQueue(Parser):
 
     def parse_content(self, content):
         self.data = []
-        fields = ['queue_number', 'peer_portid', 'queue_total', 'copy_mode',
-            'copy_range', 'queue_dropped', 'user_dropped', 'id_sequence']
+        fields = [
+            "queue_number",
+            "peer_portid",
+            "queue_total",
+            "copy_mode",
+            "copy_range",
+            "queue_dropped",
+            "user_dropped",
+            "id_sequence",
+        ]
         for line in content:
             parts = [int(p.strip()) for p in line.split()]
             assert len(parts) == 9

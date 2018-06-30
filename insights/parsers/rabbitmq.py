@@ -8,12 +8,12 @@ from insights.specs import Specs
 # For "Status of node" section's erlang block prasing only, could not cover
 # sections "Cluster status of node" & "Application environment of node".
 def erlblock_parser():
-    COMMA = p.Suppress(',')
+    COMMA = p.Suppress(",")
     LBRACE, RBRACE = map(p.Suppress, "{}")
     LBRACKET, RBRACKET = map(p.Suppress, "[]")
 
-    key = p.Word(p.alphas + '_')
-    value_tnum = p.Word(p.nums + '.')
+    key = p.Word(p.alphas + "_")
+    value_tnum = p.Word(p.nums + ".")
     value_tword = p.Word(p.alphanums + '/"-[]:.()')
     value_tstr = p.OneOrMore(value_tword)
     value_tdoustrs = value_tstr + COMMA + value_tstr
@@ -37,9 +37,9 @@ def perm_parser():
     COLON = p.Suppress(":")
     WHITE = p.Suppress(p.White())
 
-    vhostname = p.Word(p.alphanums + '_-/')
-    username = p.Word(p.alphanums + '_-')
-    conf = p.Word(p.alphanums + '.*#')
+    vhostname = p.Word(p.alphanums + "_-/")
+    username = p.Word(p.alphanums + "_-")
+    conf = p.Word(p.alphanums + ".*#")
 
     perm_vhost = p.Suppress("Permissions on") + vhostname + COLON
     ucwr = p.Suppress("user" + WHITE + "configure" + WHITE + "write" + WHITE + "read")
@@ -57,19 +57,19 @@ def create_parser():
     DOTS = p.Suppress("...")
     NSTAT_PREFIX = p.Suppress("Status of node")
     PERM_PREFIX = p.Suppress("Permissions on")
-    nodename = p.Word(p.alphanums + '\'_-@')
+    nodename = p.Word(p.alphanums + "'_-@")
 
     block_nstat = p.Group(NSTAT_PREFIX + nodename + DOTS + erlblock_parser())
-    nstat = p.Dict(p.OneOrMore(p.Suppress(p.SkipTo(NSTAT_PREFIX)) +
-            block_nstat)).setResultsName('nstat')
-    perm = p.Suppress(p.SkipTo(PERM_PREFIX)) + perm_parser().setResultsName('perm')
+    nstat = p.Dict(
+        p.OneOrMore(p.Suppress(p.SkipTo(NSTAT_PREFIX)) + block_nstat)
+    ).setResultsName("nstat")
+    perm = p.Suppress(p.SkipTo(PERM_PREFIX)) + perm_parser().setResultsName("perm")
 
     return nstat + perm
 
 
 @parser(Specs.rabbitmq_report)
 class RabbitMQReport(CommandParser):
-
     def parse_content(self, content):
         """
         Support StatusOfNode and Permissions Sections only
@@ -120,7 +120,6 @@ class RabbitMQReport(CommandParser):
 
 @parser(Specs.rabbitmq_users)
 class RabbitMQUsers(CommandParser):
-
     def parse_content(self, content):
         self.data = {}
         for line in content[1:-1]:
@@ -129,7 +128,7 @@ class RabbitMQUsers(CommandParser):
                 self.data[line_splits[0]] = line_splits[1][1:-1]
 
 
-TRUE_FALSE = {'true': True, 'false': False}
+TRUE_FALSE = {"true": True, "false": False}
 """dict: Dictionary for converting true/false strings to bool."""
 
 
@@ -170,7 +169,9 @@ class RabbitMQQueues(CommandParser):
         ValueError: Raised if any of the numbers are not valid numbers
     """
 
-    QueueInfo = namedtuple('QueueInfo', ['name', 'messages', 'consumers', 'auto_delete'])
+    QueueInfo = namedtuple(
+        "QueueInfo", ["name", "messages", "consumers", "auto_delete"]
+    )
     """namedtuple: Structure to hold a line of RabbitMQ queue information."""
 
     def parse_content(self, content):
@@ -181,14 +182,19 @@ class RabbitMQQueues(CommandParser):
             if "...done." in line:
                 continue
             parts = line.split()
-            if len(parts) == 4 and not line.startswith('Error:'):
+            if len(parts) == 4 and not line.startswith("Error:"):
                 if parts[3].lower() in TRUE_FALSE:
-                    self.data.append(RabbitMQQueues.QueueInfo(
-                        parts[0], int(parts[1]), int(parts[2]),
-                        TRUE_FALSE[parts[3].lower()])
+                    self.data.append(
+                        RabbitMQQueues.QueueInfo(
+                            parts[0],
+                            int(parts[1]),
+                            int(parts[2]),
+                            TRUE_FALSE[parts[3].lower()],
+                        )
                     )
                 else:
                     raise ParseException(
-                        "auto_delete should be true or false: {0}".format(line))
+                        "auto_delete should be true or false: {0}".format(line)
+                    )
             else:
                 raise ParseException("Data appears invalid: {0}".format(line))

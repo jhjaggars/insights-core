@@ -24,7 +24,7 @@ architecture => x86_64
 facterversion => 1.7.6
 filesystems => xfs
 """.strip()
-SYSTEMID_PROFILE_NAME = '''
+SYSTEMID_PROFILE_NAME = """
 <?xml version="1.0"?>
 <params>
 <param>
@@ -48,8 +48,8 @@ SYSTEMID_PROFILE_NAME = '''
 </struct></value>
 </param>
 </params>
-'''.strip()
-SYSTEMID_NO_PROFILE_NAME = '''
+""".strip()
+SYSTEMID_NO_PROFILE_NAME = """
 <?xml version="1.0"?>
 <params>
 <param>
@@ -63,19 +63,19 @@ SYSTEMID_NO_PROFILE_NAME = '''
 </member>
 </param>
 </params>
-'''.strip()
+""".strip()
 
 
 def test_get_hostname():
     hn = Hostname(context_wrap(HOSTNAME))
-    expected = (HOSTNAME, HOSTNAME_SHORT, 'example.com')
+    expected = (HOSTNAME, HOSTNAME_SHORT, "example.com")
     result = hostname(hn, None, None)
     assert result.fqdn == expected[0]
     assert result.hostname == expected[1]
     assert result.domain == expected[2]
 
     hn = Hostname(context_wrap(HOSTNAME_SHORT))
-    expected = (HOSTNAME_SHORT, HOSTNAME_SHORT, '')
+    expected = (HOSTNAME_SHORT, HOSTNAME_SHORT, "")
     result = hostname(hn, None, None)
     assert result.fqdn == expected[0]
     assert result.hostname == expected[1]
@@ -84,7 +84,7 @@ def test_get_hostname():
 
 def test_get_facter_hostname():
     hn = Facter(context_wrap(FACTS_FQDN))
-    expected = ('ewa-satellite.example.com', 'ewa-satellite', 'example.com')
+    expected = ("ewa-satellite.example.com", "ewa-satellite", "example.com")
     result = hostname(None, hn, None)
     assert result.fqdn == expected[0]
     assert result.hostname == expected[1]
@@ -93,7 +93,7 @@ def test_get_facter_hostname():
 
 def test_get_systemid_hostname():
     hn = SystemID(context_wrap(SYSTEMID_PROFILE_NAME))
-    expected = ('example_profile', 'example_profile', '')
+    expected = ("example_profile", "example_profile", "")
     result = hostname(None, None, hn)
     assert result.fqdn == expected[0]
     assert result.hostname == expected[1]
@@ -104,7 +104,7 @@ def test_get_all_hostname():
     hn = Hostname(context_wrap(HOSTNAME))
     fhn = Facter(context_wrap(FACTS_FQDN))
     shn = SystemID(context_wrap(SYSTEMID_PROFILE_NAME))
-    expected = (HOSTNAME, HOSTNAME_SHORT, 'example.com')
+    expected = (HOSTNAME, HOSTNAME_SHORT, "example.com")
     result = hostname(hn, fhn, shn)
     assert result.fqdn == expected[0]
     assert result.hostname == expected[1]

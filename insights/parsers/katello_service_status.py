@@ -26,8 +26,7 @@ Examples:
 from .. import parser, add_filter, CommandParser
 from insights.specs import Specs
 
-add_filter(Specs.katello_service_status, ['Some services failed to status',
-                                      'Success'])
+add_filter(Specs.katello_service_status, ["Some services failed to status", "Success"])
 
 
 @parser(Specs.katello_service_status)
@@ -40,13 +39,14 @@ class KatelloServiceStatus(CommandParser):
         is_ok (bool): Is there no failed service?
 
     """
+
     def parse_content(self, content):
         self.failed_services = []
         self.is_ok = False
 
         for line in content[::-1]:
-            if 'Some services failed to status:' in line:
-                failed_services = line.split(':')[-1].strip()
-                self.failed_services = [s for s in failed_services.split(',') if s]
+            if "Some services failed to status:" in line:
+                failed_services = line.split(":")[-1].strip()
+                self.failed_services = [s for s in failed_services.split(",") if s]
 
         self.is_ok = len(self.failed_services) == 0

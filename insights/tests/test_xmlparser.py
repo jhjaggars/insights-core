@@ -6,8 +6,8 @@ from insights.tests import context_wrap
 class FakeXmlParserClass(XMLParser):
     def parse_dom(self):
         # default namespace
-        xmlns = 'http://people.example.com'
-        keyword = '*{%s}%s' % (xmlns, "neighbor[2]")
+        xmlns = "http://people.example.com"
+        keyword = "*{%s}%s" % (xmlns, "neighbor[2]")
         tmo_dict = {}
         for n in self.dom.findall(keyword):
             tmo_dict = {n.get("name"): n.get("direction")}
@@ -55,5 +55,10 @@ def test_parse():
     assert "Switzerland" in xml
     assert xml.get("Switzerland", "") == "W"
     assert len(xml.get_elements(".//year/..[@name='Singapore']")) == 1
-    assert xml.get_elements(".//*[@name='Singapore']/year")[-1].text == '2011'
-    assert xml.get_elements(".//neighbor[2]", xmlns="http://people.example.com")[0].get('name') == 'Switzerland'
+    assert xml.get_elements(".//*[@name='Singapore']/year")[-1].text == "2011"
+    assert (
+        xml.get_elements(".//neighbor[2]", xmlns="http://people.example.com")[0].get(
+            "name"
+        )
+        == "Switzerland"
+    )

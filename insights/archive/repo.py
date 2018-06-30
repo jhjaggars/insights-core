@@ -8,9 +8,15 @@ from insights.core import load_package
 
 ARCHIVES = [
     TestArchive("base_rhel67", base_archive="rhel6.7"),
-    TestArchive("insights_heartbeat", transforms=[
-        Transform("hostname").replace("insights-heartbeat-9cd6f607-6b28-44ef-8481-62b0e7773614")
-    ], machine_id=hashlib.sha224("TEST-HEARTBEAT-RHAI2").hexdigest())
+    TestArchive(
+        "insights_heartbeat",
+        transforms=[
+            Transform("hostname").replace(
+                "insights-heartbeat-9cd6f607-6b28-44ef-8481-62b0e7773614"
+            )
+        ],
+        machine_id=hashlib.sha224("TEST-HEARTBEAT-RHAI2").hexdigest(),
+    ),
 ]
 
 
@@ -70,7 +76,7 @@ def build_integration_test_archive(module_name, i, test_tuple, dest, machine_id=
             "input_data": input_data,
             "expected_response": expected_response,
             "archive_path": archive_path,
-            "test_archive": archive
+            "test_archive": archive,
         }
 
 
@@ -82,7 +88,9 @@ def build_integration_test_archives(package, dest=DEFAULT_DEST, machine_id=None)
         if console:
             print("\nBuilding {0} ".format(module_name), end="")
         for i, test_tuple in enumerate(func()):
-            archive = build_integration_test_archive(module_name, i, test_tuple, dest, machine_id)
+            archive = build_integration_test_archive(
+                module_name, i, test_tuple, dest, machine_id
+            )
             if archive:
                 yield archive
     if console:
@@ -92,6 +100,7 @@ def build_integration_test_archives(package, dest=DEFAULT_DEST, machine_id=None)
 def get_integration_generators(package):
     load_package(package)
     from insights.tests import ARCHIVE_GENERATORS
+
     for func in sorted(ARCHIVE_GENERATORS, key=lambda f: f.__module__):
         if not func.slow:
             yield func

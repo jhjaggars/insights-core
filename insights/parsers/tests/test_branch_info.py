@@ -10,5 +10,5 @@ def test_settings_yml():
     ctx = context_wrap(bi_conf_content)
     ctx.content = bi_conf_content
     result = BranchInfo(ctx)
-    assert result.data['remote_branch'] == -1
-    assert result.data['remote_leaf'] == -1
+    assert result.data["remote_branch"] == -1
+    assert result.data["remote_leaf"] == -1

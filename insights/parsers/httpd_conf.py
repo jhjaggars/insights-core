@@ -81,7 +81,9 @@ from copy import deepcopy
 from .. import Parser, parser, get_active_lines, LegacyItemAccess
 from insights.specs import Specs
 
-ParsedData = namedtuple('ParsedData', ['value', 'line', 'section', 'section_name', 'file_name', 'file_path'])
+ParsedData = namedtuple(
+    "ParsedData", ["value", "line", "section", "section_name", "file_name", "file_path"]
+)
 """namedtuple: Type for storing the parsed httpd configuration's directive information."""
 
 
@@ -136,21 +138,21 @@ class HttpdConf(LegacyItemAccess, Parser):
         where_to_store = self.first_half  # Set which part of file is the parser at
 
         # Flag to be used for different parsing of the main config file
-        main_config = self.file_name == 'httpd.conf'
+        main_config = self.file_name == "httpd.conf"
 
         section = []  # Can be treated as a stack
         for line in get_active_lines(content):
             if main_config and where_to_store is not self.second_half:
                 # Dividing line looks like 'IncludeOptional conf.d/*.conf'
-                if re.search(r'^\s*IncludeOptional\s+conf\.d', line):
+                if re.search(r"^\s*IncludeOptional\s+conf\.d", line):
                     where_to_store = self.second_half
 
             # new section start
-            if line.startswith('<') and not line.startswith('</'):
-                splits = line.strip('<>').split(None, 1)
-                section.append(((splits[0], splits[1] if len(splits) == 2 else ''), {}))
+            if line.startswith("<") and not line.startswith("</"):
+                splits = line.strip("<>").split(None, 1)
+                section.append(((splits[0], splits[1] if len(splits) == 2 else ""), {}))
             # one section end
-            elif line.startswith('</'):
+            elif line.startswith("</"):
                 sec, pd = section.pop()
                 # for nested section
                 if section:
@@ -171,16 +173,25 @@ class HttpdConf(LegacyItemAccess, Parser):
                 except ValueError:
                     continue  # Skip lines which are not 'Option Value'
 
-                value = value.strip('\'"')
+                value = value.strip("'\"")
 
                 if section:
                     cur_sec = section[-1][0]
-                    parsed_data = ParsedData(value, line, cur_sec[0], cur_sec[1], self.file_name, self.file_path)
+                    parsed_data = ParsedData(
+                        value,
+                        line,
+                        cur_sec[0],
+                        cur_sec[1],
+                        self.file_name,
+                        self.file_path,
+                    )
                     # before: section = [(('IfModule', 'worker.c'), {})]
                     add_to_dict_list(section[-1][-1], option, parsed_data)
                     # after:  section = [(('IfModule', 'worker.c'), [{'MaxClients': (256, 'MaxClients 256')}])]
                 else:
-                    parsed_data = ParsedData(value, line, None, None, self.file_name, self.file_path)
+                    parsed_data = ParsedData(
+                        value, line, None, None, self.file_name, self.file_path
+                    )
                     add_to_dict_list(self.data, option, parsed_data)
                     if main_config:
                         add_to_dict_list(where_to_store, option, parsed_data)

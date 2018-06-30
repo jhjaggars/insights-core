@@ -34,10 +34,10 @@ Success!
 
 def test_kss():
     kss = KatelloServiceStatus(context_wrap(KS_OUT))
-    assert kss.failed_services == ['tomcat6', 'httpd']
+    assert kss.failed_services == ["tomcat6", "httpd"]
     assert not kss.is_ok
     kss = KatelloServiceStatus(context_wrap(KS_OUT_1))
-    assert kss.failed_services == ['httpd']
+    assert kss.failed_services == ["httpd"]
     assert not kss.is_ok
     kss = KatelloServiceStatus(context_wrap(KS_OUT_2))
     assert kss.failed_services == []

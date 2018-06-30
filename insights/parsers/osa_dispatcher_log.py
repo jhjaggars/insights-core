@@ -51,11 +51,14 @@ class OSADispatcherLog(LogFileOutput):
         >>> len(list(osa.get_after(datetime(2015, 12, 27, 22, 48, 0))))
         2
     """
-    time_format = '%Y/%m/%d %H:%M:%S'
 
-    _LINE_STR = r"^(?P<timestamp>\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2} " + \
-        r"[+-]?\d{2}:\d{2}) (?P<pid>\d+) (?P<client_ip>\S+): " + \
-        r"(?P<module>\w+)/(?P<function>[\w_.-]+)(?:\((?P<info>.*)\))?$"
+    time_format = "%Y/%m/%d %H:%M:%S"
+
+    _LINE_STR = (
+        r"^(?P<timestamp>\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2} "
+        + r"[+-]?\d{2}:\d{2}) (?P<pid>\d+) (?P<client_ip>\S+): "
+        + r"(?P<module>\w+)/(?P<function>[\w_.-]+)(?:\((?P<info>.*)\))?$"
+    )
     _LINE_RE = re.compile(_LINE_STR)
 
     def _parse_line(self, line):
@@ -69,16 +72,17 @@ class OSADispatcherLog(LogFileOutput):
         key in the line's dict.
         """
         msg_info = dict()
-        msg_info['raw_message'] = line
+        msg_info["raw_message"] = line
 
         match = self._LINE_RE.search(line)
         if match:
             msg_info.update(match.groupdict())
             try:
-                stamp = match.group('timestamp')
+                stamp = match.group("timestamp")
                 # Must remove : from timezone for strptime %z
-                msg_info['datetime'] = datetime.strptime(
-                    stamp[0:23] + stamp[24:26], self.time_format + ' %z')
+                msg_info["datetime"] = datetime.strptime(
+                    stamp[0:23] + stamp[24:26], self.time_format + " %z"
+                )
             except:
                 pass
 
@@ -96,7 +100,7 @@ class OSADispatcherLog(LogFileOutput):
         for l in reversed(self.lines):
             msg_info = self._parse_line(l)
             # assume parse is successful if we got an IP address
-            if 'client_ip' in msg_info:
+            if "client_ip" in msg_info:
                 return msg_info
         # Return the last one even if it didn't parse.
         return msg_info

@@ -20,6 +20,6 @@ ENGINE_PKI_ENGINE_CERT="/etc/pki/ovirt-engine/certs/engine.cer"
 
 def test_ovirt_engine_confd():
     match_result = OvirtEngineConfd(context_wrap(CONFD_MATCH))
-    assert 'tmp' in match_result.get('ENGINE_TMP')
+    assert "tmp" in match_result.get("ENGINE_TMP")
     no_match_result = OvirtEngineConfd(context_wrap(CONFD_NOT_MATCH))
-    assert no_match_result.get('ENGINE_TMP') is None
+    assert no_match_result.get("ENGINE_TMP") is None

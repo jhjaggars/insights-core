@@ -46,34 +46,31 @@ def test_get_brctl_show():
     # the content is splitted with tab     # noqa: E101
     result1 = BrctlShow(context_wrap(BRCTL_SHOW_TAB)).group_by_iface
     assert result1["br0"] == {
-                "bridge id": "8000.2047478aa2e8",
-                "STP enabled": "no",
-                "interfaces": ['em1', 'vnet0', 'vnet1']
-            }
+        "bridge id": "8000.2047478aa2e8",
+        "STP enabled": "no",
+        "interfaces": ["em1", "vnet0", "vnet1"],
+    }
 
     # the content is split with space
     result = BrctlShow(context_wrap(BRCTL_SHOW)).group_by_iface
     assert len(result) == 4
 
     assert result["br0"] == {
-                "bridge id": "8000.08002731ddfd",
-                "STP enabled": "no",
-                "interfaces": ['eth1', 'eth2', 'eth3']
-            }
+        "bridge id": "8000.08002731ddfd",
+        "STP enabled": "no",
+        "interfaces": ["eth1", "eth2", "eth3"],
+    }
     assert result["br1"] == {
-                "bridge id": "8000.0800278cdb62",
-                "STP enabled": "no",
-                "interfaces": ['eth4', 'eth5']
-            }
+        "bridge id": "8000.0800278cdb62",
+        "STP enabled": "no",
+        "interfaces": ["eth4", "eth5"],
+    }
     assert result["br2"] == {
-                "bridge id": "8000.0800278cdb63",
-                "STP enabled": "yes",
-                "interfaces": ['eth6']
-            }
-    assert result["docker0"] == {
-                "bridge id": "8000.0242d4cf2112",
-                "STP enabled": "no"
-            }
+        "bridge id": "8000.0800278cdb63",
+        "STP enabled": "yes",
+        "interfaces": ["eth6"],
+    }
+    assert result["docker0"] == {"bridge id": "8000.0242d4cf2112", "STP enabled": "no"}
 
     # Test handling of system with no bridges
     with pytest.raises(ParseException) as e_info:

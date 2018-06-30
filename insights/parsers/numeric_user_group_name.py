@@ -44,6 +44,7 @@ class NumericUserGroupName(CommandParser):
     """
     Reports whether there is a user or group with a name that starts with a digit.
     """
+
     def parse_content(self, content):
         self.nr_numeric_user = None
         self.nr_numeric_group = None
@@ -55,9 +56,9 @@ class NumericUserGroupName(CommandParser):
                 n = int(line_split[1])
             except ValueError:
                 continue
-            if '/etc/passwd' == line_split[0]:
+            if "/etc/passwd" == line_split[0]:
                 self.nr_numeric_user = n
-            if '/etc/group' == line_split[0]:
+            if "/etc/group" == line_split[0]:
                 self.nr_numeric_group = n
 
         # The grep command should report on both files unless a file is missing or something is very
@@ -65,4 +66,6 @@ class NumericUserGroupName(CommandParser):
         if None is self.nr_numeric_user or None is self.nr_numeric_group:
             raise ParseException("Unexpected grep output or grep not found.")
 
-        self.has_numeric_user_or_group = bool(self.nr_numeric_user or self.nr_numeric_group)
+        self.has_numeric_user_or_group = bool(
+            self.nr_numeric_user or self.nr_numeric_group
+        )

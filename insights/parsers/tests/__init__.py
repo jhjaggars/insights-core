@@ -1,6 +1,5 @@
 import doctest
-from doctest import (DebugRunner, DocTestFinder, DocTestRunner,
-                     OutputChecker)
+from doctest import DebugRunner, DocTestFinder, DocTestRunner, OutputChecker
 import re
 import sys
 
@@ -13,21 +12,29 @@ class Py23DocChecker(OutputChecker):
         return OutputChecker.check_output(self, want, got, optionflags)
 
 
-def ic_testmod(m, name=None, globs=None, verbose=None,
-               report=True, optionflags=0, extraglobs=None,
-               raise_on_error=False, exclude_empty=False):
+def ic_testmod(
+    m,
+    name=None,
+    globs=None,
+    verbose=None,
+    report=True,
+    optionflags=0,
+    extraglobs=None,
+    raise_on_error=False,
+    exclude_empty=False,
+):
     """See original code in doctest.testmod."""
     if name is None:
         name = m.__name__
     finder = DocTestFinder(exclude_empty=exclude_empty)
     if raise_on_error:
-        runner = DebugRunner(checker=Py23DocChecker(),
-                             verbose=verbose,
-                             optionflags=optionflags)
+        runner = DebugRunner(
+            checker=Py23DocChecker(), verbose=verbose, optionflags=optionflags
+        )
     else:
-        runner = DocTestRunner(checker=Py23DocChecker(),
-                               verbose=verbose,
-                               optionflags=optionflags)
+        runner = DocTestRunner(
+            checker=Py23DocChecker(), verbose=verbose, optionflags=optionflags
+        )
     for test in finder.find(m, name, globs=globs, extraglobs=extraglobs):
         runner.run(test)
 

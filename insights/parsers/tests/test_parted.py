@@ -66,48 +66,48 @@ def test_parted():
     context = context_wrap(PARTED_DATA)
     results = PartedL(context)
     assert results is not None
-    assert results.get('model') == 'Virtio Block Device (virtblk)'
-    assert results.disk == '/dev/vda'
-    assert results.get('size') == '9664MB'
-    assert results.get('sector_size') == '512B/512B'
-    assert results.logical_sector_size == '512B'
-    assert results.physical_sector_size == '512B'
-    assert results.get('partition_table') == 'msdos'
-    assert results.get('disk_flags') is None
+    assert results.get("model") == "Virtio Block Device (virtblk)"
+    assert results.disk == "/dev/vda"
+    assert results.get("size") == "9664MB"
+    assert results.get("sector_size") == "512B/512B"
+    assert results.logical_sector_size == "512B"
+    assert results.physical_sector_size == "512B"
+    assert results.get("partition_table") == "msdos"
+    assert results.get("disk_flags") is None
     partitions = results.partitions
     assert len(partitions) == 2
-    assert partitions[0].number == '1'
-    assert partitions[0].start == '1049kB'
-    assert partitions[0].end == '525MB'
-    assert partitions[0].size == '524MB'
-    assert partitions[0].file_system == 'xfs'
-    assert partitions[0].get('name') is None
-    assert partitions[0].type == 'primary'
-    assert partitions[0].flags == 'boot'
+    assert partitions[0].number == "1"
+    assert partitions[0].start == "1049kB"
+    assert partitions[0].end == "525MB"
+    assert partitions[0].size == "524MB"
+    assert partitions[0].file_system == "xfs"
+    assert partitions[0].get("name") is None
+    assert partitions[0].type == "primary"
+    assert partitions[0].flags == "boot"
     assert results.boot_partition is not None
-    assert results.boot_partition.number == '1'
+    assert results.boot_partition.number == "1"
 
-    assert partitions[1].get('file_system') == ''
-    assert partitions[1].get('flags') == 'lvm'
-    assert partitions[1].get('name') is None
-    assert partitions[1].get('number') == '2'
-    assert partitions[1].get('start') == '525MB'
-    assert partitions[1].get('end') == '9664MB'
-    assert partitions[1].get('size') == '9138MB'
-    assert partitions[1].get('type') == 'primary'
+    assert partitions[1].get("file_system") == ""
+    assert partitions[1].get("flags") == "lvm"
+    assert partitions[1].get("name") is None
+    assert partitions[1].get("number") == "2"
+    assert partitions[1].get("start") == "525MB"
+    assert partitions[1].get("end") == "9664MB"
+    assert partitions[1].get("size") == "9138MB"
+    assert partitions[1].get("type") == "primary"
 
     context = context_wrap(PARTED_DATA_2)
     results = PartedL(context)
     assert results is not None
-    assert results.disk == '/dev/sdet'
+    assert results.disk == "/dev/sdet"
     assert len(results.partitions) == 1
 
     context = context_wrap(PARTED_DATA_3)
     results = PartedL(context)
     assert results is not None
-    assert results.disk == '/dev/sda'
-    assert results.logical_sector_size == '512B'
-    assert results.physical_sector_size == '512B'
+    assert results.disk == "/dev/sda"
+    assert results.logical_sector_size == "512B"
+    assert results.physical_sector_size == "512B"
     assert len(results.partitions) == 10
 
 
@@ -156,7 +156,7 @@ def test_failure_modes():
     # Test failure to find a slash in sector size
     results = PartedL(context_wrap(PARTED_DATA_NO_SECTOR_SPLIT))
     assert results is not None
-    assert results.disk == '/dev/vda'
+    assert results.disk == "/dev/vda"
     assert results._sector_size is None
     assert results.logical_sector_size is None
     assert results.physical_sector_size is None
@@ -164,13 +164,13 @@ def test_failure_modes():
     # Object should be complete but has no data
     part = PartedL(context_wrap(PARTED_ERR_DATA_NO_PARTITIONS))
     assert part is not None
-    assert part.disk == '/dev/vda'
-    assert part.data['sector_size'] == '512B/512B'
-    assert part.logical_sector_size == '512B'
-    assert part.physical_sector_size == '512B'
+    assert part.disk == "/dev/vda"
+    assert part.data["sector_size"] == "512B/512B"
+    assert part.logical_sector_size == "512B"
+    assert part.physical_sector_size == "512B"
     assert part.partitions == []
 
     # Various other failure modes that aren't actual parse exceptions atm
     part = PartedL(context_wrap(PARTED_ERR_DATA_EXCEPTIONS))
-    assert part.disk == '/dev/vda'
-    assert 'sector_size' not in part.data
+    assert part.disk == "/dev/vda"
+    assert "sector_size" not in part.data

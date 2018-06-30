@@ -58,6 +58,7 @@ class ChronydSysconfig(SysconfigOptions):
         '-d'
 
     """
+
     pass
 
 
@@ -82,6 +83,7 @@ class NtpdSysconfig(SysconfigOptions):
         >>> service_opts['OPTIONS']
         '-x -g'
     """
+
     pass
 
 
@@ -108,7 +110,7 @@ class DockerSysconfig(SysconfigOptions):
     @property
     def options(self):
         """ Return the value of the 'OPTIONS' variable, or '' if not defined. """
-        return self.data.get('OPTIONS', '')
+        return self.data.get("OPTIONS", "")
 
 
 @parser(Specs.sysconfig_httpd)
@@ -142,6 +144,7 @@ class HttpdSysconfig(SysconfigOptions):
         False
 
     """
+
     pass
 
 
@@ -178,6 +181,7 @@ class IrqbalanceSysconfig(SysconfigOptions):
         False
 
     """
+
     pass
 
 
@@ -201,19 +205,19 @@ class KdumpSysconfig(SysconfigOptions):
     """
 
     KDUMP_KEYS = [
-        'KDUMP_COMMANDLINE',
-        'KDUMP_COMMANDLINE_REMOVE',
-        'KDUMP_COMMANDLINE_APPEND',
-        'KDUMP_KERNELVER',
-        'KDUMP_IMG',
-        'KDUMP_IMG_EXT',
-        'KEXEC_ARGS',
+        "KDUMP_COMMANDLINE",
+        "KDUMP_COMMANDLINE_REMOVE",
+        "KDUMP_COMMANDLINE_APPEND",
+        "KDUMP_KERNELVER",
+        "KDUMP_IMG",
+        "KDUMP_IMG_EXT",
+        "KEXEC_ARGS",
     ]
 
     def parse_content(self, content):
         super(KdumpSysconfig, self).parse_content(content)
         for key in self.KDUMP_KEYS:
-            setattr(self, key, self.data.get(key, ''))
+            setattr(self, key, self.data.get(key, ""))
 
 
 @parser(Specs.sysconfig_virt_who)
@@ -247,6 +251,7 @@ class VirtWhoSysconfig(SysconfigOptions):
         >>> vwho_syscfg.get('TEST_OPT')  # Quotes are stripped
         'A TEST'
     """
+
     pass
 
 
@@ -270,6 +275,7 @@ class MongodSysconfig(SysconfigOptions):
         >>> 'NOSUCHOPTION' in mongod_syscfg
         False
     """
+
     pass
 
 
@@ -295,4 +301,5 @@ class MemcachedSysconfig(SysconfigOptions):
         >>> memcached_sysconfig.get('OPTIONS')
         '-U 0 -l 127.0.0.1'
     """
+
     pass

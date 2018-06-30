@@ -1,5 +1,6 @@
 from __future__ import print_function
 from __future__ import absolute_import
+
 # !/usr/bin/python
 # Copyright (C) 2016 Red Hat, All rights reserved.
 # AUTHORS: Alex Collins <alcollin@redhat.com>
@@ -19,12 +20,12 @@ def getMajorMinor(deviceName, dmsetupLs):
     startingIndex = string.rindex(dmsetupLs, deviceName) + len(deviceName)
     endingIndex = string.index(dmsetupLs[startingIndex:], "\n") + startingIndex
     # trim the preceding tab and ()'s
-    newStr = dmsetupLs[startingIndex + 2: endingIndex - 1]
+    newStr = dmsetupLs[startingIndex + 2 : endingIndex - 1]
     return newStr
 
 
 def getDmsetupLs():
-    cmd = ['dmsetup', 'ls']
+    cmd = ["dmsetup", "ls"]
     r = util.subp(cmd)
     if r.return_code != 0:
         print(r.stderr)

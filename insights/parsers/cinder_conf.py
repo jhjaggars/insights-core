@@ -67,4 +67,5 @@ class CinderConf(IniConfigFile):
     """
     Cinder configuration parser class, based on the ``IniConfigFile`` class.
     """
+
     pass

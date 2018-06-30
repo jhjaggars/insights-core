@@ -6,8 +6,8 @@ from insights.util import subproc
 
 
 def test_call():
-    result = subproc.call('echo -n hello')
-    assert result == 'hello'
+    result = subproc.call("echo -n hello")
+    assert result == "hello"
 
 
 def test_call_list_of_lists():
@@ -21,7 +21,7 @@ def test_call_timeout():
     # Timeouts don't work on OS X
     if sys.platform != "darwin":
         with pytest.raises(subproc.CalledProcessError):
-            subproc.call('sleep 3', timeout=1)
+            subproc.call("sleep 3", timeout=1)
 
 
 def test_call_invalid_args():

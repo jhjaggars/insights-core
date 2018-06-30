@@ -74,6 +74,7 @@ class GnocchiConf(IniConfigFile):
         10
 
     """
+
     pass
 
 
@@ -104,4 +105,5 @@ class GnocchiMetricdLog(LogFileOutput):
         [{'raw_message': '2017-04-13 21:06:11.676 114807 ERROR tooz.drivers.redis ToozError: Cannot extend an unlocked lock'}]
 
     """
+
     pass

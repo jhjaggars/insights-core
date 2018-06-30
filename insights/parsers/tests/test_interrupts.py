@@ -80,16 +80,16 @@ def test_interrupts():
     assert all_ints.get("i8042") == [all_ints.data[1], all_ints.data[4]]
     assert len(all_ints.get("IR-PCI-MSI")) == 9
     for one_int in all_ints:
-        if one_int['irq'] == "NMI:":
-            assert one_int['counts'] == ["210", "92", "179", "96", "177", "0", "0", "0"]
-            assert one_int['type_device'] == "Non-maskable interrupts"
+        if one_int["irq"] == "NMI:":
+            assert one_int["counts"] == ["210", "92", "179", "96", "177", "0", "0", "0"]
+            assert one_int["type_device"] == "Non-maskable interrupts"
     all_ints = Interrupts(context_wrap(INT_SINGLE))
     assert len(all_ints.data) == 9
     for one_int in all_ints:
-        assert len(one_int['counts']) == 1
-    assert 'type_device' in all_ints.data[6]
-    assert 'type_device' not in all_ints.data[7]
-    assert 'type_device' not in all_ints.data[8]
+        assert len(one_int["counts"]) == 1
+    assert "type_device" in all_ints.data[6]
+    assert "type_device" not in all_ints.data[7]
+    assert "type_device" not in all_ints.data[8]
 
     with pytest.raises(ParseException):
         Interrupts(context_wrap(INT_INVALID_1))

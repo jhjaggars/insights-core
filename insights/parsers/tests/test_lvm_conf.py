@@ -21,6 +21,6 @@ test_bad_json = [ "partial
 def test_lvm_conf():
     lvm_conf_output = LvmConf(context_wrap(LVM_CONF))
     assert lvm_conf_output["locking_type"] == 1
-    assert lvm_conf_output["volume_list"] == ['vg2', 'vg3/lvol3', '@tag2', '@*']
-    assert lvm_conf_output["filter"] == ['a/sda[0-9]*$/', 'r/sd.*/']
-    assert lvm_conf_output['test_bad_json'] == '[ "partial'
+    assert lvm_conf_output["volume_list"] == ["vg2", "vg3/lvol3", "@tag2", "@*"]
+    assert lvm_conf_output["filter"] == ["a/sda[0-9]*$/", "r/sd.*/"]
+    assert lvm_conf_output["test_bad_json"] == '[ "partial'

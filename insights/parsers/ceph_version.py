@@ -29,14 +29,14 @@ import re
 from insights.specs import Specs
 
 community_to_release_map = {
-    "0.94.1": {'release': "1.3.0", 'major': '1.3', 'minor': '0'},
-    "0.94.3": {'release': "1.3.1", 'major': '1.3', 'minor': '1'},
-    "0.94.5": {'release': "1.3.2", 'major': '1.3', 'minor': '2'},
-    "0.94.9": {'release': "1.3.3", 'major': '1.3', 'minor': '3'},
-    "10.2.2": {'release': "2.0", 'major': '2', 'minor': '0'},
-    "10.2.3": {'release': "2.1", 'major': '2', 'minor': '1'},
-    "10.2.5": {'release': "2.2", 'major': '2', 'minor': '2'},
-    "10.2.7": {'release': "2.3", 'major': '2', 'minor': '3'}
+    "0.94.1": {"release": "1.3.0", "major": "1.3", "minor": "0"},
+    "0.94.3": {"release": "1.3.1", "major": "1.3", "minor": "1"},
+    "0.94.5": {"release": "1.3.2", "major": "1.3", "minor": "2"},
+    "0.94.9": {"release": "1.3.3", "major": "1.3", "minor": "3"},
+    "10.2.2": {"release": "2.0", "major": "2", "minor": "0"},
+    "10.2.3": {"release": "2.1", "major": "2", "minor": "1"},
+    "10.2.5": {"release": "2.2", "major": "2", "minor": "2"},
+    "10.2.7": {"release": "2.3", "major": "2", "minor": "3"},
 }
 
 
@@ -70,7 +70,7 @@ class CephVersion(CommandParser):
 
         ceph_version_line = content[-1]
         # re search pattern
-        pattern_community = r'((\d{1,2})\.(\d{1,2})\.((\d{1,2})|x))((\-(\d{1,2}))?)'
+        pattern_community = r"((\d{1,2})\.(\d{1,2})\.((\d{1,2})|x))((\-(\d{1,2}))?)"
         community_version_mo = re.search(pattern_community, str(ceph_version_line), 0)
         if not community_version_mo:
             raise CephVersionError("Wrong Format Ceph Version", content)
@@ -78,8 +78,10 @@ class CephVersion(CommandParser):
         community_version = community_version_mo.group(1)
         release_data = community_to_release_map.get(community_version, None)
         if not release_data:
-            raise CephVersionError("No Mapping Release Version. Ceph Release Number is Null", content)
+            raise CephVersionError(
+                "No Mapping Release Version. Ceph Release Number is Null", content
+            )
 
-        self.release = release_data['release']
-        self.major = release_data['major']
-        self.minor = release_data['minor']
+        self.release = release_data["release"]
+        self.major = release_data["major"]
+        self.minor = release_data["minor"]

@@ -61,18 +61,18 @@ domains =
 
 def test_sssd_conf():
     result = SSSD_Config(context_wrap(sssd_conf_cnt))
-    assert 'sssd' in result
-    assert 'domain/example.com' in result
+    assert "sssd" in result
+    assert "domain/example.com" in result
 
-    assert result.getint('pam', 'reconnection_retries') == 3
+    assert result.getint("pam", "reconnection_retries") == 3
 
-    assert ['example.com'] == result.domains
+    assert ["example.com"] == result.domains
 
-    domain = result.domain_config('example.com')
+    domain = result.domain_config("example.com")
     assert type(domain) == dict
-    assert domain['id_provider'] == 'ldap'
+    assert domain["id_provider"] == "ldap"
 
-    absent_domain = result.domain_config('example.org')
+    absent_domain = result.domain_config("example.org")
     assert type(absent_domain) == dict
     assert absent_domain == {}
 

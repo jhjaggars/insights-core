@@ -26,11 +26,11 @@ HEAT_ENGINE_LOG = """
 
 def test_heat_api_log():
     log = HeatApiLog(context_wrap(HEAT_API_LOG))
-    assert len(log.get('INFO')) == 3
+    assert len(log.get("INFO")) == 3
     assert len(list(log.get_after(datetime(2016, 11, 9, 14, 39, 30)))) == 4
 
 
 def test_heat_engine_log():
     log = HeatEngineLog(context_wrap(HEAT_ENGINE_LOG))
-    assert len(log.get('INFO')) == 3
+    assert len(log.get("INFO")) == 3
     assert len(list(log.get_after(datetime(2016, 11, 9, 14, 32, 45)))) == 1

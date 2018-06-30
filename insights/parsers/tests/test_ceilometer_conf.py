@@ -566,8 +566,12 @@ def test_match():
     assert result.data.get("DEFAULT", "log_dir") == "/var/log/ceilometer"
     assert result.data.get("api", "host") == "192.0.2.10"
 
-    assert result.data.get("coordination", "backend_url") == \
-        "redis://:chDWmHdH8dyjsmpCWfCEpJR87@192.0.2.7:6379/"
+    assert (
+        result.data.get("coordination", "backend_url")
+        == "redis://:chDWmHdH8dyjsmpCWfCEpJR87@192.0.2.7:6379/"
+    )
     assert result.data.get("database", "metering_time_to_live") == "-1"
-    assert result.data.get("database", "connection") == \
-        "mongodb://192.0.2.11:27017,192.0.2.10:27017,192.0.2.12:27017/ceilometer?replicaSet=tripleo"
+    assert (
+        result.data.get("database", "connection")
+        == "mongodb://192.0.2.11:27017,192.0.2.10:27017,192.0.2.12:27017/ceilometer?replicaSet=tripleo"
+    )

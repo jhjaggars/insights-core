@@ -31,4 +31,4 @@ CIB_CONFIG = """
 def test_cib():
     cib = CIB(context_wrap(CIB_CONFIG))
     assert cib is not None
-    assert cib.nodes == ['foo', 'bar', 'baz']
+    assert cib.nodes == ["foo", "bar", "baz"]

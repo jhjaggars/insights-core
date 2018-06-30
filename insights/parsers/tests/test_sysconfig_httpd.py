@@ -29,7 +29,7 @@ HTTPD_LANG=C
 
 def test_httpd_service_conf():
     result = HttpdSysconfig(context_wrap(HTTPD))
-    assert result["HTTPD"] == '/usr/sbin/httpd.worker'
+    assert result["HTTPD"] == "/usr/sbin/httpd.worker"
     assert result.get("OPTIONS") is None
-    assert result.get("OPTIONS1") == ''
-    assert result['HTTPD_LANG'] == "C"
+    assert result.get("OPTIONS1") == ""
+    assert result["HTTPD_LANG"] == "C"

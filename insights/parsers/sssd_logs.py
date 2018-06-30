@@ -13,14 +13,13 @@ def strip_surrounds(s):
     # Or s{([\[\(]+)(.*)\1:?}{\2} except matching brace style
     start = 0
     end = len(s) - 1
-    if s[end] == ':':
+    if s[end] == ":":
         end -= 1
     # print "strip '{s}' from {start} to {end}".format(s=s, start=start, end=end)
-    while (s[start] == '[' and s[end] == ']') or \
-      (s[start] == '(' and s[end] == ')'):
+    while (s[start] == "[" and s[end] == "]") or (s[start] == "(" and s[end] == ")"):
         start += 1
         end -= 1
-    return s[start:(end + 1)]
+    return s[start : (end + 1)]
 
 
 @parser(Specs.sssd_logs)
@@ -66,23 +65,23 @@ class SSSDLog(LogFileOutput):
         'monitor_hup'
 
     """
-    time_format = '%b %d %H:%M:%S %Y'
+
+    time_format = "%b %d %H:%M:%S %Y"
 
     def _parse_line(self, line):
         fields = line.split()
         parsed_line = {
-            'timestamp': strip_surrounds(' '.join(fields[0:5])),
-            'module': strip_surrounds(fields[5]),
-            'function': strip_surrounds(fields[6]),
-            'level': strip_surrounds(fields[7]),
-            'message': ' '.join(fields[8:]),
-            'raw_message': line
+            "timestamp": strip_surrounds(" ".join(fields[0:5])),
+            "module": strip_surrounds(fields[5]),
+            "function": strip_surrounds(fields[6]),
+            "level": strip_surrounds(fields[7]),
+            "message": " ".join(fields[8:]),
+            "raw_message": line,
         }
         # Try to convert the datetime if possible
         try:
-            parsed_line['datetime'] = datetime.strptime(
-                parsed_line['timestamp'],
-                '%a %b %d %H:%M:%S %Y'
+            parsed_line["datetime"] = datetime.strptime(
+                parsed_line["timestamp"], "%a %b %d %H:%M:%S %Y"
             )
         except:
             pass

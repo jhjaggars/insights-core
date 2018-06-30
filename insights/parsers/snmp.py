@@ -75,13 +75,16 @@ class TcpIpStats(Parser, LegacyItemAccess):
             ...
         }
     """
+
     def parse_content(self, content):
         snmp_stats = {}
         data_id = []
         for line in content:
             line_split = line.split()
             if line_split[1].isdigit():
-                snmp_stats[line_split[0].replace(":", "")] = dict(zip(data_id, map(int, line_split[1:])))
+                snmp_stats[line_split[0].replace(":", "")] = dict(
+                    zip(data_id, map(int, line_split[1:]))
+                )
             else:
                 data_id = line_split[1:]
         self.data = snmp_stats
@@ -139,5 +142,7 @@ class TcpIpStatsIPV6(Parser, LegacyItemAccess):
         snmp6_stats = {}
         for line in content:
             line_split = line.split()
-            snmp6_stats[line_split[0]] = int(line_split[1]) if len(line_split) > 1 and line_split[1] else None
+            snmp6_stats[line_split[0]] = (
+                int(line_split[1]) if len(line_split) > 1 and line_split[1] else None
+            )
         self.data = snmp6_stats

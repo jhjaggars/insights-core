@@ -12,7 +12,7 @@ from insights.specs import Specs
 
 @parser(Specs.kerberos_kdc_log)
 class KerberosKDCLog(LogFileOutput):
-    '''
+    """
     Read the ``/var/log/krb5kdc.log`` file.
 
     .. note::
@@ -57,17 +57,18 @@ class KerberosKDCLog(LogFileOutput):
         Because the Kerberos KDC log timestamps by default have no year,
         the year of the logs will be inferred from the year in your timestamp.
         This will also work around December/January crossovers.
-    '''
-    time_format = '%b %d %H:%M:%S'
+    """
+
+    time_format = "%b %d %H:%M:%S"
     _LINE_RE = re.compile(
-        r'(?P<timestamp>\w{3} \d\d \d\d:\d\d:\d\d) ' +
-        r'(?P<system>\w\S+) ' +
-        r'(?P<service>\w+)\[(?P<pid>\d+)\]\((?P<level>\w+)\): ' +
-        r'(?P<message>.*)'
+        r"(?P<timestamp>\w{3} \d\d \d\d:\d\d:\d\d) "
+        + r"(?P<system>\w\S+) "
+        + r"(?P<service>\w+)\[(?P<pid>\d+)\]\((?P<level>\w+)\): "
+        + r"(?P<message>.*)"
     )
 
     def _parse_line(self, line):
-        data = {'raw_message': line}
+        data = {"raw_message": line}
         match = self._LINE_RE.search(line)
         if match:
             data.update(match.groupdict())

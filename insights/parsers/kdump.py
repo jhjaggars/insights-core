@@ -78,12 +78,13 @@ class KDumpConf(Parser):
         >>> 'path' in kd.data
         True
     """
-    NET_COMMANDS = set(['nfs', 'net', 'ssh'])
-    SUPPORTED_FS_TYPES = ['ext2', 'ext3', 'ext4', 'btrfs', 'xfs']
+
+    NET_COMMANDS = set(["nfs", "net", "ssh"])
+    SUPPORTED_FS_TYPES = ["ext2", "ext3", "ext4", "btrfs", "xfs"]
 
     def parse_content(self, content):
         lines = list(content)
-        opt_kw = 'options'
+        opt_kw = "options"
         items = {opt_kw: {}}
         # Paul Wayper - 2017-03-27 - why do we care about comments?
         comments = []
@@ -94,12 +95,12 @@ class KDumpConf(Parser):
             if not line:
                 continue
             # Ignore lines that are entirely comments
-            if line.startswith('#'):
+            if line.startswith("#"):
                 comments.append(_line)
                 continue
             # Remove comments
-            if '#' in line:
-                comment_start = line.index('#')
+            if "#" in line:
+                comment_start = line.index("#")
                 inline_comments.append(_line)
                 line = line[0:comment_start]
 
@@ -109,7 +110,7 @@ class KDumpConf(Parser):
             # All options must have a value
             if len(lineparts) < 2:
                 continue
-            opt, value = (lineparts)
+            opt, value = lineparts
 
             if opt != opt_kw:
                 # Some items can be repeated - if they are, create a list of
@@ -143,7 +144,7 @@ class KDumpConf(Parser):
             (str) The module's options, or '' if either ``options`` or
               ``module`` is not found.
         """
-        return self.get('options', {}).get(module, '')
+        return self.get("options", {}).get(module, "")
 
     def _network_lines(self, net_commands=NET_COMMANDS):
         """
@@ -159,7 +160,7 @@ class KDumpConf(Parser):
         ``_network_lines`` above to find the list of commands.  The first
         line that lists an IP address is returned, otherwise None is returned.
         """
-        ip_re = re.compile(r'(\d{1,3}\.){3}\d{1,3}')
+        ip_re = re.compile(r"(\d{1,3}\.){3}\d{1,3}")
         for l in self._network_lines(net_commands):
             matched_ip = ip_re.search(l)
             if matched_ip:
@@ -169,15 +170,14 @@ class KDumpConf(Parser):
         """
         Is the destination of the kernel dump an ssh connection?
         """
-        return 'ssh' in self or ('net' in self and '@' in self['net'])
+        return "ssh" in self or ("net" in self and "@" in self["net"])
 
     def is_nfs(self):
         """
         Is the destination of the kernel dump a NFS or NFSv4 connection?
         """
-        return (
-            ('nfs' in self or 'nfs4' in self) or
-            ('net' in self and '@' not in self['net'])
+        return ("nfs" in self or "nfs4" in self) or (
+            "net" in self and "@" not in self["net"]
         )
 
     def get_hostname(self, net_commands=NET_COMMANDS):
@@ -190,17 +190,17 @@ class KDumpConf(Parser):
         for l in self._network_lines(net_commands):
             # required for urlparse to interpret as host instead of
             # relative path
-            if '//' not in l:
-                l = '//' + l
+            if "//" not in l:
+                l = "//" + l
             netloc = urlparse(l).netloc
 
             # strip user:pass@
-            i = netloc.find('@')
+            i = netloc.find("@")
             if i != -1:
-                netloc = netloc[i + 1:]
+                netloc = netloc[i + 1 :]
 
             # strip port
-            return netloc.rsplit(':', 1)[0]
+            return netloc.rsplit(":", 1)[0]
 
     @property
     def ip(self):
@@ -233,8 +233,12 @@ class KDumpConf(Parser):
         Since only one target could be set, the logic used here is checking
         if remote target is used, return True for not.
         """
-        return not ('ssh' in self.data or 'net' in self.data or
-                    'nfs' in self.data or 'nfs4' in self.data)
+        return not (
+            "ssh" in self.data
+            or "net" in self.data
+            or "nfs" in self.data
+            or "nfs4" in self.data
+        )
 
     def _parse_target(self):
         """
@@ -243,13 +247,16 @@ class KDumpConf(Parser):
         https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/kernel_administration_guide/kernel_crash_dump_guide#sect-supported-kdump-targets
         """
         target = None
-        keys = ['ssh', 'net', 'nfs', 'nfs4', 'raw'] + self.SUPPORTED_FS_TYPES
+        keys = ["ssh", "net", "nfs", "nfs4", "raw"] + self.SUPPORTED_FS_TYPES
         for k in keys:
             if k in self.data:
                 v = self.data[k]
                 if isinstance(v, list):
-                    raise ParseException("More than one %s type targets are\
-                                         configured." % k)
+                    raise ParseException(
+                        "More than one %s type targets are\
+                                         configured."
+                        % k
+                    )
                 if target:
                     raise ParseException("More than one target is configured.")
                 else:
@@ -295,7 +302,7 @@ class KexecCrashLoaded(Parser):
             self.is_loaded = False
             return
         line = list(content)[0].strip()
-        self.is_loaded = line == '1'
+        self.is_loaded = line == "1"
 
 
 @parser(Specs.kexec_crash_size)

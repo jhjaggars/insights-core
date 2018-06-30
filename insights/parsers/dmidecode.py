@@ -129,7 +129,9 @@ class DMIDecode(CommandParser, LegacyItemAccess):
     @defaults()
     def bios_date(self):
         """(datetime.date): Get the BIOS release date in datetime.date format"""
-        month, day, year = map(int, self["bios_information"][0]["release_date"].split("/"))
+        month, day, year = map(
+            int, self["bios_information"][0]["release_date"].split("/")
+        )
         return date(year, month, day)
 
     @property
@@ -204,7 +206,7 @@ def parse_dmidecode(dmidecode_content, pythonic_keys=False):
 
         if not section:
             # Ignore 'Table at 0xBFFCB000' and similar.
-            if not ('Table' in nbline or 'table' in nbline):
+            if not ("Table" in nbline or "table" in nbline):
                 section = fix_key(nbline)
 
     if section in obj:

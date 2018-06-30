@@ -31,20 +31,24 @@ from ..parsers.sestatus import SEStatus
 from ..parsers.grub_conf import Grub1Config, Grub1EFIConfig, Grub2Config, Grub2EFIConfig
 from ..parsers.selinux_config import SelinuxConfig
 
-GRUB_DISABLED = 'grub_disabled'
-GRUB_NOT_ENFORCING = 'grub_not_enforcing'
-RUNTIME_DISABLED = 'sestatus_disabled'
-RUNTIME_NOT_ENFORCING = 'sestatus_not_enforcing'
-BOOT_DISABLED = 'selinux_conf_disabled'
-BOOT_NOT_ENFORCING = 'selinux_conf_not_enforcing'
+GRUB_DISABLED = "grub_disabled"
+GRUB_NOT_ENFORCING = "grub_not_enforcing"
+RUNTIME_DISABLED = "sestatus_disabled"
+RUNTIME_NOT_ENFORCING = "sestatus_not_enforcing"
+BOOT_DISABLED = "selinux_conf_disabled"
+BOOT_NOT_ENFORCING = "selinux_conf_not_enforcing"
 
 
-@combiner(SEStatus, SelinuxConfig,
-          optional=[Grub1Config, Grub1EFIConfig, Grub2Config, Grub2EFIConfig])
+@combiner(
+    SEStatus,
+    SelinuxConfig,
+    optional=[Grub1Config, Grub1EFIConfig, Grub2Config, Grub2EFIConfig],
+)
 class SELinux(object):
     """
     A combiner for detecting that SELinux is enabled and running and also enabled at boot time.
     """
+
     def __init__(self, se_status, selinux_config, grub1, grub1_efi, grub2, grub2_efi):
         self.problems = {}
         self.sestatus = se_status
@@ -61,10 +65,10 @@ class SELinux(object):
 
         Values of output from sestatus command are always lowercase.
         """
-        if self.sestatus.data['selinux_status'] != 'enabled':
-            self.problems[RUNTIME_DISABLED] = self.sestatus.data['selinux_status']
-        elif self.sestatus.data['current_mode'] != 'enforcing':
-            self.problems[RUNTIME_NOT_ENFORCING] = self.sestatus.data['current_mode']
+        if self.sestatus.data["selinux_status"] != "enabled":
+            self.problems[RUNTIME_DISABLED] = self.sestatus.data["selinux_status"]
+        elif self.sestatus.data["current_mode"] != "enforcing":
+            self.problems[RUNTIME_NOT_ENFORCING] = self.sestatus.data["current_mode"]
 
     def _check_boot_config(self):
         """
@@ -72,12 +76,14 @@ class SELinux(object):
 
         This file determines the boot configuration for SELinux.
         """
-        opt_value = self.selinux_config.data.get('SELINUX')
+        opt_value = self.selinux_config.data.get("SELINUX")
         if opt_value is None:
-            self.problems[BOOT_NOT_ENFORCING] = 'Missing in config (Permissive by default)'
-        elif opt_value == 'disabled':
+            self.problems[
+                BOOT_NOT_ENFORCING
+            ] = "Missing in config (Permissive by default)"
+        elif opt_value == "disabled":
             self.problems[BOOT_DISABLED] = opt_value
-        elif opt_value != 'enforcing':
+        elif opt_value != "enforcing":
             self.problems[BOOT_NOT_ENFORCING] = opt_value
 
     def _check_grub_config(self):
@@ -93,10 +99,10 @@ class SELinux(object):
         """
 
         conf = self.grub_config.boot_entries if self.grub_config is not None else []
-        se_dis = [e.cmdline for e in conf if 'selinux=0' in e.cmdline]
+        se_dis = [e.cmdline for e in conf if "selinux=0" in e.cmdline]
         if se_dis:
             self.problems[GRUB_DISABLED] = se_dis
-        se_noe = [e.cmdline for e in conf if 'enforcing=0' in e.cmdline]
+        se_noe = [e.cmdline for e in conf if "enforcing=0" in e.cmdline]
         if se_noe:
             self.problems[GRUB_NOT_ENFORCING] = se_noe
 

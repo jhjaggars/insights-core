@@ -54,12 +54,14 @@ blacklist {
 
 
 def test_multipath_conf():
-    multipath_conf_info = multipath_conf.MultipathConf(context_wrap(MULTIPATH_CONF_INFO))
-    assert multipath_conf_info.get('defaults').get('udev_dir') == '/dev'
-    assert multipath_conf_info.get('defaults').get('path_selector') == 'round-robin 0'
-    assert multipath_conf_info.get('multipaths')[1].get('alias') == 'red'
-    assert multipath_conf_info.get('devices')[0].get('no_path_retry') == 'queue'
-    assert multipath_conf_info.get('blacklist').get('devnode') == '^hd[a-z]'
+    multipath_conf_info = multipath_conf.MultipathConf(
+        context_wrap(MULTIPATH_CONF_INFO)
+    )
+    assert multipath_conf_info.get("defaults").get("udev_dir") == "/dev"
+    assert multipath_conf_info.get("defaults").get("path_selector") == "round-robin 0"
+    assert multipath_conf_info.get("multipaths")[1].get("alias") == "red"
+    assert multipath_conf_info.get("devices")[0].get("no_path_retry") == "queue"
+    assert multipath_conf_info.get("blacklist").get("devnode") == "^hd[a-z]"
 
 
 def test_multipath_conf_tree():

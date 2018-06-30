@@ -63,7 +63,7 @@ Examples:
 from .. import add_filter, Scannable, parser, CommandParser
 from insights.specs import Specs
 
-add_filter(Specs.lsof, ['COMMAND'])
+add_filter(Specs.lsof, ["COMMAND"])
 
 
 @parser(Specs.lsof)
@@ -79,7 +79,7 @@ class Lsof(CommandParser, Scannable):
         self.header_row = line
         self.name_idx = self.header_row.index(" NAME")
         self.pid_idx = self.header_row.index("  PID")
-        _, self.mid_cols = self.header_row[:self.name_idx].split(None, 1)
+        _, self.mid_cols = self.header_row[: self.name_idx].split(None, 1)
         self.mid_cols = "  " + self.mid_cols
         self.indexes = {}
         for col_name in self.mid_cols.split():
@@ -103,7 +103,7 @@ class Lsof(CommandParser, Scannable):
         content = iter(content)
 
         line = next(content)
-        while 'COMMAND ' not in line:
+        while "COMMAND " not in line:
             line = next(content)
 
         self._calc_indexes(line)
@@ -114,9 +114,9 @@ class Lsof(CommandParser, Scannable):
         Given a line, returns a dictionary for that line. Requires _start to be
         called first.
         """
-        command, rest = line[:self.pid_idx], line[self.pid_idx:]
-        name = line[self.name_idx:]
-        middle_dict = self._split_middle(rest[:self.name_idx - len(command)])
+        command, rest = line[: self.pid_idx], line[self.pid_idx :]
+        name = line[self.name_idx :]
+        middle_dict = self._split_middle(rest[: self.name_idx - len(command)])
         middle_dict["COMMAND"] = command.strip()
         middle_dict["NAME"] = name.strip()
         return middle_dict
@@ -143,13 +143,14 @@ class Lsof(CommandParser, Scannable):
         Examples:
             collect_keys('root_block_devs', USER='root', TYPE='BLK')
         """
+
         def scanner(self, obj):
             # Have to set the attribute so it exists, even if it has no rows
             if not hasattr(self, result_key):
                 setattr(self, result_key, [])
             # Minor hack - search for 'SIZE/OFF' as 'SIZE_OFF'.
-            if 'SIZE_OFF' in kwargs:
-                kwargs['SIZE/OFF'] = kwargs['SIZE_OFF']
+            if "SIZE_OFF" in kwargs:
+                kwargs["SIZE/OFF"] = kwargs["SIZE_OFF"]
             # Filter the keywords for the list of column names requested.
             for key in [k for k in kwargs if k in obj]:
                 # If we have a keyword whose value doesn't match the given

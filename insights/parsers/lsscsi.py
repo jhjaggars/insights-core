@@ -47,11 +47,19 @@ class LsSCSI(CommandParser):
         'cd/dvd'
 
     """
+
     def parse_content(self, content):
         if len(content) == 0:
             raise ParseException("Empty content of command output.")
 
-        LSSCSI_TABLE_HEADER_ITEMS = ['HCTL', 'Peripheral-Type', 'Vendor', 'Model', 'Revision', 'Primary-Device-Node']
+        LSSCSI_TABLE_HEADER_ITEMS = [
+            "HCTL",
+            "Peripheral-Type",
+            "Vendor",
+            "Model",
+            "Revision",
+            "Primary-Device-Node",
+        ]
         LEN = len(LSSCSI_TABLE_HEADER_ITEMS)
 
         col_index = []
@@ -69,7 +77,9 @@ class LsSCSI(CommandParser):
             elif not pre_col_index and len(col_split) > LEN:
                 unfixed_index = [l.index(c) for c in col_split]
                 forth_str = l.split(col_split[2], 1)[-1].strip()
-                pre_col_index = unfixed_index[:3] + [l.index(forth_str)] + unfixed_index[-2:]
+                pre_col_index = (
+                    unfixed_index[:3] + [l.index(forth_str)] + unfixed_index[-2:]
+                )
 
         if not col_index and pre_col_index:
             col_index = pre_col_index
@@ -79,10 +89,14 @@ class LsSCSI(CommandParser):
 
         self.data = []
         for line in content:
-            col_data = dict((LSSCSI_TABLE_HEADER_ITEMS[i],
-                             line[col_index[i]:col_index[i + 1]].strip())
-                            for i in range(LEN - 1))
-            col_data[LSSCSI_TABLE_HEADER_ITEMS[-1]] = line[col_index[-1]:].strip()
+            col_data = dict(
+                (
+                    LSSCSI_TABLE_HEADER_ITEMS[i],
+                    line[col_index[i] : col_index[i + 1]].strip(),
+                )
+                for i in range(LEN - 1)
+            )
+            col_data[LSSCSI_TABLE_HEADER_ITEMS[-1]] = line[col_index[-1] :].strip()
             self.data.append(col_data)
 
     def __getitem__(self, idx):
@@ -93,4 +107,4 @@ class LsSCSI(CommandParser):
         """
         list: All lines' Primary-Device-Node values.
         """
-        return [v['Primary-Device-Node'] for v in self.data]
+        return [v["Primary-Device-Node"] for v in self.data]

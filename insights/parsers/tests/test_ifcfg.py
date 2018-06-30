@@ -135,9 +135,8 @@ def test_ifcfg_space_v1():
     context.path = CONTEXT_PATH_DEVICE
 
     r = IfCFG(context)
-    assert keys_in(["DEVICE", "iface", "ONBOOT", "BOOTPROTO",
-                    "IPV4_FAILURE_FATAL"], r)
-    assert r["DEVICE"] == '\'"badName1"  \''
+    assert keys_in(["DEVICE", "iface", "ONBOOT", "BOOTPROTO", "IPV4_FAILURE_FATAL"], r)
+    assert r["DEVICE"] == "'\"badName1\"  '"
 
 
 def test_ifcfg_space_v2():
@@ -145,9 +144,8 @@ def test_ifcfg_space_v2():
     context.path = CONTEXT_PATH_DEVICE
 
     r = IfCFG(context)
-    assert keys_in(["DEVICE", "iface", "ONBOOT", "BOOTPROTO",
-                    "IPV4_FAILURE_FATAL"], r)
-    assert r["DEVICE"] == '\"\"badName2\"  \"'
+    assert keys_in(["DEVICE", "iface", "ONBOOT", "BOOTPROTO", "IPV4_FAILURE_FATAL"], r)
+    assert r["DEVICE"] == '""badName2"  "'
 
 
 def test_ifcfg():
@@ -155,15 +153,14 @@ def test_ifcfg():
     context.path = CONTEXT_PATH
 
     r = IfCFG(context)
-    assert keys_in(["iface", "TYPE", "BOOTPROTO",
-                    "IPV4_FAILURE_FATAL", "NAME"], r)
+    assert keys_in(["iface", "TYPE", "BOOTPROTO", "IPV4_FAILURE_FATAL", "NAME"], r)
     assert not keys_in(["ONBOOT"], r)
     assert r["TYPE"] == "Ethernet"
     assert r["BOOTPROTO"] == "dhcp"
     assert r["IPV4_FAILURE_FATAL"] == "no"
     assert r["NAME"] == "enp0s25"
     assert r["iface"] == "enp0s25"
-    assert r.ifname == r['iface']
+    assert r.ifname == r["iface"]
     assert r.bonding_mode is None
 
 

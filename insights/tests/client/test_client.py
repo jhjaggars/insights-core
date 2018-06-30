@@ -12,7 +12,7 @@ def test_version():
     sys.argv = []
 
     try:
-        config = InsightsConfig(logging_file='/tmp/insights.log')
+        config = InsightsConfig(logging_file="/tmp/insights.log")
         client = InsightsClient(config)
         result = client.version()
         assert result == "%s-%s" % (package_info["VERSION"], package_info["RELEASE"])

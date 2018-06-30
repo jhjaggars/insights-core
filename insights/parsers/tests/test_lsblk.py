@@ -93,9 +93,9 @@ def test_lsblk():
     rhel_root = None
     sda = None
     for result in results:
-        if result.name == 'rhel-root':
+        if result.name == "rhel-root":
             rhel_root = result
-        elif result.name == 'sda':
+        elif result.name == "sda":
             sda = result
     assert rhel_root is not None
     assert rhel_root.maj_min == "253:0"
@@ -111,22 +111,20 @@ def test_lsblk():
     assert sda.size == "500G"
     assert sda.read_only is False
     assert sda.type == "disk"
-    assert 'mountpoint' not in sda
-    assert 'parent_names' not in sda
-    assert hasattr(results, 'device_data')
+    assert "mountpoint" not in sda
+    assert "parent_names" not in sda
+    assert hasattr(results, "device_data")
     assert isinstance(results.device_data, dict)
-    assert sorted(results.device_data.keys()) == sorted([
-        'vda', 'vda1', 'vda2', 'rhel-root', 'rhel-swap', 'sda', 'sda1'
-    ])
-    assert results.device_data['sda'] == sda
-    assert sda.get('MAJ_MIN') == sda.maj_min
-    assert str(rhel_root) == 'lvm:rhel-root(/)'
-    assert str(sda) == 'disk:sda'
+    assert sorted(results.device_data.keys()) == sorted(
+        ["vda", "vda1", "vda2", "rhel-root", "rhel-swap", "sda", "sda1"]
+    )
+    assert results.device_data["sda"] == sda
+    assert sda.get("MAJ_MIN") == sda.maj_min
+    assert str(rhel_root) == "lvm:rhel-root(/)"
+    assert str(sda) == "disk:sda"
 
     # Keyword search tests
-    assert results.search(TYPE='disk') == [
-        results.rows[0], results.rows[5]
-    ]
+    assert results.search(TYPE="disk") == [results.rows[0], results.rows[5]]
 
     results = lsblk.LSBlock(context_wrap(LSBLK_DATA2))
     assert results is not None
@@ -166,7 +164,7 @@ vda           252:0    0    9G  0
 def test_lsblock_bad_data():
     blocks = lsblk.LSBlock(context_wrap(LSBLK_DATA_BAD))
     assert len(blocks.rows) == 1
-    assert blocks.rows[0].name == 'vda1'
+    assert blocks.rows[0].name == "vda1"
 
 
 def test_lsblk_po():
@@ -175,7 +173,7 @@ def test_lsblk_po():
     assert len(results) == 7
     sda1 = None
     for result in results:
-        if result.name == 'sda1':
+        if result.name == "sda1":
             sda1 = result
     assert sda1 is not None
     assert sda1.alignment == "0"
@@ -186,12 +184,12 @@ def test_lsblk_po():
     assert sda1.fstype == "ext4"
     assert sda1.group == "disk"
     assert sda1.kname == "sda1"
-    assert 'LABEL' not in sda1
+    assert "LABEL" not in sda1
     assert sda1.log_sec == "512"
     assert sda1.maj_min == "8:1"
     assert sda1.min_io == "512"
     assert sda1.mode == "brw-rw----"
-    assert 'MODEL' not in sda1
+    assert "MODEL" not in sda1
     assert sda1.mountpoint == "/boot"
     assert sda1.name == "sda1"
     assert sda1.opt_io == "0"
@@ -204,7 +202,7 @@ def test_lsblk_po():
     assert sda1.rq_size == "128"
     assert sda1.sched == "cfq"
     assert sda1.size == "500M"
-    assert 'STATE' not in sda1
+    assert "STATE" not in sda1
     assert sda1.type == "part"
     assert sda1.uuid == "c7c4c016-8b00-4ded-bffb-5cc4719b7d45"
 
@@ -220,7 +218,7 @@ def test_lsblockpairs_no_type():
     with pytest.raises(ParseException) as exc:
         blocks = lsblk.LSBlockPairs(context_wrap(LSBLOCKPAIRS_NO_TYPE_DATA))
         assert repr(blocks.rows[0]) is None
-    assert 'TYPE not found in LsBlockPairs line' in str(exc)
+    assert "TYPE not found in LsBlockPairs line" in str(exc)
 
 
 def test_lsblockpairs_failed():
@@ -246,6 +244,6 @@ def test_lsblockpairs_no_translate():
     # some reason it doesn't, we want to make sure that the code still works
     # correctly.  This is mainly for code coverage testing.
     blocks = lsblk.LSBlockPairs(context_wrap(LSBLOCKPAIRS_NO_TRANSLATE_DATA))
-    assert 'sr0' in blocks.device_data
-    assert not hasattr(blocks.device_data['sr0'], 'removable')
-    assert not hasattr(blocks.device_data['sr0'], 'read_only')
+    assert "sr0" in blocks.device_data
+    assert not hasattr(blocks.device_data["sr0"], "removable")
+    assert not hasattr(blocks.device_data["sr0"], "read_only")

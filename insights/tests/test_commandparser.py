@@ -5,8 +5,7 @@ import pytest
 
 CMF = "blah: Command not found"
 NO_SUCH_FILE = "/usr/bin/blah: No such file or directory"
-MULTI_LINE = "blah: Command not found\n" \
-             "/usr/bin/blah: No such file or directory"
+MULTI_LINE = "blah: Command not found\n" "/usr/bin/blah: No such file or directory"
 
 
 class MockParser(CommandParser):
@@ -27,4 +26,4 @@ def test_no_such_file_or_directory():
 
 
 def test_multi_line():
-    assert MULTI_LINE.split('\n') == MockParser(context_wrap(MULTI_LINE)).data
+    assert MULTI_LINE.split("\n") == MockParser(context_wrap(MULTI_LINE)).data

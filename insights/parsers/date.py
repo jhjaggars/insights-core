@@ -86,10 +86,12 @@ class DateParser(CommandParser):
             raise DateParseException(msg % self.data)
         try:
             self.timezone = parts[4]
-            no_tz = ' '.join(parts[:4]) + ' ' + parts[-1]
-            self.datetime = datetime.strptime(no_tz, '%a %b %d %H:%M:%S %Y')
+            no_tz = " ".join(parts[:4]) + " " + parts[-1]
+            self.datetime = datetime.strptime(no_tz, "%a %b %d %H:%M:%S %Y")
         except:
-            six.reraise(DateParseException, DateParseException(self.data), sys.exc_info()[2])
+            six.reraise(
+                DateParseException, DateParseException(self.data), sys.exc_info()[2]
+            )
 
 
 @parser(Specs.date)
@@ -99,6 +101,7 @@ class Date(DateParser):
 
     Sample: Fri Jun 24 09:13:34 CST 2016
     """
+
     pass
 
 
@@ -109,4 +112,5 @@ class DateUTC(DateParser):
 
     Sample: Fri Jun 24 09:13:34 UTC 2016
     """
+
     pass

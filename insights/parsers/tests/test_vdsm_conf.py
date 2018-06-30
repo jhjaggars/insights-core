@@ -4,7 +4,7 @@ from insights.parsers import vdsm_conf
 from insights.tests import context_wrap
 
 
-VDSM_CONF = '''
+VDSM_CONF = """
 [vars]
 ssl = true
 cpu_affinity = 1
@@ -12,9 +12,9 @@ cpu_affinity = 1
 [addresses]
 management_port = 54321
 qq = 345
-'''
+"""
 
-VDSM_LOGGER_CONF = '''
+VDSM_LOGGER_CONF = """
 [loggers]
 keys=root,vds,storage,virt,ovirt_hosted_engine_ha,ovirt_hosted_engine_ha_config,IOProcess,devel
 
@@ -102,32 +102,36 @@ class: vdsm.logUtils.TimezoneFormatter
 [formatter_sysform]
 format= vdsm %(name)s %(levelname)s %(message)s
 datefmt=
-'''
+"""
 
 
 def test_vdsm_conf_ini():
     result = vdsm_conf.VDSMConfIni(context_wrap(VDSM_CONF))
-    assert sorted(result.sections()) == sorted(['vars', 'addresses'])
-    assert result.has_option('vars', 'ssl')
-    assert result.getboolean('vars', 'ssl')
-    assert result.getint('vars', 'cpu_affinity') == 1
-    assert result.getint('addresses', 'management_port') == 54321
-    assert result.getint('addresses', 'qq') == 345
+    assert sorted(result.sections()) == sorted(["vars", "addresses"])
+    assert result.has_option("vars", "ssl")
+    assert result.getboolean("vars", "ssl")
+    assert result.getint("vars", "cpu_affinity") == 1
+    assert result.getint("addresses", "management_port") == 54321
+    assert result.getint("addresses", "qq") == 345
 
 
 def test_vdsm_logger_conf():
     conf = vdsm_conf.VDSMLoggerConf(context_wrap(VDSM_LOGGER_CONF))
     assert len(conf.sections()) == 18
-    assert conf.has_option('loggers', 'keys') is True
-    assert conf.getboolean('logger_root', 'propagate') is False
-    assert conf.get('logger_ovirt_hosted_engine_ha', 'level') == 'DEBUG'
-    assert conf.get('formatter_sysform', 'datefmt') == ''
-    assert conf.has_option('formatter_long', 'class') is True
-    assert conf.items('loggers') == {'keys': 'root,vds,storage,virt,ovirt_hosted_engine_ha,ovirt_hosted_engine_ha_config,IOProcess,devel'}
+    assert conf.has_option("loggers", "keys") is True
+    assert conf.getboolean("logger_root", "propagate") is False
+    assert conf.get("logger_ovirt_hosted_engine_ha", "level") == "DEBUG"
+    assert conf.get("formatter_sysform", "datefmt") == ""
+    assert conf.has_option("formatter_long", "class") is True
+    assert conf.items("loggers") == {
+        "keys": "root,vds,storage,virt,ovirt_hosted_engine_ha,ovirt_hosted_engine_ha_config,IOProcess,devel"
+    }
 
 
 def test_documentation():
-    env = {'conf': vdsm_conf.VDSMConfIni(context_wrap(VDSM_CONF)),
-           'vdsm_logger_conf': vdsm_conf.VDSMLoggerConf(context_wrap(VDSM_LOGGER_CONF))}
+    env = {
+        "conf": vdsm_conf.VDSMConfIni(context_wrap(VDSM_CONF)),
+        "vdsm_logger_conf": vdsm_conf.VDSMLoggerConf(context_wrap(VDSM_LOGGER_CONF)),
+    }
     failed_count, tests = doctest.testmod(vdsm_conf, globs=env)
     assert failed_count == 0

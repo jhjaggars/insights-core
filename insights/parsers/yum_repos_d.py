@@ -10,7 +10,7 @@ class YumReposD(LegacyItemAccess, Parser):
         return self.data.get(key)
 
     def parse_content(self, content):
-        '''
+        """
         Return an object contains a dict.
         {
             "rhel-source": {
@@ -33,17 +33,17 @@ class YumReposD(LegacyItemAccess, Parser):
         gpgcheck=1
         gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
                file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release_bak
-        '''
+        """
         repos_dict = {}
         section_dict = {}
         key = None
         for line in get_active_lines(content):
-            if line.startswith('['):
+            if line.startswith("["):
                 section_dict = {}
                 repos_dict[line[1:-1]] = section_dict
-            elif '=' in line:
+            elif "=" in line:
                 key, value = [s.strip() for s in line.split("=", 1)]
-                if key in ('baseurl', 'gpgkey'):
+                if key in ("baseurl", "gpgkey"):
                     section_dict[key] = [v.strip() for v in value.split(",")]
                 else:
                     section_dict[key] = value

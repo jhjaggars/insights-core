@@ -61,9 +61,13 @@ class JournaldConf(Parser):
         # note, the Parser class sets:
         # * self.file_path = context.path and
         # * self.file_name = os.path.basename(context.path)
-        self.active_lines_unparsed = get_active_lines(content) if content is not None else []
+        self.active_lines_unparsed = (
+            get_active_lines(content) if content is not None else []
+        )
         #  (man page shows all options with "=")
-        self.active_settings = split_kv_pairs(content, use_partition=False) if content is not None else []
+        self.active_settings = (
+            split_kv_pairs(content, use_partition=False) if content is not None else []
+        )
 
     def get_active_setting_value(self, setting_name):
         """
@@ -80,6 +84,7 @@ class EtcJournaldConf(JournaldConf):
     """
     Parser for accessing the ``/etc/systemd/journald.conf`` file.
     """
+
     pass
 
 
@@ -88,6 +93,7 @@ class EtcJournaldConfD(JournaldConf):
     """
     Parser for accessing the ``/etc/systemd/journald.conf.d/*.conf`` files.
     """
+
     pass
 
 
@@ -96,4 +102,5 @@ class UsrJournaldConfD(JournaldConf):
     """
     Parser for accessing the ``usr/lib/systemd/journald.conf.d/*.conf`` files.
     """
+
     pass

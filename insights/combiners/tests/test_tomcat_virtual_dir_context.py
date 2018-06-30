@@ -1,6 +1,10 @@
-from insights.combiners.tomcat_virtual_dir_context import TomcatVirtualDirContextCombined
-from insights.parsers.tomcat_virtual_dir_context import TomcatVirtualDirContextFallback, \
-    TomcatVirtualDirContextTargeted
+from insights.combiners.tomcat_virtual_dir_context import (
+    TomcatVirtualDirContextCombined
+)
+from insights.parsers.tomcat_virtual_dir_context import (
+    TomcatVirtualDirContextFallback,
+    TomcatVirtualDirContextTargeted,
+)
 from insights.tests import context_wrap
 
 FOUND_1_FALLBACK = """
@@ -71,27 +75,34 @@ def test_tomcat_virtual_dir_context_found():
     targeted = TomcatVirtualDirContextTargeted(context_wrap(FOUND_1_TARGETED))
     combined = TomcatVirtualDirContextCombined(fallback, [targeted])
     assert len(combined.data) == 2
-    assert combined.data == {'/usr/share/tomcat/conf/server.xml':
-                             ['    <Resources className="org.apache.naming.resources.VirtualDirContext"'],
-                             '/srv/tomcat/uportal/conf/server.xml':
-                             ['    <Resources className="org.apache.naming.resources.VirtualDirContext"'],
-                             }
+    assert combined.data == {
+        "/usr/share/tomcat/conf/server.xml": [
+            '    <Resources className="org.apache.naming.resources.VirtualDirContext"'
+        ],
+        "/srv/tomcat/uportal/conf/server.xml": [
+            '    <Resources className="org.apache.naming.resources.VirtualDirContext"'
+        ],
+    }
 
 
 def test_tomcat_virtual_dir_context_missing_parser():
     fallback = TomcatVirtualDirContextFallback(context_wrap(FOUND_1_FALLBACK))
     combined = TomcatVirtualDirContextCombined(fallback, None)
     assert len(combined.data) == 1
-    assert combined.data == {'/usr/share/tomcat/conf/server.xml':
-                             ['    <Resources className="org.apache.naming.resources.VirtualDirContext"'],
-                             }
+    assert combined.data == {
+        "/usr/share/tomcat/conf/server.xml": [
+            '    <Resources className="org.apache.naming.resources.VirtualDirContext"'
+        ]
+    }
 
     targeted = TomcatVirtualDirContextTargeted(context_wrap(FOUND_1_TARGETED))
     combined = TomcatVirtualDirContextCombined(None, [targeted])
     assert len(combined.data) == 1
-    assert combined.data == {'/srv/tomcat/uportal/conf/server.xml':
-                             ['    <Resources className="org.apache.naming.resources.VirtualDirContext"'],
-                             }
+    assert combined.data == {
+        "/srv/tomcat/uportal/conf/server.xml": [
+            '    <Resources className="org.apache.naming.resources.VirtualDirContext"'
+        ]
+    }
 
 
 def test_tomcat_virtual_dir_context_combinations_found():
@@ -99,20 +110,22 @@ def test_tomcat_virtual_dir_context_combinations_found():
     targeted = TomcatVirtualDirContextTargeted(context_wrap(FOUND_3_TARGETED))
     combined = TomcatVirtualDirContextCombined(fallback, [targeted])
     assert len(combined.data) == 4
-    assert combined.data == {'/srv/tomcat/uportal/conf/server.xml':
-                             ['    <Resources className="org.apache.naming.resources.VirtualDirContext"',
-                              '"VirtualDirContext"'],
-
-                             '/srv/tomcat/whatever_Again/webapps/whatever/META-INF/context.xml':
-                             ['className="org.apache.naming.resources.VirtualDirContext"'],
-
-                             '/usr/share/tomcat/conf/server.xml':
-                             ['    <Resources className="org.apache.naming.resources.VirtualDirContext"',
-                              '"VirtualDirContext"'],
-
-                             '/usr/share/tomcat6/webapps/whatever/META-INF/context.xml':
-                             ['className="org.apache.naming.resources.VirtualDirContext"'],
-                             }
+    assert combined.data == {
+        "/srv/tomcat/uportal/conf/server.xml": [
+            '    <Resources className="org.apache.naming.resources.VirtualDirContext"',
+            '"VirtualDirContext"',
+        ],
+        "/srv/tomcat/whatever_Again/webapps/whatever/META-INF/context.xml": [
+            'className="org.apache.naming.resources.VirtualDirContext"'
+        ],
+        "/usr/share/tomcat/conf/server.xml": [
+            '    <Resources className="org.apache.naming.resources.VirtualDirContext"',
+            '"VirtualDirContext"',
+        ],
+        "/usr/share/tomcat6/webapps/whatever/META-INF/context.xml": [
+            'className="org.apache.naming.resources.VirtualDirContext"'
+        ],
+    }
 
 
 def test_tomcat_virtual_dir_context_combinations_found_but_same():
@@ -120,13 +133,15 @@ def test_tomcat_virtual_dir_context_combinations_found_but_same():
     targeted = TomcatVirtualDirContextTargeted(context_wrap(FOUND_4_TARGETED))
     combined = TomcatVirtualDirContextCombined(fallback, [targeted])
     assert len(combined.data) == 2
-    assert combined.data == {'/usr/share/tomcat/conf/server.xml':
-                             ['    <Resources className="org.apache.naming.resources.VirtualDirContext"',
-                              '"VirtualDirContext"'],
-
-                             '/usr/share/tomcat6/webapps/whatever/META-INF/context.xml':
-                             ['className="org.apache.naming.resources.VirtualDirContext"'],
-                             }
+    assert combined.data == {
+        "/usr/share/tomcat/conf/server.xml": [
+            '    <Resources className="org.apache.naming.resources.VirtualDirContext"',
+            '"VirtualDirContext"',
+        ],
+        "/usr/share/tomcat6/webapps/whatever/META-INF/context.xml": [
+            'className="org.apache.naming.resources.VirtualDirContext"'
+        ],
+    }
 
 
 def test_tomcat_virtual_dir_context_no_data():

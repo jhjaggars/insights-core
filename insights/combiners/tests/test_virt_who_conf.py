@@ -102,13 +102,25 @@ def test_virt_who_conf_1():
     assert result.background is False
     assert result.oneshot is True
     assert result.interval == 1000
-    assert result.sm_type == 'sat6'
-    assert sorted(result.hypervisor_types) == sorted(['esx', 'hyperv'])
+    assert result.sm_type == "sat6"
+    assert sorted(result.hypervisor_types) == sorted(["esx", "hyperv"])
 
-    expected = [{'name': 'esx_1', 'server': '10.72.32.219', 'env': 'Satellite',
-                 'owner': 'Satellite', 'type': 'esx'},
-                {'name': 'hyperv_1', 'server': '10.72.32.209', 'env': 'Satellite',
-                 'owner': 'Satellite', 'type': 'hyperv'}]
+    expected = [
+        {
+            "name": "esx_1",
+            "server": "10.72.32.219",
+            "env": "Satellite",
+            "owner": "Satellite",
+            "type": "esx",
+        },
+        {
+            "name": "hyperv_1",
+            "server": "10.72.32.209",
+            "env": "Satellite",
+            "owner": "Satellite",
+            "type": "hyperv",
+        },
+    ]
     for d in result.hypervisors:
         assert d in expected
 
@@ -120,18 +132,18 @@ def test_virt_who_conf_2():
     assert result.background is True
     assert result.oneshot is False
     assert result.interval == 3600
-    assert result.sm_type == 'sat5'
+    assert result.sm_type == "sat5"
 
 
 def test_virt_who_conf_3():
     vw_sysconf = VirtWhoSysconfig(context_wrap(SYS_VIRTWHO_SAM))
     vwho_conf = VirtWhoConf(context_wrap(VWHO_CONF))
     result = AllVirtWhoConf(vw_sysconf, [vwho_conf])
-    assert result.sm_type == 'sam'
+    assert result.sm_type == "sam"
 
 
 def test_virt_who_conf_4():
     vw_sysconf = VirtWhoSysconfig(context_wrap(SYS_VIRTWHO_CP))
     vwho_conf = VirtWhoConf(context_wrap(VWHO_CONF))
     result = AllVirtWhoConf(vw_sysconf, [vwho_conf])
-    assert result.sm_type == 'cp'
+    assert result.sm_type == "cp"

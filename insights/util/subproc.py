@@ -42,11 +42,20 @@ class CalledProcessError(Exception):
         rc = self.returncode
         cmd = self.cmd
         output = self.output
-        return '<{c}({r}, {cmd}, {o})>'.format(c=name, r=rc, cmd=cmd, o=output)
+        return "<{c}({r}, {cmd}, {o})>".format(c=name, r=rc, cmd=cmd, o=output)
 
 
-def call(cmd, timeout=None, signum=signal.SIGKILL, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-         keep_rc=False, output_encoding="utf-8", **kwargs):
+def call(
+    cmd,
+    timeout=None,
+    signum=signal.SIGKILL,
+    shell=False,
+    stdout=subprocess.PIPE,
+    stderr=subprocess.STDOUT,
+    keep_rc=False,
+    output_encoding="utf-8",
+    **kwargs
+):
     """Call cmd with an optional timeout in seconds.
 
     If `timeout` is supplied and expires, the process is killed with
@@ -84,17 +93,22 @@ def call(cmd, timeout=None, signum=signal.SIGKILL, shell=False, stdout=subproces
             if type(cmd) is list:
                 command = cmd
                 if timeout is not None and sys.platform != "darwin":
-                    cmd[0] = ['timeout', '-s', '{0}'.format(signum), '{0}'.format(timeout)] + cmd[0]
+                    cmd[0] = [
+                        "timeout",
+                        "-s",
+                        "{0}".format(signum),
+                        "{0}".format(timeout),
+                    ] + cmd[0]
                 cmd = []
                 for cl in command:
-                    cmd += [[c.encode('utf-8', 'replace') for c in cl]]
+                    cmd += [[c.encode("utf-8", "replace") for c in cl]]
             else:
                 if timeout is not None and sys.platform != "darwin":
                     cmd = "timeout -s {0} {1} {2}".format(signum, timeout, cmd)
                 command = [shlex.split(cmd)]
                 cmd = []
                 for cl in command:
-                    cmd += [[c.encode('utf-8', 'replace') for c in cl]]
+                    cmd += [[c.encode("utf-8", "replace") for c in cl]]
 
         log.debug(cmd)
 
@@ -112,7 +126,9 @@ def call(cmd, timeout=None, signum=signal.SIGKILL, shell=False, stdout=subproces
         output = cout.communicate()[0]
         rc = cout.poll()
     except Exception as e:
-        six.reraise(CalledProcessError, CalledProcessError(rc, cmd, str(e)), sys.exc_info()[2])
+        six.reraise(
+            CalledProcessError, CalledProcessError(rc, cmd, str(e)), sys.exc_info()[2]
+        )
     if keep_rc:
         return rc, output.decode(output_encoding) if output_encoding else output
     if rc:

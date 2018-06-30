@@ -81,12 +81,12 @@ class TomcatWebXml(XMLParser):
             dictionary.  An empty dict, when 'session-timeout' setting cannot
             be found.
         """
-        key_field = self.get_elements('.//session-timeout')
+        key_field = self.get_elements(".//session-timeout")
         field_text = key_field[0].text if key_field else None
 
         parsed_data = {}
         if field_text and field_text.isdigit():
-            parsed_data['session-timeout'] = int(field_text)
+            parsed_data["session-timeout"] = int(field_text)
         return parsed_data
 
 
@@ -158,4 +158,5 @@ class TomcatServerXml(XMLParser):
         'localhost'
 
     """
+
     pass

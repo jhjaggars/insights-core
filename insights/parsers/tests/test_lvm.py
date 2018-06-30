@@ -37,6 +37,8 @@ def compare_partial_dicts(result, expected):
     mismatches = 0
     for k in expected.keys():
         if not result[k] == expected[k]:
-            print("Failed for key {k}, {r} != {e}".format(k=k, r=result[k], e=expected[k]))
+            print(
+                "Failed for key {k}, {r} != {e}".format(k=k, r=result[k], e=expected[k])
+            )
             mismatches += 1
     return mismatches == 0

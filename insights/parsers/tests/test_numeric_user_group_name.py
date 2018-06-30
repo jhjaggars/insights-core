@@ -117,8 +117,15 @@ def test_numeric_user_group_name_1():
 
 
 def test_numeric_user_group_name_2():
-    for data in [NONZERO_1, NONZERO_2, NONZERO_3, UNSTRIPPED_NONZERO_1, UNSTRIPPED_NONZERO_2,
-                 UNSTRIPPED_NONZERO_3, ERRORS_6]:
+    for data in [
+        NONZERO_1,
+        NONZERO_2,
+        NONZERO_3,
+        UNSTRIPPED_NONZERO_1,
+        UNSTRIPPED_NONZERO_2,
+        UNSTRIPPED_NONZERO_3,
+        ERRORS_6,
+    ]:
         numeric_user_group_name = NumericUserGroupName(context_wrap(data))
         assert numeric_user_group_name.has_numeric_user_or_group
 

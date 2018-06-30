@@ -46,8 +46,8 @@ class PostgreSQLConf(LegacyItemAccess, Parser):
     """
     Parses postgresql.conf and converts it into a dictionary of properties.
     """
-    _value_error_str = "Do not recognise '{val}' for setting '{item}' " +\
-                       "as a {_type}"
+
+    _value_error_str = "Do not recognise '{val}' for setting '{item}' " + "as a {_type}"
 
     def parse_content(self, content):
         """
@@ -67,10 +67,10 @@ class PostgreSQLConf(LegacyItemAccess, Parser):
         for line in get_active_lines(content):
             # Comments and blank lines removed by get_active_lines
             # Split on equals or on first word
-            if '=' in line:
+            if "=" in line:
                 key, value = [s.strip() for s in line.split("=", 1)]
             else:
-                key, value = [s.strip() for s in line.split(' ', 1)]
+                key, value = [s.strip() for s in line.split(" ", 1)]
             # If value is quoted, quotes appear first and last - remove them.
             if value[0] == "'" and value[-1] == "'":
                 value = value[1:-1]
@@ -105,22 +105,22 @@ class PostgreSQLConf(LegacyItemAccess, Parser):
             value = default
             if isinstance(value, int) or isinstance(value, float):
                 return float(value)
-        dur_re = re.compile(r'^(?P<number>\d+)(?P<suffix>ms|s|min|h|d)?$')
-        length_of = {'ms': 0.001, 's': 1, 'min': 60, 'h': 3600, 'd': 86400}
+        dur_re = re.compile(r"^(?P<number>\d+)(?P<suffix>ms|s|min|h|d)?$")
+        length_of = {"ms": 0.001, "s": 1, "min": 60, "h": 3600, "d": 86400}
 
         match = dur_re.search(value)
         if match:
             # Do we have a suffix at all?  If not, assume seconds, return float
-            number, suffix = match.group('number', 'suffix')
+            number, suffix = match.group("number", "suffix")
             if suffix is None:
                 return float(number)
             # Do we have a matching suffix?
             # assert: suffix in length_of, due to regex
             return float(number) * length_of[suffix]
         else:
-            raise ValueError(self._value_error_str.format(
-                             val=value, item=item, _type='duration'
-                             ))
+            raise ValueError(
+                self._value_error_str.format(val=value, item=item, _type="duration")
+            )
 
     def as_boolean(self, item, default=None):
         """
@@ -139,13 +139,13 @@ class PostgreSQLConf(LegacyItemAccess, Parser):
                 return value
 
         lval = value.lower()
-        if lval in ('on', 't', 'tr', 'tru', 'true', 'y', 'ye', 'yes', '1'):
+        if lval in ("on", "t", "tr", "tru", "true", "y", "ye", "yes", "1"):
             return True
-        if lval in ('of', 'off', 'f', 'fa', 'fal', 'fals', 'false', 'n', 'no', '0'):
+        if lval in ("of", "off", "f", "fa", "fal", "fals", "false", "n", "no", "0"):
             return False
-        raise ValueError(self._value_error_str.format(
-                         val=value, item=item, _type='boolean'
-                         ))
+        raise ValueError(
+            self._value_error_str.format(val=value, item=item, _type="boolean")
+        )
 
     def as_memory_bytes(self, item, default=None):
         """
@@ -157,7 +157,7 @@ class PostgreSQLConf(LegacyItemAccess, Parser):
         """
         if not item:
             return None
-        size_of = {'kB': 1024, 'MB': 1048576, 'GB': 1048576 * 1024}
+        size_of = {"kB": 1024, "MB": 1048576, "GB": 1048576 * 1024}
 
         if item in self.data:
             value = self.data[item]
@@ -174,6 +174,6 @@ class PostgreSQLConf(LegacyItemAccess, Parser):
         if suffix in size_of:
             return int(value[:-2]) * size_of[suffix]
         else:
-            raise ValueError(self._value_error_str.format(
-                             val=value, item=item, _type='memory unit'
-                             ))
+            raise ValueError(
+                self._value_error_str.format(val=value, item=item, _type="memory unit")
+            )

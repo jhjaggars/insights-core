@@ -81,26 +81,32 @@ Server compiled with....
 
 
 def test_httpd_V():
-    result = HttpdV(context_wrap(HTTPD_V_22, path='/usr/sbin/httpd_-V'))
+    result = HttpdV(context_wrap(HTTPD_V_22, path="/usr/sbin/httpd_-V"))
     assert result["Server MPM"] == "prefork"
     assert result["Server version"] == "apache/2.2.15 (unix)"
     assert result["forked"] == "yes (variable process count)"
-    assert "APR_HAVE_IPV6" in result['Server compiled with']
-    assert result['Server compiled with']['APR_HAS_MMAP'] is True
-    assert result['Server compiled with']['APR_HAVE_IPV6'] == "IPv4-mapped addresses enabled"
-    assert result['Server compiled with']['DEFAULT_PIDLOG'] == "run/httpd.pid"
+    assert "APR_HAVE_IPV6" in result["Server compiled with"]
+    assert result["Server compiled with"]["APR_HAS_MMAP"] is True
+    assert (
+        result["Server compiled with"]["APR_HAVE_IPV6"]
+        == "IPv4-mapped addresses enabled"
+    )
+    assert result["Server compiled with"]["DEFAULT_PIDLOG"] == "run/httpd.pid"
     assert result.httpd_command == "/usr/sbin/httpd"
     assert result.mpm == "prefork"
     assert result.version == "apache/2.2.15 (unix)"
 
-    result = HttpdV(context_wrap(HTTPD_V_24, path='/usr/sbin/httpd.worker_-V'))
+    result = HttpdV(context_wrap(HTTPD_V_24, path="/usr/sbin/httpd.worker_-V"))
     assert result["Server MPM"] == "worker"
     assert result["Server version"] == "apache/2.4.6 (red hat enterprise linux)"
     assert result["forked"] == "yes (variable process count)"
-    assert "APR_HAVE_IPV6" in result['Server compiled with']
-    assert result['Server compiled with']['APR_HAS_MMAP'] is True
-    assert result['Server compiled with']['APR_HAVE_IPV6'] == "IPv4-mapped addresses enabled"
-    assert result['Server compiled with']['DEFAULT_PIDLOG'] == "/run/httpd/httpd.pid"
+    assert "APR_HAVE_IPV6" in result["Server compiled with"]
+    assert result["Server compiled with"]["APR_HAS_MMAP"] is True
+    assert (
+        result["Server compiled with"]["APR_HAVE_IPV6"]
+        == "IPv4-mapped addresses enabled"
+    )
+    assert result["Server compiled with"]["DEFAULT_PIDLOG"] == "/run/httpd/httpd.pid"
     assert result.httpd_command == "/usr/sbin/httpd.worker"
     assert result.mpm == "worker"
     assert result.version == "apache/2.4.6 (red hat enterprise linux)"
@@ -125,9 +131,6 @@ def test_httpd_V_exp():
 
 
 def test_httpd_V_doc():
-    env = {
-            'HttpdV': HttpdV,
-            'hv': HttpdV(context_wrap(HTTPDV_DOC))
-          }
+    env = {"HttpdV": HttpdV, "hv": HttpdV(context_wrap(HTTPDV_DOC))}
     failed, total = doctest.testmod(httpd_V, globs=env)
     assert failed == 0

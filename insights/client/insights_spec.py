@@ -17,45 +17,46 @@ def shlex_split(cmd):
     if six.PY3:
         return shlex.split(cmd)
     else:
-        return shlex.split(cmd.encode('utf-8'))
+        return shlex.split(cmd.encode("utf-8"))
 
 
 class InsightsSpec(object):
-    '''
+    """
     A spec loaded from the uploader.json
-    '''
+    """
+
     def __init__(self, config, spec, exclude):
         self.config = config
         # exclusions patterns for this spec
         self.exclude = exclude
         # pattern for spec collection
-        self.pattern = spec['pattern'] if spec['pattern'] else None
+        self.pattern = spec["pattern"] if spec["pattern"] else None
 
 
 class InsightsCommand(InsightsSpec):
-    '''
+    """
     A command spec
-    '''
+    """
+
     def __init__(self, config, spec, exclude, mountpoint):
         InsightsSpec.__init__(self, config, spec, exclude)
-        self.command = spec['command'].replace(
-            '{CONTAINER_MOUNT_POINT}', mountpoint)
+        self.command = spec["command"].replace("{CONTAINER_MOUNT_POINT}", mountpoint)
         self.archive_path = mangle.mangle_command(self.command)
         if not six.PY3:
-            self.command = self.command.encode('utf-8', 'ignore')
-        self.black_list = ['rm', 'kill', 'reboot', 'shutdown']
+            self.command = self.command.encode("utf-8", "ignore")
+        self.black_list = ["rm", "kill", "reboot", "shutdown"]
 
     def get_output(self):
-        '''
+        """
         Execute a command through system shell. First checks to see if
         the requested command is executable. Returns (returncode, stdout, 0)
-        '''
+        """
         # all commands should timeout after a long interval so the client does not hang
         # prepend native nix 'timeout' implementation
-        timeout_command = 'timeout %s %s' % (self.config.cmd_timeout, self.command)
+        timeout_command = "timeout %s %s" % (self.config.cmd_timeout, self.command)
 
         # ensure consistent locale for collected command output
-        cmd_env = {'LC_ALL': 'C'}
+        cmd_env = {"LC_ALL": "C"}
         args = shlex.split(timeout_command)
 
         # never execute this stuff
@@ -63,12 +64,19 @@ class InsightsCommand(InsightsSpec):
             raise RuntimeError("Command Blacklist")
 
         try:
-            logger.debug('Executing: %s', args)
-            proc0 = Popen(args, shell=False, stdout=PIPE, stderr=STDOUT,
-                          bufsize=-1, env=cmd_env, close_fds=True)
+            logger.debug("Executing: %s", args)
+            proc0 = Popen(
+                args,
+                shell=False,
+                stdout=PIPE,
+                stderr=STDOUT,
+                bufsize=-1,
+                env=cmd_env,
+                close_fds=True,
+            )
         except OSError as err:
             if err.errno == errno.ENOENT:
-                logger.debug('Command %s not found', self.command)
+                logger.debug("Command %s not found", self.command)
                 return
             else:
                 raise err
@@ -76,9 +84,7 @@ class InsightsCommand(InsightsSpec):
         dirty = False
 
         cmd = "sed -rf " + constants.default_sed_file
-        sedcmd = Popen(shlex_split(cmd),
-                       stdin=proc0.stdout,
-                       stdout=PIPE)
+        sedcmd = Popen(shlex_split(cmd), stdin=proc0.stdout, stdout=PIPE)
         proc0.stdout.close()
         proc0 = sedcmd
 
@@ -87,35 +93,31 @@ class InsightsCommand(InsightsSpec):
             exclude_file.write("\n".join(self.exclude))
             exclude_file.flush()
             cmd = "grep -F -v -f %s" % exclude_file.name
-            proc1 = Popen(shlex_split(cmd),
-                          stdin=proc0.stdout,
-                          stdout=PIPE)
+            proc1 = Popen(shlex_split(cmd), stdin=proc0.stdout, stdout=PIPE)
             proc0.stdout.close()
             stderr = None
             if self.pattern is None or len(self.pattern) == 0:
                 stdout, stderr = proc1.communicate()
 
             # always log return codes for debug
-            logger.debug('Proc1 Status: %s', proc1.returncode)
-            logger.debug('Proc1 stderr: %s', stderr)
+            logger.debug("Proc1 Status: %s", proc1.returncode)
+            logger.debug("Proc1 stderr: %s", stderr)
             proc0 = proc1
 
             dirty = True
 
         if self.pattern is not None and len(self.pattern):
             pattern_file = NamedTemporaryFile()
-            pattern_file.write("\n".join(self.pattern).encode('utf-8'))
+            pattern_file.write("\n".join(self.pattern).encode("utf-8"))
             pattern_file.flush()
             cmd = "grep -F -f %s" % pattern_file.name
-            proc2 = Popen(shlex_split(cmd),
-                          stdin=proc0.stdout,
-                          stdout=PIPE)
+            proc2 = Popen(shlex_split(cmd), stdin=proc0.stdout, stdout=PIPE)
             proc0.stdout.close()
             stdout, stderr = proc2.communicate()
 
             # always log return codes for debug
-            logger.debug('Proc2 Status: %s', proc2.returncode)
-            logger.debug('Proc2 stderr: %s', stderr)
+            logger.debug("Proc2 Status: %s", proc2.returncode)
+            logger.debug("Proc2 stderr: %s", stderr)
             proc0 = proc2
 
             dirty = True
@@ -130,34 +132,34 @@ class InsightsCommand(InsightsSpec):
 
         logger.debug("Proc0 Status: %s", proc0.returncode)
         logger.debug("Proc0 stderr: %s", stderr)
-        return stdout.decode('utf-8', 'ignore').strip()
+        return stdout.decode("utf-8", "ignore").strip()
 
 
 class InsightsFile(InsightsSpec):
-    '''
+    """
     A file spec
-    '''
+    """
+
     def __init__(self, spec, exclude, mountpoint):
         InsightsSpec.__init__(self, None, spec, exclude)
         # substitute mountpoint for collection
-        self.real_path = os.path.join(mountpoint, spec['file'].lstrip('/'))
-        self.archive_path = spec['file']
+        self.real_path = os.path.join(mountpoint, spec["file"].lstrip("/"))
+        self.archive_path = spec["file"]
 
     def get_output(self):
-        '''
+        """
         Get file content, selecting only lines we are interested in
-        '''
+        """
         if not os.path.isfile(self.real_path):
-            logger.debug('File %s does not exist', self.real_path)
+            logger.debug("File %s does not exist", self.real_path)
             return
 
         cmd = []
-        cmd.append('sed'.encode('utf-8'))
-        cmd.append('-rf'.encode('utf-8'))
-        cmd.append(constants.default_sed_file.encode('utf-8'))
-        cmd.append(self.real_path.encode('utf8'))
-        sedcmd = Popen(cmd,
-                       stdout=PIPE)
+        cmd.append("sed".encode("utf-8"))
+        cmd.append("-rf".encode("utf-8"))
+        cmd.append(constants.default_sed_file.encode("utf-8"))
+        cmd.append(self.real_path.encode("utf8"))
+        sedcmd = Popen(cmd, stdout=PIPE)
 
         if self.exclude is not None:
             exclude_file = NamedTemporaryFile()
@@ -192,4 +194,4 @@ class InsightsFile(InsightsSpec):
         if self.pattern is None and self.exclude is None:
             output = sedcmd.communicate()[0]
 
-        return output.decode('utf-8', 'ignore').strip()
+        return output.decode("utf-8", "ignore").strip()

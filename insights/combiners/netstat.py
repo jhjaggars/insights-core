@@ -29,6 +29,7 @@ from insights.core.plugins import combiner
 from insights.parsers.netstat import Netstat_I
 from insights.parsers.ip import IpLinkInfo
 from copy import deepcopy
+
 HANDLD_FLAGS = ["LOWER_UP", "NOARP", "NO-CARRIER"]
 
 
@@ -64,7 +65,6 @@ class NetworkStats(object):
         return periface
 
     def _organize_for_netstat(self, ldata):
-
         def _get_flags(flags):
             flg_str = ""
             if "NOARP" in flags:
@@ -74,15 +74,22 @@ class NetworkStats(object):
             for i in flags:
                 if i not in HANDLD_FLAGS:
                     flg_str += str(i[0])
-            flg_str = ''.join(sorted(flg_str))
+            flg_str = "".join(sorted(flg_str))
             return flg_str
 
         stats = {}
         data = []
-        map_table = {"MTU": "mtu", "RX-OK": "rx_packets", "RX-ERR": "rx_errors",
-                "RX-DRP": "rx_dropped", "RX-OVR": "rx_overrun",
-                "TX-OK": "tx_packets", "TX-ERR": "tx_errors", "Iface": "name",
-                "TX-DRP": "tx_dropped"}
+        map_table = {
+            "MTU": "mtu",
+            "RX-OK": "rx_packets",
+            "RX-ERR": "rx_errors",
+            "RX-DRP": "rx_dropped",
+            "RX-OVR": "rx_overrun",
+            "TX-OK": "tx_packets",
+            "TX-ERR": "tx_errors",
+            "Iface": "name",
+            "TX-DRP": "tx_dropped",
+        }
 
         for (k, v) in ldata.items():
             ifstat = {}

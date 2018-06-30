@@ -30,4 +30,7 @@ def test_package_provides_java_err():
 def test_package_provides_java_not_match():
     with pytest.raises(SkipException) as pe:
         PackageProvidesJava(context_wrap(PACKAGE_COMMAND_NOT_MATCH))
-        assert "current running java command is not provided by package installed through yum or rpm" in str(pe)
+        assert (
+            "current running java command is not provided by package installed through yum or rpm"
+            in str(pe)
+        )

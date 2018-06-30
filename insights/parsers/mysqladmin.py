@@ -45,6 +45,7 @@ class MysqladminVars(LegacyItemAccess, Parser):
         >>> output.getint('aria_block_size', '4096')
         8192
     """
+
     def parse_content(self, content):
         """
         Parse output content table of command ``/bin/mysqladmin variables``.
@@ -55,7 +56,7 @@ class MysqladminVars(LegacyItemAccess, Parser):
 
         data = {}
         for l in content[3:-1]:
-            lsp = l.split('|')
+            lsp = l.split("|")
             if len(lsp) != 4:
                 raise ParseException("Unparseable line in table: %s." % l)
             data[lsp[1].strip().lower()] = lsp[2].strip()

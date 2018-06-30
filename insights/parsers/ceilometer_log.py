@@ -39,6 +39,7 @@ class CeilometerCentralLog(LogFileOutput):
         2016-11-09 14:58:15.657 31723 INFO ceilometer.agent.manager [-] Skip pollster hardware.system_stats.io.incoming.blocks, no resources found this cycle
         2016-11-09 14:58:17.027 31723 WARNING ceilometer.neutron_client [-] The resource could not be found.
     """
+
     pass
 
 
@@ -55,4 +56,5 @@ class CeilometerCollectorLog(LogFileOutput):
         2016-11-09 14:36:35.465 4259 INFO cotyledon [-] Caught signal (15) during service initialisation, delaying it
         2016-11-09 14:38:07.280 31638 WARNING oslo_reports.guru_meditation_report [-] Guru meditation now registers SIGUSR1 and SIGUSR2 by default for backward compatibility. SIGUSR1 will no longer be registered in a future release, so please use SIGUSR2 to generate reports.
     """
+
     pass

@@ -40,4 +40,5 @@ from insights.specs import Specs
 @parser(Specs.vmware_tools_conf)
 class VMwareToolsConf(IniConfigFile):
     """Class for VMware tool configuration file content."""
+
     pass

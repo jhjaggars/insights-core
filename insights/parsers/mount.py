@@ -93,15 +93,16 @@ class MountOpts(object):
         inode64 (bool): "inode64" is enabled or not
         noquota (bool): Disk quotas are enforced or not
     """
+
     attrs = {
-        'rw': False,
-        'ro': False,
-        'defaults': False,
-        'relatime': False,
-        'seclabel': False,
-        'attr2': False,
-        'inode64': False,
-        'noquota': False
+        "rw": False,
+        "ro": False,
+        "defaults": False,
+        "relatime": False,
+        "seclabel": False,
+        "attr2": False,
+        "inode64": False,
+        "noquota": False,
     }
 
     def __init__(self, data={}):
@@ -153,12 +154,13 @@ class MountEntry(LegacyItemAccess, CommandParser):
         mount_type (str): Name of filesystem type
         mount_options (MountOpts): Mount options as a :class:`insights.parsers.mount.MountOpts` object
     """
+
     attrs = {
-            'mount_clause': '',
-            'filesystem': '',
-            'mount_point': '',
-            'mount_type': '',
-            'mount_options': MountOpts(),
+        "mount_clause": "",
+        "filesystem": "",
+        "mount_point": "",
+        "mount_type": "",
+        "mount_options": MountOpts(),
     }
 
     def __init__(self, data={}):
@@ -206,9 +208,11 @@ class Mount(CommandParser):
             raise TypeError("Mounts can only be indexed by mount string or line number")
 
     # /dev/mapper/fedora-home on /home type ext4 (rw,relatime,seclabel,data=ordered) [HOME]
-    mount_line_re = r'^(?P<filesystem>\S+) on (?P<mount_point>.+?) type ' + \
-        r'(?P<mount_type>\S+) \((?P<mount_options>[^)]+)\)' + \
-        r'(?: \[(?P<mount_label>.*)\])?$'
+    mount_line_re = (
+        r"^(?P<filesystem>\S+) on (?P<mount_point>.+?) type "
+        + r"(?P<mount_type>\S+) \((?P<mount_options>[^)]+)\)"
+        + r"(?: \[(?P<mount_label>.*)\])?$"
+    )
     mount_line_rex = re.compile(mount_line_re)
 
     def parse_content(self, content):
@@ -216,23 +220,23 @@ class Mount(CommandParser):
         self.mounts = {}
         for line in get_active_lines(content):
             mount = {}
-            mount['mount_clause'] = line
+            mount["mount_clause"] = line
             match = self.mount_line_rex.search(line)
             if match:
-                mount['filesystem'] = match.group('filesystem')
-                mount['mount_point'] = match.group('mount_point')
-                mount['mount_type'] = match.group('mount_type')
-                mount_options = match.group('mount_options')
-                mount['mount_options'] = MountOpts(optlist_to_dict(mount_options))
-                if match.group('mount_label'):
-                    mount['mount_label'] = match.group('mount_label')
+                mount["filesystem"] = match.group("filesystem")
+                mount["mount_point"] = match.group("mount_point")
+                mount["mount_type"] = match.group("mount_type")
+                mount_options = match.group("mount_options")
+                mount["mount_options"] = MountOpts(optlist_to_dict(mount_options))
+                if match.group("mount_label"):
+                    mount["mount_label"] = match.group("mount_label")
             else:
-                mount['parse_error'] = 'Unable to parse line'
+                mount["parse_error"] = "Unable to parse line"
 
             entry = MountEntry(mount)
             self.rows.append(entry)
             if match:
-                self.mounts[mount['mount_point']] = entry
+                self.mounts[mount["mount_point"]] = entry
 
     def get_dir(self, path):
         """
@@ -245,7 +249,8 @@ class Mount(CommandParser):
         absolute paths will return None.
         """
         import os
-        while path != '':
+
+        while path != "":
             if path in self.mounts:
                 return self.mounts[path]
             path = os.path.split(path)[0]

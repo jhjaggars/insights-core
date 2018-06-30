@@ -34,66 +34,64 @@ def test_mount():
     results = Mount(context_wrap(MOUNT_DATA))
     assert results is not None
     assert len(results) == 13
-    sr0 = results.search(filesystem='/dev/sr0')[0]
-    sda1 = results.search(filesystem='/dev/sda1')[0]
+    sr0 = results.search(filesystem="/dev/sr0")[0]
+    sda1 = results.search(filesystem="/dev/sda1")[0]
     assert sr0 is not None
-    assert sr0['mount_point'] == '/run/media/root/VMware Tools'
+    assert sr0["mount_point"] == "/run/media/root/VMware Tools"
     # test get method
-    assert sr0.get('mount_point') == '/run/media/root/VMware Tools'
-    assert sr0.get('does not exist', 'failure') == 'failure'
-    assert sr0['mount_type'] == 'iso9660'
-    assert 'ro' in sr0['mount_options']
+    assert sr0.get("mount_point") == "/run/media/root/VMware Tools"
+    assert sr0.get("does not exist", "failure") == "failure"
+    assert sr0["mount_type"] == "iso9660"
+    assert "ro" in sr0["mount_options"]
     assert sr0.mount_options.ro
-    assert 'relatime' in sr0['mount_options']
-    assert sr0['mount_options']['uhelper'] == 'udisks2'
-    assert sr0['mount_label'] == 'VMware Tools'
+    assert "relatime" in sr0["mount_options"]
+    assert sr0["mount_options"]["uhelper"] == "udisks2"
+    assert sr0["mount_label"] == "VMware Tools"
     assert sda1 is not None
-    assert sda1['mount_point'] == '/boot'
-    assert sda1['mount_type'] == 'ext4'
-    assert 'rw' in sda1['mount_options']
-    assert 'seclabel' in sda1['mount_options']
-    assert sda1['mount_options']['data'] == 'ordered'
-    assert sda1.mount_options.data == 'ordered'
-    assert 'mount_label' not in sda1
+    assert sda1["mount_point"] == "/boot"
+    assert sda1["mount_type"] == "ext4"
+    assert "rw" in sda1["mount_options"]
+    assert "seclabel" in sda1["mount_options"]
+    assert sda1["mount_options"]["data"] == "ordered"
+    assert sda1.mount_options.data == "ordered"
+    assert "mount_label" not in sda1
 
     # Test iteration
     for mount in results:
-        assert hasattr(mount, 'filesystem')
-        assert hasattr(mount, 'mount_point')
-        assert hasattr(mount, 'mount_type')
-        assert hasattr(mount, 'mount_options')
+        assert hasattr(mount, "filesystem")
+        assert hasattr(mount, "mount_point")
+        assert hasattr(mount, "mount_type")
+        assert hasattr(mount, "mount_options")
 
     # Test getitem
     assert results[12] == sr0
-    assert results['/etc/shadow'] == results[11]
+    assert results["/etc/shadow"] == results[11]
     # Index only by string or number
     with pytest.raises(TypeError) as exc:
         assert results[set([1, 2, 3])] is None
     assert "Mounts can only be indexed by mount string or line number" in str(exc)
 
     # Test mounts dictionary
-    assert results.mounts['/run/media/root/VMware Tools'] == sr0
+    assert results.mounts["/run/media/root/VMware Tools"] == sr0
 
     # Test get_dir
-    assert results.get_dir('/run/media/root/VMware Tools') == sr0
-    assert results.get_dir('/boot/grub2/grub.cfg') == sda1
-    assert results.get_dir('/etc') == results['/']
-    assert results.get_dir('relative/paths/fail') is None
+    assert results.get_dir("/run/media/root/VMware Tools") == sr0
+    assert results.get_dir("/boot/grub2/grub.cfg") == sda1
+    assert results.get_dir("/etc") == results["/"]
+    assert results.get_dir("relative/paths/fail") is None
 
     # Test parse failure
     errors = Mount(context_wrap(MOUNT_ERR_DATA))
     assert errors is not None
     assert len(errors) == 2
-    assert not hasattr(errors[0], 'parse_error')
-    assert errors[0].filesystem == 'tmpfs'
-    assert hasattr(errors[1], 'parse_error')
-    assert errors[1].parse_error == 'Unable to parse line'
+    assert not hasattr(errors[0], "parse_error")
+    assert errors[0].filesystem == "tmpfs"
+    assert hasattr(errors[1], "parse_error")
+    assert errors[1].parse_error == "Unable to parse line"
 
     # Test search
-    assert results.search(filesystem='/dev/sr0') == [sr0]
-    assert results.search(mount_type='tmpfs') == [
-        results.rows[n] for n in (0, 7, 8)
-    ]
-    assert results.search(mount_options__contains='seclabel') == [
+    assert results.search(filesystem="/dev/sr0") == [sr0]
+    assert results.search(mount_type="tmpfs") == [results.rows[n] for n in (0, 7, 8)]
+    assert results.search(mount_options__contains="seclabel") == [
         results.rows[n] for n in (0, 1, 3, 4, 5, 7, 8, 11)
     ]

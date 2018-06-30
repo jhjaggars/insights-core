@@ -58,14 +58,15 @@ class NSSwitchConf(Parser, LegacyItemAccess):
         set(['files', 'dns', 'sss', 'myhostname'])
 
     """
+
     def parse_content(self, content):
         self.errors = []
         self.data = {}
         self.sources = set()
         for line in get_active_lines(content):
-            if ':' not in line:
+            if ":" not in line:
                 self.errors.append(line)
             else:
-                service, sources = [s.lower().strip() for s in line.split(':', 1)]
+                service, sources = [s.lower().strip() for s in line.split(":", 1)]
                 self.data[service] = sources
                 self.sources.update(set(sources.split(None)))

@@ -70,15 +70,16 @@ class RHNCertConf(XMLParser):
 
         channel_familes = {}
         for field in self.dom.findall(".//rhn-cert-field"):
-            family = field.get('family')
+            family = field.get("family")
             if family:
                 channel_familes[family] = dict(
-                    (k, v) for k, v in field.items() if k not in ('name', 'family'))
+                    (k, v) for k, v in field.items() if k not in ("name", "family")
+                )
             elif field.text:
-                rhn_cert[field.get('name')] = field.text
+                rhn_cert[field.get("name")] = field.text
         # for all channel families
-        rhn_cert['channel-families'] = channel_familes
+        rhn_cert["channel-families"] = channel_familes
         singature = self.dom.findall(".//rhn-cert-signature")
-        rhn_cert['signature'] = singature[0].text
+        rhn_cert["signature"] = singature[0].text
 
         return rhn_cert

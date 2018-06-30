@@ -39,42 +39,42 @@ svcc.service                                somenonsense
 def test_unitfiles():
     context = context_wrap(KDUMP_DISABLED_RHEL7)
     unitfiles = UnitFiles(context)
-    assert not unitfiles.is_on('kdump.service')
+    assert not unitfiles.is_on("kdump.service")
     assert len(unitfiles.services) == 1
     assert len(unitfiles.parsed_lines) == 1
 
     context = context_wrap(KDUMP_ENABLED_RHEL7)
     unitfiles = UnitFiles(context)
-    assert unitfiles.is_on('kdump.service')
+    assert unitfiles.is_on("kdump.service")
     assert len(unitfiles.services) == 1
     assert len(unitfiles.parsed_lines) == 1
 
     context = context_wrap(KDUMP_ENABLED_RHEL7)
     unitfiles = UnitFiles(context)
-    assert unitfiles.is_on('kdump.service')
+    assert unitfiles.is_on("kdump.service")
     assert len(unitfiles.services) == 1
     assert len(unitfiles.parsed_lines) == 1
 
     context = context_wrap(KDUMP_BIG_TEST)
     unitfiles = UnitFiles(context)
-    assert unitfiles.is_on('kdump.service')
-    assert not unitfiles.is_on('other.service')
-    assert unitfiles.is_on('test.service')
+    assert unitfiles.is_on("kdump.service")
+    assert not unitfiles.is_on("other.service")
+    assert unitfiles.is_on("test.service")
     assert len(unitfiles.services) == 3
     assert len(unitfiles.parsed_lines) == 3
 
     context = context_wrap(UNIT_INVALID_VS_VALID)
     unitfiles = UnitFiles(context)
-    assert unitfiles.is_on('svca.service')
-    assert 'svca.service' in unitfiles.services
-    assert 'svca.service' in unitfiles.service_list
-    assert 'svcb.service' in unitfiles.services
-    assert 'svcb.service' in unitfiles.service_list
-    assert 'svcc.service' not in unitfiles.services
-    assert 'svcc.service' not in unitfiles.service_list
-    assert True is unitfiles.is_on('svca.service')
-    assert False is unitfiles.is_on('svcb.service')
-    assert None is unitfiles.is_on('svcc.service')
-    assert unitfiles.exists('svca.service')
-    assert unitfiles.exists('svcb.service')
-    assert not unitfiles.exists('svcc.service')
+    assert unitfiles.is_on("svca.service")
+    assert "svca.service" in unitfiles.services
+    assert "svca.service" in unitfiles.service_list
+    assert "svcb.service" in unitfiles.services
+    assert "svcb.service" in unitfiles.service_list
+    assert "svcc.service" not in unitfiles.services
+    assert "svcc.service" not in unitfiles.service_list
+    assert True is unitfiles.is_on("svca.service")
+    assert False is unitfiles.is_on("svcb.service")
+    assert None is unitfiles.is_on("svcc.service")
+    assert unitfiles.exists("svca.service")
+    assert unitfiles.exists("svcb.service")
+    assert not unitfiles.exists("svcc.service")

@@ -37,4 +37,5 @@ class PacemakerLog(LogFileOutput):
         >>> len(list(pm.get_after(datetime(21, 8, 2017, 12, 59, 50))))
         3
     """
-    time_format = '%b %d %H:%M:%S'
+
+    time_format = "%b %d %H:%M:%S"

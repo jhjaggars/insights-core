@@ -64,4 +64,5 @@ from insights.specs import Specs
 @parser(Specs.ls_disk)
 class LsDisk(CommandParser, FileListing):
     """Parses output of ``ls -lanR /dev/disk`` command."""
+
     pass

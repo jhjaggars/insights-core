@@ -56,13 +56,18 @@ class IscsiAdmModeSession(CommandParser, LegacyItemAccess):
                 }
             ]
     """
+
     def parse_content(self, content):
         iscsiadm_session_all = []
         for line in (l.split() for l in content if l.strip()):
-            iscsiadm_session_all.append({"IFACE_TRANSPORT": line[0].strip(':'),
-                                         "SID": line[1].strip('[]'),
-                                         "TARGET_IP": line[2],
-                                         "TARGET_IQN": line[3]})
+            iscsiadm_session_all.append(
+                {
+                    "IFACE_TRANSPORT": line[0].strip(":"),
+                    "SID": line[1].strip("[]"),
+                    "TARGET_IP": line[2],
+                    "TARGET_IQN": line[3],
+                }
+            )
 
         self.data = iscsiadm_session_all
         """list of dict: List containing dict for each line of command output."""

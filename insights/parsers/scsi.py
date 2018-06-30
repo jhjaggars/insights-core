@@ -21,16 +21,17 @@ class Device(object):
     }
     All fields are accessible as computed attributes
     """
+
     keys = [
-        'ansi__scsi_revision',
-        'vendor',
-        'rev',
-        'host',
-        'channel',
-        'model',
-        'type',
-        'id',
-        'lun'
+        "ansi__scsi_revision",
+        "vendor",
+        "rev",
+        "host",
+        "channel",
+        "model",
+        "type",
+        "id",
+        "lun",
     ]
 
     def __init__(self, data):
@@ -53,18 +54,18 @@ class SCSI(Parser):
         Type:   RAID                             ANSI  SCSI revision: 05
     """
 
-    HOST_KEYS = ['Host', 'Channel', 'Id', 'Lun']
-    VENDOR_KEYS = ['Vendor', 'Model', 'Rev']
-    TYPE_KEYS = ['Type', 'ANSI SCSI revision']
-    TYPE_KEYS_ALT = ['Type', 'ANSI  SCSI revision']
+    HOST_KEYS = ["Host", "Channel", "Id", "Lun"]
+    VENDOR_KEYS = ["Vendor", "Model", "Rev"]
+    TYPE_KEYS = ["Type", "ANSI SCSI revision"]
+    TYPE_KEYS_ALT = ["Type", "ANSI  SCSI revision"]
 
-    def parse_content(self, content, header='Attached devices:'):
+    def parse_content(self, content, header="Attached devices:"):
         if not content or len(content) < 1:
             raise ParseException("Empty content of file /proc/scsi/scsi", content)
         devices = []
         if header:
             if content[0] != header:
-                msg = 'Expected Header: %s but got %s' % (header, content[0])
+                msg = "Expected Header: %s but got %s" % (header, content[0])
                 raise ParseException(msg)
             content = content[1:]
         lines = deque(filter(None, [line.strip() for line in content]))
@@ -77,6 +78,7 @@ class SCSI(Parser):
     This method now checks for which version is used and runs collect_keys
     with the appropriate key definition
     """
+
     @classmethod
     def parse_device(cls, parts):
         device = {}
@@ -96,8 +98,8 @@ class SCSI(Parser):
             for i, key in enumerate(keys):
                 start = content.index(key)
                 end = content.index(keys[i + 1]) if (i + 1) < num_keys else None
-                k, v = [s.strip() for s in content[start:end].split(':')]
-                data[k.lower().replace(' ', '_')] = v
+                k, v = [s.strip() for s in content[start:end].split(":")]
+                data[k.lower().replace(" ", "_")] = v
         except:
             raise ParseException("Parse error for current line:", content)
 

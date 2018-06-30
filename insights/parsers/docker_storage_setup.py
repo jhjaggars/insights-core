@@ -38,4 +38,5 @@ class DockerStorageSetup(SysconfigOptions):
     """
     A parser for accessing /etc/sysconfig/docker-storage-setup.
     """
+
     pass

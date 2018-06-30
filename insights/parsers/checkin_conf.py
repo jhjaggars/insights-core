@@ -59,4 +59,5 @@ class CheckinConf(IniConfigFile):
         >>> checkin_conf.get('spacewalk', 'host')
         u''
     """
+
     pass

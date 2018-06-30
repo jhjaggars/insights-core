@@ -68,7 +68,7 @@ RHV_ANALYZER_JSON = """
 """.strip()
 
 
-class TestRhvLogCollectorJson():
+class TestRhvLogCollectorJson:
     def test_rhv_log_collector_json(self):
         result = RhvLogCollectorJson(context_wrap(RHV_ANALYZER_JSON))
 
@@ -86,53 +86,20 @@ class TestRhvLogCollectorJson():
                     "name": "check_legacy_policy",
                     "path": "/usr/share/rhv-log-collector-analyzer/analyzer/produceReport/sqls/cluster_query_migration_policy_check_legacy.sql",
                     "result": [
-                        [
-                            {
-                                "Cluster": "fccl",
-                                "Data Center": "fcdc",
-                                "NO.": 1
-                            }
-                        ],
-                        [
-                            {
-                                "Cluster": "larry",
-                                "Data Center": "Default",
-                                "NO.": 2
-                            }
-                        ],
-                        [
-                            {
-                                "Cluster": "larry",
-                                "Data Center": "lo-dc",
-                                "NO.": 3
-                            }
-                        ],
-                        [
-                            {
-                                "Cluster": "larry",
-                                "Data Center": "fcdc",
-                                "NO.": 4
-                            }
-                        ],
-                        [
-                            {
-                                "Cluster": "larry",
-                                "Data Center": "larry",
-                                "NO.": 5
-                            }
-                        ],
-                        [
-                            {
-                                "Cluster": "lo-cl",
-                                "Data Center": "lo-dc",
-                                "NO.": 6
-                            }
-                        ]
+                        [{"Cluster": "fccl", "Data Center": "fcdc", "NO.": 1}],
+                        [{"Cluster": "larry", "Data Center": "Default", "NO.": 2}],
+                        [{"Cluster": "larry", "Data Center": "lo-dc", "NO.": 3}],
+                        [{"Cluster": "larry", "Data Center": "fcdc", "NO.": 4}],
+                        [{"Cluster": "larry", "Data Center": "larry", "NO.": 5}],
+                        [{"Cluster": "lo-cl", "Data Center": "lo-dc", "NO.": 6}],
                     ],
                     "time": "0.0137791633606",
                     "type": "WARNING",
-                    "when": "2018-06-27 00:19:14"
+                    "when": "2018-06-27 00:19:14",
                 }
-            ]
+            ],
         }
-        assert result['rhv-log-collector-analyzer'][0]['file'] == 'cluster_query_migration_policy_check_legacy.sql'
+        assert (
+            result["rhv-log-collector-analyzer"][0]["file"]
+            == "cluster_query_migration_policy_check_legacy.sql"
+        )

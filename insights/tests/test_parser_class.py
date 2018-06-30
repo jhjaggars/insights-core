@@ -4,28 +4,19 @@ from insights.core import Parser
 
 SIMPLE_DATA = json.dumps({"a": 1, "b": 2, "c": 3})
 
-COMPLEX_DATA = json.dumps({
-    "food": "processor",
-    "mixing": "bowl",
-    "cake": {
-        "eggs": 2,
-        "flour": 3,
-        "sugar": 4,
-        "chocolate": 10
-    },
-    "pie": {
-        "peaches": 3,
-        "sugar": 2,
-        "dough": 1,
-        "goo": 3
+COMPLEX_DATA = json.dumps(
+    {
+        "food": "processor",
+        "mixing": "bowl",
+        "cake": {"eggs": 2, "flour": 3, "sugar": 4, "chocolate": 10},
+        "pie": {"peaches": 3, "sugar": 2, "dough": 1, "goo": 3},
     }
-})
+)
 
 FAKE_DATA = "This is some fake data"
 
 
 class SimpleParser(Parser):
-
     def parse_content(self, content):
         self.data = json.loads(content)
 
@@ -41,7 +32,6 @@ class SimpleParser(Parser):
 
 
 class ComplexParser(SimpleParser):
-
     def cake(self):
         return SubParser(self.data["cake"])
 
@@ -50,7 +40,6 @@ class ComplexParser(SimpleParser):
 
 
 class SubParser(object):
-
     def sugar(self):
         return self.data["sugar"]
 

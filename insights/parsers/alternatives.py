@@ -90,7 +90,7 @@ class AlternativesOutput(CommandParser):
 
         for line in content:
             words = line.split(None)
-            if ' - status is' in line:
+            if " - status is" in line:
                 # alternatives only displays one program, so finding
                 # this line again is an error.
                 if self.program:
@@ -107,21 +107,21 @@ class AlternativesOutput(CommandParser):
             elif not self.program:
                 # Lines before 'status is' line are ignored
                 continue
-            elif line.startswith(' link currently points to ') and len(words) == 5:
+            elif line.startswith(" link currently points to ") and len(words) == 5:
                 # line: ' link currently points to /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.111-1.b15.el7_2.x86_64/jre/bin/java'
                 self.link = words[4]
-            elif ' - priority ' in line and len(words) == 4 and words[3].isdigit():
+            elif " - priority " in line and len(words) == 4 and words[3].isdigit():
                 # line: /usr/lib/jvm/jre-1.6.0-ibm.x86_64/bin/java - priority 16091
                 # New path - save current path if set
-                self.paths.append({
-                    'path': words[0],
-                    'priority': int(words[3]),
-                    'slave': {},
-                })
+                self.paths.append(
+                    {"path": words[0], "priority": int(words[3]), "slave": {}}
+                )
                 current_path = self.paths[-1]
-            elif line.startswith(' slave ') and len(words) == 3 and current_path:
+            elif line.startswith(" slave ") and len(words) == 3 and current_path:
                 # line: ' slave ControlPanel: /usr/lib/jvm/jre-1.6.0-ibm.x86_64/bin/ControlPanel'
-                current_path['slave'][words[1][:-1]] = words[2]  # remove final : from program
+                current_path["slave"][words[1][:-1]] = words[
+                    2
+                ]  # remove final : from program
             elif line.startswith("Current `best' version is ") and len(words) == 5:
                 # line: 'Current `best' version is /usr/lib/jvm/jre-1.6.0-ibm.x86_64/bin/java.'
                 self.best = words[4][:-1]  # strip trailing . from path
@@ -150,4 +150,5 @@ class JavaAlternatives(AlternativesOutput):
         >>> java.paths[2]['slave']['ControlPanel']
         '/usr/lib/jvm/jre-1.6.0-ibm.x86_64/bin/ControlPanel'
     """
+
     pass

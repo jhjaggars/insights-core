@@ -38,6 +38,7 @@ class VDSMConfIni(IniConfigFile):
         54321
 
     """
+
     pass
 
 
@@ -90,4 +91,5 @@ class VDSMLoggerConf(IniConfigFile):
         True
 
     """
+
     pass

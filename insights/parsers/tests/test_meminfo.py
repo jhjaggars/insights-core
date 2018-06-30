@@ -65,19 +65,55 @@ def test_meminfo():
         values.append(l.split()[1].strip())
     m = meminfo.MemInfo(context_wrap(MEMINFO))
     actual = [
-        m.total, m.free, m.available, m.buffers, m.cached, m.swap.cached,
-        m.active, m.inactive, m.anon.active, m.anon.inactive, m.file.active,
-        m.file.inactive, m.unevictable, m.mlocked, m.swap.total, m.swap.free,
-        m.dirty, m.writeback, m.anon.pages, m.mapped, m.shmem, m.slab.total,
-        m.slab.reclaimable, m.slab.unreclaimable, m.kernel_stack, m.page_tables,
-        m.nfs_unstable, m.bounce, m.writeback_tmp, m.commit.limit, m.commit.total,
-        m.vmalloc.total, m.vmalloc.used, m.vmalloc.chunk, m.corrupted,
-        m.huge_pages.anon, m.huge_pages.total, m.huge_pages.free,
-        m.huge_pages.reserved, m.huge_pages.surplus, m.huge_pages.size,
-        m.direct_map.kb, m.direct_map.mb
+        m.total,
+        m.free,
+        m.available,
+        m.buffers,
+        m.cached,
+        m.swap.cached,
+        m.active,
+        m.inactive,
+        m.anon.active,
+        m.anon.inactive,
+        m.file.active,
+        m.file.inactive,
+        m.unevictable,
+        m.mlocked,
+        m.swap.total,
+        m.swap.free,
+        m.dirty,
+        m.writeback,
+        m.anon.pages,
+        m.mapped,
+        m.shmem,
+        m.slab.total,
+        m.slab.reclaimable,
+        m.slab.unreclaimable,
+        m.kernel_stack,
+        m.page_tables,
+        m.nfs_unstable,
+        m.bounce,
+        m.writeback_tmp,
+        m.commit.limit,
+        m.commit.total,
+        m.vmalloc.total,
+        m.vmalloc.used,
+        m.vmalloc.chunk,
+        m.corrupted,
+        m.huge_pages.anon,
+        m.huge_pages.total,
+        m.huge_pages.free,
+        m.huge_pages.reserved,
+        m.huge_pages.surplus,
+        m.huge_pages.size,
+        m.direct_map.kb,
+        m.direct_map.mb,
     ]
     for i in range(len(actual)):
-        assert isinstance(actual[i], int), "Line %d's value is not an int: %s" % (i, type(actual[i]))
+        assert isinstance(actual[i], int), "Line %d's value is not an int: %s" % (
+            i,
+            type(actual[i]),
+        )
         assert actual[i] == int(values[i]) * 1024, "Line %d failed to match" % i
 
     assert m.swap.used == (int(values[14]) - int(values[15]) - int(values[5])) * 1024
@@ -101,10 +137,7 @@ def test_meminfo_short():
 
 
 def test_using_huge_pages():
-    t = [
-        "AnonHugePages:    135168 kB",
-        "HugePages_Total:       0"
-    ]
+    t = ["AnonHugePages:    135168 kB", "HugePages_Total:       0"]
     m = meminfo.MemInfo(context_wrap(t))
     assert not m.huge_pages.using
     assert m.huge_pages.using_transparent

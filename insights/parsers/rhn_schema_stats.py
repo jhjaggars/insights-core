@@ -8,11 +8,11 @@ def _replace_tabs(s, ts=8):
     Replace the tabs in 's' and keep its original alignment with the tab-stop
     equals to 'ts'
     """
-    result = ''
+    result = ""
     for c in s:
-        if c == '\t':
+        if c == "\t":
             while True:
-                result += ' '
+                result += " "
                 if len(result) % ts == 0:
                     break
         else:
@@ -25,29 +25,32 @@ def _lower(s, ic=True):
 
 
 class Table(object):
-
     def __init__(self, data):
         self.data = data
 
 
 class TableSummary(Table):
-
     def __contains__(self, s):
-        return any(s in r.get('table', '').lower() for r in self.data)
+        return any(s in r.get("table", "").lower() for r in self.data)
 
     def get(self, s, ic):
         s = _lower(s, ic)
-        return [r for r in self.data if s in _lower(r.get('table', ''), ic)]
+        return [r for r in self.data if s in _lower(r.get("table", ""), ic)]
 
 
 class ConstraintTable(Table):
-
     def __contains__(self, s):
-        return any(s in r.get('table', r.get('TABLE NAME', '')).lower() for r in self.data)
+        return any(
+            s in r.get("table", r.get("TABLE NAME", "")).lower() for r in self.data
+        )
 
     def get(self, s, ic):
         s = _lower(s, ic)
-        return [r for r in self.data if s in _lower(r.get('table', r.get('TABLE NAME', '')), ic)]
+        return [
+            r
+            for r in self.data
+            if s in _lower(r.get("table", r.get("TABLE NAME", "")), ic)
+        ]
 
 
 class LabelTable(Table):
@@ -111,15 +114,25 @@ class DBStatsLog(CommandParser):
         Return if the 's' (ignore case) is contained in any table name or not
         """
         s = s.lower()
-        return s in self.data.get("table_summary", []) or s in self.data.get("constraint_table", [])
+        return s in self.data.get("table_summary", []) or s in self.data.get(
+            "constraint_table", []
+        )
 
     def get_table(self, s, ic=True):
         """
         Return the table info in which the table name contains
         the 's'
         """
-        result = self.data["table_summary"].get(s, ic) if "table_summary" in self.data else []
-        result.extend(self.data["constraint_table"].get(s, ic) if "constraint_table" in self.data else [])
+        result = (
+            self.data["table_summary"].get(s, ic)
+            if "table_summary" in self.data
+            else []
+        )
+        result.extend(
+            self.data["constraint_table"].get(s, ic)
+            if "constraint_table" in self.data
+            else []
+        )
         return result
 
     def parse_content(self, content):
@@ -139,18 +152,17 @@ class DBStatsLog(CommandParser):
             header_list = []
             index_list = []
             for line in content:
-                if line.strip() == '' or line.startswith('\t'):
+                if line.strip() == "" or line.startswith("\t"):
                     pass
-                elif ': ' in line:
-                    k, _, v = line.partition(': ')
-                    table.append({'table': k.strip(),
-                                  'rows': int(v.strip())})
-                elif line.startswith('LABEL') or line.startswith('CONSTRAINT '):
+                elif ": " in line:
+                    k, _, v = line.partition(": ")
+                    table.append({"table": k.strip(), "rows": int(v.strip())})
+                elif line.startswith("LABEL") or line.startswith("CONSTRAINT "):
                     header_line = _replace_tabs(line)
-                elif header_line and line.startswith('--'):
+                elif header_line and line.startswith("--"):
                     pre_idx = 0
                     for idx, c in enumerate(line):
-                        if c == ' ':
+                        if c == " ":
                             header_list.append(header_line[pre_idx:idx].strip())
                             pre_idx = idx + 1
                             index_list.append(pre_idx)
@@ -173,8 +185,10 @@ class DBStatsLog(CommandParser):
         if tables:
             self.data = {
                 "table_summary": TableSummary(tables[0]) if len(tables) > 0 else None,
-                "constraint_table": ConstraintTable(tables[1]) if len(tables) > 1 else None,
-                "label_table": LabelTable(tables[2]) if len(tables) > 2 else None
+                "constraint_table": ConstraintTable(tables[1])
+                if len(tables) > 1
+                else None,
+                "label_table": LabelTable(tables[2]) if len(tables) > 2 else None,
             }
         else:
             self.data = {}

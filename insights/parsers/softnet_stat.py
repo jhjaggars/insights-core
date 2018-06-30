@@ -66,12 +66,16 @@ class SoftNetStats(Parser):
     def parse_content(self, contents):
         for line in contents:
             stats = [int(st, 16) for st in line.split(None)]
-            self.cpu_nstats.append({'packet_process': stats[0],
-                            'packet_drops': stats[1],
-                            'time_squeeze': stats[2],
-                            'cpu_collision': stats[7],
-                            'received_rps': stats[8],
-                            'flow_limit_count': stats[9]})
+            self.cpu_nstats.append(
+                {
+                    "packet_process": stats[0],
+                    "packet_drops": stats[1],
+                    "time_squeeze": stats[2],
+                    "cpu_collision": stats[7],
+                    "received_rps": stats[8],
+                    "flow_limit_count": stats[9],
+                }
+            )
         self.cpu_instances = len(self.cpu_nstats)
 
     def per_cpu_nstat(self, key):

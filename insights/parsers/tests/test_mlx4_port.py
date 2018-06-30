@@ -11,6 +11,6 @@ eth
 
 def test_mlx4_port():
     result = Mlx4Port(context_wrap(MLX4_PORT))
-    assert result.port_val == {'mlx4_port1': 'ib', 'mlx4_port2': 'eth'}
-    assert result.port_val['mlx4_port1'] == 'ib'
+    assert result.port_val == {"mlx4_port1": "ib", "mlx4_port2": "eth"}
+    assert result.port_val["mlx4_port1"] == "ib"
     assert len(result.port_val) == 2

@@ -38,12 +38,13 @@ class RedhatRelease(Parser):
         self.raw = content[0]
         product, _, version_name = [v.strip() for v in content[0].partition("release")]
         version_name_split = [v.strip() for v in version_name.split(None, 1)]
-        code_name = (version_name_split[1].strip("()")
-                        if len(version_name_split) > 1 else None)
+        code_name = (
+            version_name_split[1].strip("()") if len(version_name_split) > 1 else None
+        )
         self.parsed = {
             "product": product,
             "version": version_name_split[0],
-            "code_name": code_name
+            "code_name": code_name,
         }
 
     @property

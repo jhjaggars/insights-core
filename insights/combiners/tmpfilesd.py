@@ -25,6 +25,7 @@ class AllTmpFiles(object):
         active_rules(dict): a dictionary of rules using the config file as the key
         file_paths(list): a list of the file paths for the configurations.
     """
+
     def __init__(self, tmpfiles):
         active_rules = {}
         files = set([])
@@ -36,7 +37,7 @@ class AllTmpFiles(object):
             if not active_rules.get(tmpfile.file_path):
                 active_rules[tmpfile.file_path] = []
             for new_rule in tmpfile.rules:
-                _file = (new_rule['path'])
+                _file = new_rule["path"]
                 if _file not in files:
                     files.add(_file)
                     active_rules[tmpfile.file_path].append(new_rule)
@@ -70,7 +71,7 @@ class AllTmpFiles(object):
         match = {}
         for r, d in self.active_rules.items():
             for i in self.active_rules[r]:
-                if i['path'] == path:
+                if i["path"] == path:
                     match[r] = i
 
         return match

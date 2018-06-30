@@ -31,4 +31,5 @@ class CobblerSettings(YAMLParser):
     """
     Read the ``/etc/cobbler/settings`` YAML file.
     """
+
     pass

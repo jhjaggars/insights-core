@@ -241,24 +241,23 @@ menuentry 'Red Hat Enterprise Linux Workstation (3.10.0-327.36.3.el7.x86_64) 7.2
 """
 
 
-class TestGrub2Module():
-
+class TestGrub2Module:
     def test_mod_internal(self):
         config = Grub2Config(context_wrap(MODULE_TEST))
         assert config
         assert type(config.kernel_initrds) == dict
         # Why is this two separate lists and not a list of dicts?
-        assert 'grub_initrds' in config.kernel_initrds
-        assert config.kernel_initrds['grub_initrds'] == [
-            'initramfs-3.10.0-327.36.3.el7.x86_64.img',
+        assert "grub_initrds" in config.kernel_initrds
+        assert config.kernel_initrds["grub_initrds"] == [
+            "initramfs-3.10.0-327.36.3.el7.x86_64.img"
         ]
-        assert 'grub_kernels' in config.kernel_initrds
-        assert config.kernel_initrds['grub_kernels'] == [
-            'vmlinuz-3.10.0-327.36.3.el7.x86_64']
+        assert "grub_kernels" in config.kernel_initrds
+        assert config.kernel_initrds["grub_kernels"] == [
+            "vmlinuz-3.10.0-327.36.3.el7.x86_64"
+        ]
 
 
-class TestGrub1ConfKdump():
-
+class TestGrub1ConfKdump:
     def test_kdump_iommu_enabled(self):
         assert Grub1Config(context_wrap(IOMMU_OFF)).is_kdump_iommu_enabled is False
         assert Grub1Config(context_wrap(IOMMU_MISSING)).is_kdump_iommu_enabled is False
@@ -268,7 +267,7 @@ class TestGrub1ConfKdump():
         assert Grub2Config(context_wrap(IOMMU2_ON)).is_kdump_iommu_enabled is True
 
 
-class TestGrub1Config():
+class TestGrub1Config:
     """
     #boot=/dev/sda
     default 0
@@ -280,56 +279,68 @@ class TestGrub1Config():
     title Red Hat Enterprise Linux Server (2.6.32-431.11.2.el6.x86_64)
             kernel /vmlinuz-2.6.32-431.11.2.el6.x86_64 crashkernel=128M rhgb quiet
     """
+
     def test_grub1_config(self):
         config = Grub1Config(context_wrap(GOOD_OFFSET_1))
         assert config
-        assert 'configs' in config
-        assert 'title' in config
-        assert 'menuentry' not in config
+        assert "configs" in config
+        assert "title" in config
+        assert "menuentry" not in config
 
-        assert len(config['configs']) == 4
-        assert config['configs'][0] == ('default', '0')
-        assert config['configs'][1] == ('timeout', '0')
-        assert config['configs'][2] == ('splashimage', '(hd0,0)/grub/splash.xpm.gz')
-        assert config['configs'][3] == ('hiddenmenu', None)
+        assert len(config["configs"]) == 4
+        assert config["configs"][0] == ("default", "0")
+        assert config["configs"][1] == ("timeout", "0")
+        assert config["configs"][2] == ("splashimage", "(hd0,0)/grub/splash.xpm.gz")
+        assert config["configs"][3] == ("hiddenmenu", None)
 
-        assert len(config['title']) == 2
-        assert len(config['title'][0]) == 2
-        assert config['title'][0][0] == ('title_name', 'Red Hat Enterprise Linux Server (2.6.32-431.17.1.el6.x86_64)')
-        assert config['title'][0][1] == ('kernel', '/vmlinuz-2.6.32-431.17.1.el6.x86_64 crashkernel=128M rhgb quiet')
-        assert len(config['title'][1]) == 2
-        assert config['title'][1][0] == ('title_name', 'Red Hat Enterprise Linux Server (2.6.32-431.11.2.el6.x86_64)')
-        assert config['title'][1][1] == ('kernel', '/vmlinuz-2.6.32-431.11.2.el6.x86_64 crashkernel=128M rhgb quiet')
+        assert len(config["title"]) == 2
+        assert len(config["title"][0]) == 2
+        assert config["title"][0][0] == (
+            "title_name",
+            "Red Hat Enterprise Linux Server (2.6.32-431.17.1.el6.x86_64)",
+        )
+        assert config["title"][0][1] == (
+            "kernel",
+            "/vmlinuz-2.6.32-431.17.1.el6.x86_64 crashkernel=128M rhgb quiet",
+        )
+        assert len(config["title"][1]) == 2
+        assert config["title"][1][0] == (
+            "title_name",
+            "Red Hat Enterprise Linux Server (2.6.32-431.11.2.el6.x86_64)",
+        )
+        assert config["title"][1][1] == (
+            "kernel",
+            "/vmlinuz-2.6.32-431.11.2.el6.x86_64 crashkernel=128M rhgb quiet",
+        )
 
         assert config.is_kdump_iommu_enabled is False
         assert type(config.kernel_initrds) == dict
         # Why is this two separate lists and not a list of dicts?
         # Because this config has been deliberately cut down and is not a
         # real GRUB configuration, it can't find the initrds.
-        assert 'grub_initrds' in config.kernel_initrds
-        assert config.kernel_initrds['grub_initrds'] == []
-        assert 'grub_kernels' in config.kernel_initrds
-        assert config.kernel_initrds['grub_kernels'] == [
-            'vmlinuz-2.6.32-431.17.1.el6.x86_64',
-            'vmlinuz-2.6.32-431.11.2.el6.x86_64'
+        assert "grub_initrds" in config.kernel_initrds
+        assert config.kernel_initrds["grub_initrds"] == []
+        assert "grub_kernels" in config.kernel_initrds
+        assert config.kernel_initrds["grub_kernels"] == [
+            "vmlinuz-2.6.32-431.17.1.el6.x86_64",
+            "vmlinuz-2.6.32-431.11.2.el6.x86_64",
         ]
 
 
-class TestGrub2Config():
-
+class TestGrub2Config:
     def test_grub2_config(self):
         config = Grub2Config(context_wrap(GRUB2_CONFIG))
         assert config
-        assert 'configs' in config
-        assert 'title' not in config
-        assert 'menuentry' in config
+        assert "configs" in config
+        assert "title" not in config
+        assert "menuentry" in config
 
         # Current parsing code is near useless for pulling information out of
         # GRUB2 config, as the file is actually a bash script.  So here we
         # don't do any testing of the junk in 'configs'.
-        assert len(config['configs']) > 0
+        assert len(config["configs"]) > 0
 
-        assert len(config['menuentry']) == 4
+        assert len(config["menuentry"]) == 4
         """
         menuentry 'Red Hat Enterprise Linux Workstation (3.10.0-327.36.3.el7.x86_64) 7.2 (Maipo)' --class red --class gnu-linux --class gnu --class os --unrestricted $menuentry_id_option 'gnulinux-3.10.0-123.13.2.el7.x86_64-advanced-fbff9f50-62c3-484e-bca5-d53f672cda7c' {
             load_video
@@ -349,25 +360,31 @@ class TestGrub2Config():
         """
         # The current parsing code does a very bad job of reading menu
         # entry configuration.  Test a few things but we hope for better.
-        assert len(config['menuentry'][0]) == 9
-        assert config['menuentry'][0][0] == ('menuentry_name', "'Red Hat Enterprise Linux Workstation (3.10.0-327.36.3.el7.x86_64) 7.2 (Maipo)' --class red --class gnu-linux --class gnu --class os --unrestricted $menuentry_id_option 'gnulinux-3.10.0-123.13.2.el7.x86_64-advanced-fbff9f50-62c3-484e-bca5-d53f672cda7c'")
-        assert config['menuentry'][0][1] == ('load_video', None)
-#        assert config['menuentry'][0][-2] == ('linux16', '/vmlinuz-3.10.0-327.36.3.el7.x86_64 root=/dev/RHEL7CSB/Root ro rd.lvm.lv=RHEL7CSB/Root rd.luks.uuid=luks-96c66446-77fd-4431-9508-f6912bd84194 crashkernel=auto  vconsole.keymap=us rd.lvm.lv=RHEL7CSB/Swap vconsole.font=latarcyrheb-sun16 rhgb quiet LANG=en_GB.utf8')
-        assert config['menuentry'][0][-1] == ('initrd16', '/initramfs-3.10.0-327.36.3.el7.x86_64.img')
+        assert len(config["menuentry"][0]) == 9
+        assert config["menuentry"][0][0] == (
+            "menuentry_name",
+            "'Red Hat Enterprise Linux Workstation (3.10.0-327.36.3.el7.x86_64) 7.2 (Maipo)' --class red --class gnu-linux --class gnu --class os --unrestricted $menuentry_id_option 'gnulinux-3.10.0-123.13.2.el7.x86_64-advanced-fbff9f50-62c3-484e-bca5-d53f672cda7c'",
+        )
+        assert config["menuentry"][0][1] == ("load_video", None)
+        #        assert config['menuentry'][0][-2] == ('linux16', '/vmlinuz-3.10.0-327.36.3.el7.x86_64 root=/dev/RHEL7CSB/Root ro rd.lvm.lv=RHEL7CSB/Root rd.luks.uuid=luks-96c66446-77fd-4431-9508-f6912bd84194 crashkernel=auto  vconsole.keymap=us rd.lvm.lv=RHEL7CSB/Swap vconsole.font=latarcyrheb-sun16 rhgb quiet LANG=en_GB.utf8')
+        assert config["menuentry"][0][-1] == (
+            "initrd16",
+            "/initramfs-3.10.0-327.36.3.el7.x86_64.img",
+        )
 
         assert type(config.kernel_initrds) == dict
         # Why is this two separate lists and not a list of dicts?
-        assert 'grub_initrds' in config.kernel_initrds
-        assert config.kernel_initrds['grub_initrds'] == [
-            'initramfs-3.10.0-327.36.3.el7.x86_64.img',
-            'initramfs-3.10.0-267.el7.x86_64.img',
-            'initramfs-3.10.0-230.el7synaptics.1186112.1186106.2.x86_64.img',
-            'initramfs-0-rescue-71483baa33934d94a7804a398fed6241.img'
+        assert "grub_initrds" in config.kernel_initrds
+        assert config.kernel_initrds["grub_initrds"] == [
+            "initramfs-3.10.0-327.36.3.el7.x86_64.img",
+            "initramfs-3.10.0-267.el7.x86_64.img",
+            "initramfs-3.10.0-230.el7synaptics.1186112.1186106.2.x86_64.img",
+            "initramfs-0-rescue-71483baa33934d94a7804a398fed6241.img",
         ]
-        assert 'grub_kernels' in config.kernel_initrds
-        assert config.kernel_initrds['grub_kernels'] == [
-            'vmlinuz-3.10.0-327.36.3.el7.x86_64',
-            'vmlinuz-3.10.0-267.el7.x86_64',
-            'vmlinuz-3.10.0-230.el7synaptics.1186112.1186106.2.x86_64',
-            'vmlinuz-0-rescue-71483baa33934d94a7804a398fed6241'
+        assert "grub_kernels" in config.kernel_initrds
+        assert config.kernel_initrds["grub_kernels"] == [
+            "vmlinuz-3.10.0-327.36.3.el7.x86_64",
+            "vmlinuz-3.10.0-267.el7.x86_64",
+            "vmlinuz-3.10.0-230.el7synaptics.1186112.1186106.2.x86_64",
+            "vmlinuz-0-rescue-71483baa33934d94a7804a398fed6241",
         ]

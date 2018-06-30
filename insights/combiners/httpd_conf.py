@@ -101,7 +101,8 @@ class HttpdConfAll(object):
                      such as ``UserDir``, are used.
         config_data (list): List of parsed config files in containing ConfigData named tuples.
     """
-    ConfigData = namedtuple('ConfigData', ['file_name', 'file_path', 'full_data_dict'])
+
+    ConfigData = namedtuple("ConfigData", ["file_name", "file_path", "full_data_dict"])
 
     def __init__(self, httpd_conf):
         self.data = {}
@@ -115,16 +116,19 @@ class HttpdConfAll(object):
             file_path = httpd_parser.file_path
 
             # Flag to be used for different handling of the main config file
-            main_config = httpd_parser.file_name == 'httpd.conf'
+            main_config = httpd_parser.file_name == "httpd.conf"
 
             if not main_config:
-                config_files_data.append(self.ConfigData(file_name, file_path,
-                                                         httpd_parser.data))
+                config_files_data.append(
+                    self.ConfigData(file_name, file_path, httpd_parser.data)
+                )
             else:
-                main_config_data.append(self.ConfigData(file_name, file_path,
-                                                        httpd_parser.first_half))
-                main_config_data.append(self.ConfigData(file_name, file_path,
-                                                        httpd_parser.second_half))
+                main_config_data.append(
+                    self.ConfigData(file_name, file_path, httpd_parser.first_half)
+                )
+                main_config_data.append(
+                    self.ConfigData(file_name, file_path, httpd_parser.second_half)
+                )
 
         # Sort configuration files
         config_files_data.sort()
@@ -133,7 +137,9 @@ class HttpdConfAll(object):
         # These values can be used when looking for bad settings which are not actually active
         # but may become active if other configurations are changed
         if main_config_data:
-            self.config_data = [main_config_data[0]] + config_files_data + [main_config_data[1]]
+            self.config_data = (
+                [main_config_data[0]] + config_files_data + [main_config_data[1]]
+            )
         else:
             self.config_data = config_files_data
 
@@ -176,6 +182,7 @@ class HttpdConfAll(object):
 
                 If directive or section does not exist, returns empty list.
         """
+
         def _deep_search(data, dr, sc):
             """
             Utility function to get search the directive `dr` in the nested
@@ -202,11 +209,12 @@ class HttpdConfAll(object):
 
         if section:
             if isinstance(section, str):
-                section = (section, '')
+                section = (section, "")
             elif isinstance(section, tuple) and len(section) == 1:
-                section = (section[0], '')
-            elif (not isinstance(section, tuple) or
-                    (len(section) == 0 or len(section) > 2)):
+                section = (section[0], "")
+            elif not isinstance(section, tuple) or (
+                len(section) == 0 or len(section) > 2
+            ):
                 return []
             return _deep_search(self.data, directive, section)
 
@@ -267,6 +275,7 @@ class HttpdConfAll(object):
 
             If section does not exist, returns empty list.
         """
+
         def _deep_search(data, sc):
             """
             Utility function to search for sections in the nested dict
@@ -291,7 +300,12 @@ class HttpdConfAll(object):
                         sect_file_name = None
                         sect_file_path = None
                         for subkey, subvalue in v.items():
-                            if subvalue and isinstance(subkey, str) and isinstance(subvalue, list) and isinstance(subvalue[0], ParsedData):
+                            if (
+                                subvalue
+                                and isinstance(subkey, str)
+                                and isinstance(subvalue, list)
+                                and isinstance(subvalue[0], ParsedData)
+                            ):
                                 # it is a directive, not a section, there's at least one ParsedData
                                 sect_file_name = subvalue[0].file_name
                                 sect_file_path = subvalue[0].file_path
@@ -316,6 +330,7 @@ class HttpConfDocParser(DocParser):
     Insights parser. It produces a configtree model constructed of ``Node``
     instances.
     """
+
     def parse_directive(self, lg):
         line = next(lg)
         name, attrs = parse_name_attrs(line)
@@ -360,6 +375,7 @@ def parse_doc(f, ctx=None):
 @parser(Specs.httpd_conf)
 class _HttpdConf(ConfigParser):
     """ Parser for individual httpd configuration files. """
+
     def parse_doc(self, content):
         return parse_doc(content, ctx=self)
 
@@ -372,6 +388,7 @@ class HttpdConfTree(ConfigCombiner):
 
     See the :py:class:`insights.core.ConfigComponent` class for example usage.
     """
+
     def __init__(self, confs):
         includes = startswith("Include")
         super(HttpdConfTree, self).__init__(confs, "httpd.conf", includes)

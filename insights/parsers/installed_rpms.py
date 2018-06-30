@@ -82,57 +82,57 @@ from insights.specs import Specs
 # https://pdc.fedoraproject.org/rest_api/v1/arches/
 KNOWN_ARCHITECTURES = [
     # Common architectures
-    'x86_64',
-    'i386',
-    'i486',
-    'i586',
-    'i686',
-    'src',
-    'ia64',
-    'ppc',
-    'ppc64',
-    's390',
-    's390x',
-    'amd64',
-    '(none)',
-    'noarch',
+    "x86_64",
+    "i386",
+    "i486",
+    "i586",
+    "i686",
+    "src",
+    "ia64",
+    "ppc",
+    "ppc64",
+    "s390",
+    "s390x",
+    "amd64",
+    "(none)",
+    "noarch",
     # Less common
-    'alpha',
-    'alphaev4',
-    'alphaev45',
-    'alphaev5',
-    'alphaev56',
-    'alphaev6',
-    'alphaev67',
-    'alphaev68',
-    'alphaev7',
-    'alphapca56',
-    'arm64',
-    'armv5tejl',
-    'armv5tel',
-    'armv6l',
-    'armv7hl',
-    'armv7hnl',
-    'armv7l',
-    'athlon',
-    'armhfp',
-    'geode',
-    'ia32e',
-    'nosrc',
-    'ppc64iseries',
-    'ppc64le',
-    'ppc64p7',
-    'ppc64pseries',
-    'sh3',
-    'sh4',
-    'sh4a',
-    'sparc',
-    'sparc64',
-    'sparc64v',
-    'sparcv8',
-    'sparcv9',
-    'sparcv9v',
-    'aarch64',
+    "alpha",
+    "alphaev4",
+    "alphaev45",
+    "alphaev5",
+    "alphaev56",
+    "alphaev6",
+    "alphaev67",
+    "alphaev68",
+    "alphaev7",
+    "alphapca56",
+    "arm64",
+    "armv5tejl",
+    "armv5tel",
+    "armv6l",
+    "armv7hl",
+    "armv7hnl",
+    "armv7l",
+    "athlon",
+    "armhfp",
+    "geode",
+    "ia32e",
+    "nosrc",
+    "ppc64iseries",
+    "ppc64le",
+    "ppc64p7",
+    "ppc64pseries",
+    "sh3",
+    "sh4",
+    "sh4a",
+    "sparc",
+    "sparc64",
+    "sparc64v",
+    "sparcv8",
+    "sparcv9",
+    "sparcv9v",
+    "aarch64",
 ]
 """list: List of recognized architectures.
 
@@ -147,6 +147,7 @@ class InstalledRpms(CommandParser):
     A parser for working with data containing a list of installed RPM files on the system and
     related information.
     """
+
     def __init__(self, *args, **kwargs):
         self.errors = []
         """list: List of input lines that indicate an error acquiring the data on the client."""
@@ -158,8 +159,8 @@ class InstalledRpms(CommandParser):
         super(InstalledRpms, self).__init__(*args, **kwargs)
 
     def parse_content(self, content):
-        for line in get_active_lines(content, comment_char='COMMAND>'):
-            if line.startswith('error:') or line.startswith('warning:'):
+        for line in get_active_lines(content, comment_char="COMMAND>"):
+            if line.startswith("error:") or line.startswith("warning:"):
                 self.errors.append(line)
             else:
                 try:
@@ -193,7 +194,7 @@ class InstalledRpms(CommandParser):
     @property
     def corrupt(self):
         """bool: True if RPM database is corrupted, else False."""
-        return any('rpmdbNextIterator' in s for s in self.errors)
+        return any("rpmdbNextIterator" in s for s in self.errors)
 
     def get_max(self, package_name):
         """
@@ -229,8 +230,7 @@ class InstalledRpms(CommandParser):
     def is_hypervisor(self):
         """bool: True if ".el[6|7]ev" exists in "vdsm".release, else False."""
         rpm = self.get_max("vdsm")
-        return (True if rpm and rpm.release.endswith((".el6ev", ".el7ev")) else
-                False)
+        return True if rpm and rpm.release.endswith((".el6ev", ".el7ev")) else False
 
     # re-export get_max/min with more descriptive names
     newest = get_max
@@ -271,7 +271,7 @@ def pad_version(left, right):
             if type(c) is int:
                 mn.append(0)
             elif isinstance(c, six.string_types):
-                mn.append('')
+                mn.append("")
             else:
                 raise Exception("pad_version failed (%s) (%s)" % (left, right))
 
@@ -319,8 +319,14 @@ class InstalledRpm(object):
              '8902150305004...b3576ff37da7e12e2285358267495ac48a437d4eefb3213' '\t'
              'RSA/8, Mon Aug 16 11:14:17 2010, Key ID 199e2f91fd431d51')
     """
+
     SOSREPORT_KEYS = [
-        'installtime', 'buildtime', 'vendor', 'buildserver', 'pgpsig', 'pgpsig_short'
+        "installtime",
+        "buildtime",
+        "vendor",
+        "buildserver",
+        "pgpsig",
+        "pgpsig_short",
     ]
     """list: List of keys for SOS Report RPM information."""
 
@@ -339,10 +345,11 @@ class InstalledRpm(object):
 
         for k, v in data.items():
             setattr(self, k, v)
-        if 'epoch' not in data:
-            self.epoch = '0'
+        if "epoch" not in data:
+            self.epoch = "0"
 
         """Below is only for version comparison"""
+
         def _start_of_distribution(rest_split):
             """
             The start of distribution field: from the right, the last non-digit part
@@ -360,11 +367,11 @@ class InstalledRpm(object):
 
         self._release_sep = self.release
         self._distribution = None
-        rl_split = self._release_sep.split('.') if self._release_sep else None
+        rl_split = self._release_sep.split(".") if self._release_sep else None
         idx = _start_of_distribution(rl_split) if rl_split else None
         if idx:
-            self._release_sep = '.'.join(rl_split[:idx])
-            self._distribution = '.'.join(rl_split[idx:])
+            self._release_sep = ".".join(rl_split[:idx])
+            self._distribution = ".".join(rl_split[idx:])
 
     @classmethod
     def from_package(cls, package_string):
@@ -426,7 +433,7 @@ class InstalledRpm(object):
         Returns:
             str: arch separator
         """
-        return '.' if package_string.rfind('.') > package_string.rfind('-') else '-'
+        return "." if package_string.rfind(".") > package_string.rfind("-") else "-"
 
     @classmethod
     def _parse_package(cls, package_string):
@@ -442,18 +449,13 @@ class InstalledRpm(object):
         pkg, arch = rsplit(package_string, cls._arch_sep(package_string))
         if arch not in KNOWN_ARCHITECTURES:
             pkg, arch = (package_string, None)
-        pkg, release = rsplit(pkg, '-')
-        name, version = rsplit(pkg, '-')
+        pkg, release = rsplit(pkg, "-")
+        name, version = rsplit(pkg, "-")
         # oracleasm packages have a dash in their version string, fix that
-        if name.startswith('oracleasm') and name.endswith('.el5'):
-            name, version2 = name.split('-', 1)
-            version = version2 + '-' + version
-        return {
-            'name': name,
-            'version': version,
-            'release': release,
-            'arch': arch
-        }
+        if name.startswith("oracleasm") and name.endswith(".el5"):
+            name, version2 = name.split("-", 1)
+            version = version2 + "-" + version
+        return {"name": name, "version": version, "release": release, "arch": arch}
 
     @classmethod
     def _parse_line(cls, line):
@@ -474,7 +476,7 @@ class InstalledRpm(object):
             rpm = cls._parse_package(line.strip())
             return rpm
         rpm = cls._parse_package(pkg)
-        rest = rest.split('\t')
+        rest = rest.split("\t")
         for i, value in enumerate(rest):
             rpm[cls.SOSREPORT_KEYS[i]] = value
         return rpm
@@ -482,9 +484,7 @@ class InstalledRpm(object):
     @property
     def package(self):
         """str: Package `name-version-release` string."""
-        return u'{0}-{1}-{2}'.format(self.name,
-                                     self.version,
-                                     self.release)
+        return u"{0}-{1}-{2}".format(self.name, self.version, self.release)
 
     @property
     def nvr(self):
@@ -499,7 +499,7 @@ class InstalledRpm(object):
     @property
     def source(self):
         """InstalledRpm: Returns source RPM of this RPM object."""
-        if hasattr(self, 'srpm'):
+        if hasattr(self, "srpm"):
             rpm = self.from_package(self.srpm)
             # Source RPMs don't have epoch for some reason
             rpm.epoch = self.epoch
@@ -513,7 +513,7 @@ class InstalledRpm(object):
         return getattr(self, item)
 
     def __str__(self):
-        return '{0}:{1}'.format(self.epoch, self.package)
+        return "{0}:{1}".format(self.epoch, self.package)
 
     def __unicode__(self):
         return str(self)
@@ -526,19 +526,27 @@ class InstalledRpm(object):
             return False
 
         if self.name != other.name:
-            raise ValueError('Cannot compare packages with differing names {0} != {1}'
-                             .format(self.name, other.name))
+            raise ValueError(
+                "Cannot compare packages with differing names {0} != {1}".format(
+                    self.name, other.name
+                )
+            )
         if (not self._distribution) != (not other._distribution):
-            raise ValueError('Cannot compare packages that one has distribution while the other does not {0} != {1}'
-                             .format(self.package, other.package))
+            raise ValueError(
+                "Cannot compare packages that one has distribution while the other does not {0} != {1}".format(
+                    self.package, other.package
+                )
+            )
 
         self_ep, other_ep = pad_version(self.epoch, other.epoch)
         self_v, other_v = pad_version(self.version, other.version)
         self_rl, other_rl = pad_version(self.release, other.release)
-        eq_ret = (type(self) == type(other) and
-                  self_ep == other_ep and
-                  self_v == other_v and
-                  self_rl == other_rl)
+        eq_ret = (
+            type(self) == type(other)
+            and self_ep == other_ep
+            and self_v == other_v
+            and self_rl == other_rl
+        )
 
         if self._distribution:
             self_d, other_d = pad_version(self._distribution, other._distribution)

@@ -20,6 +20,7 @@ def serializer(_type):
             raise Exception(msg % (dr.get_name(_type), dr.get_name(SERIALIZERS[_type])))
         SERIALIZERS[_type] = func
         return func
+
     return inner
 
 
@@ -29,9 +30,12 @@ def deserializer(_type):
     def inner(func):
         if _type in DESERIALIZERS:
             msg = "%s already has a deserializer registered: %s"
-            raise Exception(msg % (dr.get_name(_type), dr.get_name(DESERIALIZERS[_type])))
+            raise Exception(
+                msg % (dr.get_name(_type), dr.get_name(DESERIALIZERS[_type]))
+            )
         DESERIALIZERS[_type] = func
         return func
+
     return inner
 
 
@@ -69,9 +73,12 @@ def serialize(obj):
     the_ser = get_serializer(obj)
 
     if the_ser:
+
         def to_dict(x):
             return {"type": dr.get_name(type(obj)), "object": the_ser(x)}
+
     else:
+
         def to_dict(x):
             return {"type": None, "object": x}
 

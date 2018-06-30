@@ -92,7 +92,11 @@ class OVSvsctlshow(CommandParser):
         if len(content) < 3:
             return
         version_line = content[-1]
-        self.data = {"uuid": content[0], "bridges": {}, "ovs_version": version_line.split('"')[1]}
+        self.data = {
+            "uuid": content[0],
+            "bridges": {},
+            "ovs_version": version_line.split('"')[1],
+        }
         bridge_dict = {}
         port_dict = {}
         for line in content[1:-1]:

@@ -97,28 +97,32 @@ class CertList(CommandParser):
         self._rq_list = []
         current_request = None
 
-        _TRACK_HEADER = 'Number of certificates and requests being tracked: '
-        _RQ_HEADER = 'Request ID '
+        _TRACK_HEADER = "Number of certificates and requests being tracked: "
+        _RQ_HEADER = "Request ID "
         for line in content:
             line = line.strip()
             if line.startswith(_TRACK_HEADER):
-                num_tracked = line[len(_TRACK_HEADER):-1]
+                num_tracked = line[len(_TRACK_HEADER) : -1]
                 if not num_tracked.isdigit():
-                    raise ParseException("Incorrectly formatted number of certificates and requests")
+                    raise ParseException(
+                        "Incorrectly formatted number of certificates and requests"
+                    )
                 self.num_tracked = int(num_tracked)
             elif line.startswith(_RQ_HEADER):
-                current_request = line[len(_RQ_HEADER) + 1:-2]
+                current_request = line[len(_RQ_HEADER) + 1 : -2]
                 if current_request in self._data:
-                    raise ParseException("Found duplicate request ID '{rq}'".format(rq=current_request))
+                    raise ParseException(
+                        "Found duplicate request ID '{rq}'".format(rq=current_request)
+                    )
                 self._data[current_request] = {}
                 self.requests.append(current_request)
                 self._rq_list.append(self._data[current_request])
-            elif line.endswith(':'):
+            elif line.endswith(":"):
                 # Key with no value - fake it
                 key = line[:-1]
-                self._data[current_request][key] = ''
-            elif ': ' in line:
-                key, val = line.split(': ', 1)
+                self._data[current_request][key] = ""
+            elif ": " in line:
+                key, val = line.split(": ", 1)
                 self._data[current_request][key] = val
 
     def __contains__(self, rq):

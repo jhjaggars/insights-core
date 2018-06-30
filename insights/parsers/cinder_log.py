@@ -36,4 +36,5 @@ class CinderVolumeLog(LogFileOutput):
     .. note::
         Please refer to the super-class :class:`insights.core.LogFileOutput`
     """
+
     pass

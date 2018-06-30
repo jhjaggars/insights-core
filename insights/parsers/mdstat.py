@@ -110,7 +110,7 @@ class Mdstat(CommandParser):
 
         for line in content:
             line = line.strip()
-            if line.startswith('Personalities'):
+            if line.startswith("Personalities"):
                 in_component = False
                 self.personalities = parse_personalities(line)
             elif line.startswith("md"):  # Starting a component array stanza
@@ -130,27 +130,28 @@ class Mdstat(CommandParser):
 
         # Map component devices into MDs dictionary by device name
         for comp in self.components:
-            devname = comp['device_name']
+            devname = comp["device_name"]
             if devname not in self.mds:
                 #     md2 : active raid1 sdb3[1] sda3[0]
                 #           129596288 blocks [2/2] [UU]
                 self.mds[devname] = {
-                    'name': devname, 'active': comp['active'],
-                    'raid': comp['raid'], 'blocks': comp['blocks'],
-                    'devices': []
+                    "name": devname,
+                    "active": comp["active"],
+                    "raid": comp["raid"],
+                    "blocks": comp["blocks"],
+                    "devices": [],
                 }
-                for opt in ['level', 'chunk', 'algorithm']:
+                for opt in ["level", "chunk", "algorithm"]:
                     if opt in comp:
                         self.mds[devname][opt] = comp[opt]
-            self.mds[devname]['devices'].append(dict(
-                (k, comp[k]) for k in comp if k in ['component_name', 'role', 'up']
-            ))
+            self.mds[devname]["devices"].append(
+                dict(
+                    (k, comp[k]) for k in comp if k in ["component_name", "role", "up"]
+                )
+            )
 
         # Keep self.data just for backwards compat
-        self.data = {
-            'personalities': self.personalities,
-            'components': self.components
-        }
+        self.data = {"personalities": self.personalities, "components": self.components}
 
 
 def parse_personalities(personalities_line):
@@ -179,8 +180,8 @@ def parse_personalities(personalities_line):
 
     personalities = []
     for token in tokens:
-        assert token.startswith('[') and token.endswith(']')
-        personalities.append(token.strip('[]'))
+        assert token.startswith("[") and token.endswith("]")
+        personalities.append(token.strip("[]"))
 
     return personalities
 
@@ -245,15 +246,17 @@ def parse_array_start(md_line):
         if len(subtokens) > 2:
             device_flag = subtokens[2]
             if device_flag:
-                device_flag = device_flag.strip('()')
+                device_flag = device_flag.strip("()")
 
-        component_row = {"device_name": device_name,
-                         "raid": raid,
-                         "active": active,
-                         "auto_read_only": auto_read_only,
-                         "component_name": comp_name,
-                         "role": role,
-                         "device_flag": device_flag}
+        component_row = {
+            "device_name": device_name,
+            "raid": raid,
+            "active": active,
+            "auto_read_only": auto_read_only,
+            "component_name": comp_name,
+            "role": role,
+            "device_flag": device_flag,
+        }
         components.append(component_row)
     return components
 
@@ -282,24 +285,26 @@ def parse_array_status(line, components):
         136448 blocks [2/2] [UU]
         6306 blocks super external:imsm<Paste>
     """
-    status_line_re = r'(?P<blocks>\d+) blocks' + \
-        r'(?: super (?P<super>\S+))?' + \
-        r'(?: level (?P<level>\d+),)?' + \
-        r'(?: (?P<chunk>\d+k) chunk,)?' + \
-        r'(?: algorithm (?P<algorithm>\d+))?'
+    status_line_re = (
+        r"(?P<blocks>\d+) blocks"
+        + r"(?: super (?P<super>\S+))?"
+        + r"(?: level (?P<level>\d+),)?"
+        + r"(?: (?P<chunk>\d+k) chunk,)?"
+        + r"(?: algorithm (?P<algorithm>\d+))?"
+    )
     # Since we're only called once per line, unless there's a good way to
     # cache this regular expression in compiled form we're going to have to
     # compile it each time.
     status_line_rex = re.compile(status_line_re)
     match = status_line_rex.search(line)
     if match:
-        attributes = {'blocks': int(match.group('blocks'))}
-        if match.group('level'):
-            attributes['level'] = int(match.group('level'))
-        if match.group('chunk'):
-            attributes['chunk'] = match.group('chunk')
-        if match.group('algorithm'):
-            attributes['algorithm'] = int(match.group('algorithm'))
+        attributes = {"blocks": int(match.group("blocks"))}
+        if match.group("level"):
+            attributes["level"] = int(match.group("level"))
+        if match.group("chunk"):
+            attributes["chunk"] = match.group("chunk")
+        if match.group("algorithm"):
+            attributes["algorithm"] = int(match.group("algorithm"))
         for comp in components:
             comp.update(attributes)
 
@@ -336,7 +341,7 @@ def parse_upstring(line):
 
     match = re.search(UP_STRING_REGEX, line)
     if match:
-        return match.group().strip('[]')
+        return match.group().strip("[]")
     else:
         return None
 
@@ -370,8 +375,8 @@ def apply_upstring(upstring, component_list):
     assert len(upstring) == len(component_list)
 
     def add_up_key(comp_dict, up_indicator):
-        assert up_indicator == 'U' or up_indicator == "_"
-        comp_dict['up'] = up_indicator == 'U'
+        assert up_indicator == "U" or up_indicator == "_"
+        comp_dict["up"] = up_indicator == "U"
 
     for comp_dict, up_indicator in zip(component_list, upstring):
         add_up_key(comp_dict, up_indicator)

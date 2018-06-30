@@ -64,16 +64,20 @@ Syntax OK
 
 
 def test_httpd_M():
-    result = HttpdM(context_wrap(HTTPD_M_RHEL6, path='/usr/test/httpd_-M'))
-    assert result.httpd_command == '/usr/test/httpd'
-    assert sorted(result.loaded_modules) == sorted(result.shared_modules + result.static_modules)
-    assert 'core_module' in result
-    assert result['core_module'] == 'static'
+    result = HttpdM(context_wrap(HTTPD_M_RHEL6, path="/usr/test/httpd_-M"))
+    assert result.httpd_command == "/usr/test/httpd"
+    assert sorted(result.loaded_modules) == sorted(
+        result.shared_modules + result.static_modules
+    )
+    assert "core_module" in result
+    assert result["core_module"] == "static"
 
-    result = HttpdM(context_wrap(HTTPD_M_RHEL7, path='/usr/tst/httpd_-M'))
-    assert result.httpd_command == '/usr/tst/httpd'
-    assert sorted(result.loaded_modules) == sorted(result.shared_modules + result.static_modules)
-    assert 'core_module' not in result
+    result = HttpdM(context_wrap(HTTPD_M_RHEL7, path="/usr/tst/httpd_-M"))
+    assert result.httpd_command == "/usr/tst/httpd"
+    assert sorted(result.loaded_modules) == sorted(
+        result.shared_modules + result.static_modules
+    )
+    assert "core_module" not in result
 
 
 def test_httpd_M_exp():
@@ -88,8 +92,8 @@ def test_httpd_M_exp():
 
 def test_httpd_M_doc():
     env = {
-            'HttpdM': HttpdM,
-            'hm': HttpdM(context_wrap(HTTPD_M_DOC, path='/usr/sbin/httpd_-M'))
-          }
+        "HttpdM": HttpdM,
+        "hm": HttpdM(context_wrap(HTTPD_M_DOC, path="/usr/sbin/httpd_-M")),
+    }
     failed, total = doctest.testmod(httpd_M, globs=env)
     assert failed == 0

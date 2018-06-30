@@ -38,6 +38,7 @@ class HeatApiLog(LogFileOutput):
     .. note::
         Please refer to its super-class :py:class:`insights.core.LogFileOutput`
     """
+
     pass
 
 
@@ -65,4 +66,5 @@ class HeatEngineLog(LogFileOutput):
     .. note::
         Please refer to its super-class :py:class:`insights.core.LogFileOutput`
     """
+
     pass

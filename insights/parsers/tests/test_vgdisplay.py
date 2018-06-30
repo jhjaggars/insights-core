@@ -247,101 +247,152 @@ VGDISPLAY_VV = """
 """
 
 
-class TestVGdisplay():
+class TestVGdisplay:
     def test_VgDisplay(self):
         vg_info = vgdisplay.VgDisplay(context_wrap(VGDISPLAY))
-        assert hasattr(vg_info, 'vg_list')
-        assert vg_info.vg_list[0].get('VG Name') == 'rhel_hp-dl160g8-3'
-        assert vg_info.vg_list[0].get('Metadata Sequence No') == '5'
-        assert vg_info.vg_list[1].get('VG UUID') == 'by0Dl3-0lpB-MxEz-f6GO-9LYO-YRAQ-GufNZN'
-        assert hasattr(vg_info, 'debug_info')
-        assert vg_info.debug_info[0] == "Couldn't find device with uuid VVLmw8-e2AA-ECfW-wDPl-Vnaa-0wW1-utv7tV."
+        assert hasattr(vg_info, "vg_list")
+        assert vg_info.vg_list[0].get("VG Name") == "rhel_hp-dl160g8-3"
+        assert vg_info.vg_list[0].get("Metadata Sequence No") == "5"
+        assert (
+            vg_info.vg_list[1].get("VG UUID")
+            == "by0Dl3-0lpB-MxEz-f6GO-9LYO-YRAQ-GufNZN"
+        )
+        assert hasattr(vg_info, "debug_info")
+        assert (
+            vg_info.debug_info[0]
+            == "Couldn't find device with uuid VVLmw8-e2AA-ECfW-wDPl-Vnaa-0wW1-utv7tV."
+        )
         assert vg_info.debug_info[1] == "There are 1 physical volumes missing."
 
     def test_vgdisplay_vv(self):
         vg_info = vgdisplay.VgDisplay(context_wrap(VGDISPLAY_VV))
 
         # Volume group tests
-        assert hasattr(vg_info, 'vg_list')
+        assert hasattr(vg_info, "vg_list")
         vgdata = vg_info.vg_list
         assert isinstance(vgdata, list)
         assert len(vgdata) == 1
         vg = vgdata[0]
         assert isinstance(vg, dict)
-        assert sorted(vg.keys()) == sorted([
-            'VG Name', 'Format', 'Metadata Areas', 'Metadata Sequence No',
-            'VG Access', 'VG Status', 'MAX LV', 'Cur LV', 'Open LV',
-            'Max PV', 'Cur PV', 'Act PV', 'VG Size', 'PE Size', 'Total PE',
-            'Alloc PE / Size', 'Free  PE / Size', 'VG UUID',
-            'Logical Volumes', 'Physical Volumes'
-        ])
-        assert vg['VG Name'] == 'RHEL7CSB'
-        assert vg['Format'] == 'lvm2'
-        assert vg['Metadata Areas'] == '1'
-        assert vg['Metadata Sequence No'] == '13'
-        assert vg['VG Access'] == 'read/write'
-        assert vg['VG Status'] == 'resizable'
-        assert vg['MAX LV'] == '0'
-        assert vg['Cur LV'] == '7'
-        assert vg['Open LV'] == '6'
-        assert vg['Max PV'] == '0'
-        assert vg['Cur PV'] == '2'
-        assert vg['Act PV'] == '1'
-        assert vg['VG Size'] == '462.76 GiB'
-        assert vg['PE Size'] == '4.00 MiB'
-        assert vg['Total PE'] == '118466'
-        assert vg['Alloc PE / Size'] == '114430 / 446.99 GiB'
+        assert sorted(vg.keys()) == sorted(
+            [
+                "VG Name",
+                "Format",
+                "Metadata Areas",
+                "Metadata Sequence No",
+                "VG Access",
+                "VG Status",
+                "MAX LV",
+                "Cur LV",
+                "Open LV",
+                "Max PV",
+                "Cur PV",
+                "Act PV",
+                "VG Size",
+                "PE Size",
+                "Total PE",
+                "Alloc PE / Size",
+                "Free  PE / Size",
+                "VG UUID",
+                "Logical Volumes",
+                "Physical Volumes",
+            ]
+        )
+        assert vg["VG Name"] == "RHEL7CSB"
+        assert vg["Format"] == "lvm2"
+        assert vg["Metadata Areas"] == "1"
+        assert vg["Metadata Sequence No"] == "13"
+        assert vg["VG Access"] == "read/write"
+        assert vg["VG Status"] == "resizable"
+        assert vg["MAX LV"] == "0"
+        assert vg["Cur LV"] == "7"
+        assert vg["Open LV"] == "6"
+        assert vg["Max PV"] == "0"
+        assert vg["Cur PV"] == "2"
+        assert vg["Act PV"] == "1"
+        assert vg["VG Size"] == "462.76 GiB"
+        assert vg["PE Size"] == "4.00 MiB"
+        assert vg["Total PE"] == "118466"
+        assert vg["Alloc PE / Size"] == "114430 / 446.99 GiB"
         # Caveat Utilor: double space after Free for alignment purposes
-        assert vg['Free  PE / Size'] == '4036 / 15.77 GiB'
-        assert vg['VG UUID'] == 'aeMrAJ-QkAe-llvW-oAoE-CWLF-MnUd-edD1tI'
+        assert vg["Free  PE / Size"] == "4036 / 15.77 GiB"
+        assert vg["VG UUID"] == "aeMrAJ-QkAe-llvW-oAoE-CWLF-MnUd-edD1tI"
 
         # Logical volume tests
-        assert isinstance(vg['Logical Volumes'], dict)
-        assert len(vg['Logical Volumes']) == 7
+        assert isinstance(vg["Logical Volumes"], dict)
+        assert len(vg["Logical Volumes"]) == 7
         # Test the first LV and then get a few different keys
-        assert sorted(vg['Logical Volumes'].keys()) == sorted([
-            '/dev/RHEL7CSB/Home', '/dev/RHEL7CSB/ISOs_lv',
-            '/dev/RHEL7CSB/NotBackedUp_lv', '/dev/RHEL7CSB/RHEL6-pg-pgsql-lv',
-            '/dev/RHEL7CSB/Root', '/dev/RHEL7CSB/Swap', '/dev/RHEL7CSB/VMs_lv'
-        ])
-        lvhome = vg['Logical Volumes']['/dev/RHEL7CSB/Home']
+        assert sorted(vg["Logical Volumes"].keys()) == sorted(
+            [
+                "/dev/RHEL7CSB/Home",
+                "/dev/RHEL7CSB/ISOs_lv",
+                "/dev/RHEL7CSB/NotBackedUp_lv",
+                "/dev/RHEL7CSB/RHEL6-pg-pgsql-lv",
+                "/dev/RHEL7CSB/Root",
+                "/dev/RHEL7CSB/Swap",
+                "/dev/RHEL7CSB/VMs_lv",
+            ]
+        )
+        lvhome = vg["Logical Volumes"]["/dev/RHEL7CSB/Home"]
         assert isinstance(lvhome, dict)
-        assert sorted(lvhome.keys()) == sorted([
-            'LV Path', 'LV Name', 'VG Name', 'LV UUID', 'LV Write Access',
-            'LV Creation host, time', 'LV Status', '# open', 'LV Size',
-            'Current LE', 'Segments', 'Allocation', 'Read ahead sectors',
-            '- currently set to', 'Block device'
-        ])
-        assert lvhome['LV Path'] == '/dev/RHEL7CSB/Home'
-        assert lvhome['LV Name'] == 'Home'
-        assert lvhome['VG Name'] == 'RHEL7CSB'
-        assert lvhome['LV UUID'] == 'IdRMoU-JorV-ChPg-F1zb-6np9-yc08-qxj08f'
-        assert lvhome['LV Write Access'] == 'read/write'
-        assert lvhome['LV Creation host, time'] == 'localhost, 2015-04-16 00:02:47 +1000'
-        assert lvhome['LV Status'] == 'available'
-        assert lvhome['# open'] == '1'
-        assert lvhome['LV Size'] == '100.00 GiB'
-        assert lvhome['Current LE'] == '25600'
-        assert lvhome['Segments'] == '1'
-        assert lvhome['Allocation'] == 'inherit'
-        assert lvhome['Read ahead sectors'] == 'auto'
-        assert lvhome['- currently set to'] == '256'
-        assert lvhome['Block device'] == '253:3'
+        assert sorted(lvhome.keys()) == sorted(
+            [
+                "LV Path",
+                "LV Name",
+                "VG Name",
+                "LV UUID",
+                "LV Write Access",
+                "LV Creation host, time",
+                "LV Status",
+                "# open",
+                "LV Size",
+                "Current LE",
+                "Segments",
+                "Allocation",
+                "Read ahead sectors",
+                "- currently set to",
+                "Block device",
+            ]
+        )
+        assert lvhome["LV Path"] == "/dev/RHEL7CSB/Home"
+        assert lvhome["LV Name"] == "Home"
+        assert lvhome["VG Name"] == "RHEL7CSB"
+        assert lvhome["LV UUID"] == "IdRMoU-JorV-ChPg-F1zb-6np9-yc08-qxj08f"
+        assert lvhome["LV Write Access"] == "read/write"
+        assert (
+            lvhome["LV Creation host, time"] == "localhost, 2015-04-16 00:02:47 +1000"
+        )
+        assert lvhome["LV Status"] == "available"
+        assert lvhome["# open"] == "1"
+        assert lvhome["LV Size"] == "100.00 GiB"
+        assert lvhome["Current LE"] == "25600"
+        assert lvhome["Segments"] == "1"
+        assert lvhome["Allocation"] == "inherit"
+        assert lvhome["Read ahead sectors"] == "auto"
+        assert lvhome["- currently set to"] == "256"
+        assert lvhome["Block device"] == "253:3"
 
         # Physical volume tests
-        assert isinstance(vg['Physical Volumes'], dict)
-        assert len(vg['Physical Volumes']) == 2
-        assert '/dev/mapper/luks-96c66446-77fd-4431-9508-f6912bd84194' in vg['Physical Volumes']
-        pvluks = vg['Physical Volumes']['/dev/mapper/luks-96c66446-77fd-4431-9508-f6912bd84194']
-        assert sorted(pvluks.keys()) == sorted([
-            'PV Name', 'PV UUID', 'PV Status', 'Total PE / Free PE'
-        ])
-        assert pvluks['PV Name'] == '/dev/mapper/luks-96c66446-77fd-4431-9508-f6912bd84194'
-        assert pvluks['PV UUID'] == 'EfWV9V-03CX-E6zc-JkMw-yQae-wdzp-Je1KUn'
-        assert pvluks['PV Status'] == 'allocatable'
-        assert pvluks['Total PE / Free PE'] == '118466 / 4036'
+        assert isinstance(vg["Physical Volumes"], dict)
+        assert len(vg["Physical Volumes"]) == 2
+        assert (
+            "/dev/mapper/luks-96c66446-77fd-4431-9508-f6912bd84194"
+            in vg["Physical Volumes"]
+        )
+        pvluks = vg["Physical Volumes"][
+            "/dev/mapper/luks-96c66446-77fd-4431-9508-f6912bd84194"
+        ]
+        assert sorted(pvluks.keys()) == sorted(
+            ["PV Name", "PV UUID", "PV Status", "Total PE / Free PE"]
+        )
+        assert (
+            pvluks["PV Name"] == "/dev/mapper/luks-96c66446-77fd-4431-9508-f6912bd84194"
+        )
+        assert pvluks["PV UUID"] == "EfWV9V-03CX-E6zc-JkMw-yQae-wdzp-Je1KUn"
+        assert pvluks["PV Status"] == "allocatable"
+        assert pvluks["Total PE / Free PE"] == "118466 / 4036"
 
         # Debug info tests
-        assert hasattr(vg_info, 'debug_info')
+        assert hasattr(vg_info, "debug_info")
         assert isinstance(vg_info.debug_info, list)
         assert vg_info.debug_info == []

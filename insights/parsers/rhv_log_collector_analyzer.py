@@ -19,4 +19,5 @@ class RhvLogCollectorJson(CommandParser, JSONParser):
     """
     Class to parse the output of ``rhv-log-collector-analyzer --json``.
     """
+
     pass

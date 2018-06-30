@@ -40,4 +40,5 @@ add_filter(Specs.ls_var_tmp, "/var/tmp")
 @parser(Specs.ls_var_tmp)
 class LsVarTmp(CommandParser, FileListing):
     """Parses output of ``ls -ln /var/tmp`` command."""
+
     pass

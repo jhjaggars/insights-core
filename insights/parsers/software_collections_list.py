@@ -49,6 +49,7 @@ class SoftwareCollectionsListInstalled(Parser):
         False
 
     """
+
     def parse_content(self, content):
         self.records = []
         for line in get_active_lines(content):

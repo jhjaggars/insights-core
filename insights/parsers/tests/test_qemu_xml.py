@@ -250,45 +250,57 @@ or other application using the libvirt API.
 
 
 def test_vm_xml():
-    xml = qemu_xml.QemuXML(context_wrap(XML_NUMA, path='/etc/libvirt/qemu/vm.xml'))
-    assert xml.file_name == 'vm.xml'
-    assert xml.vm_name == '05-s00c06h0'
-    memnode = xml.get_elements('./numatune/memnode', None)
+    xml = qemu_xml.QemuXML(context_wrap(XML_NUMA, path="/etc/libvirt/qemu/vm.xml"))
+    assert xml.file_name == "vm.xml"
+    assert xml.vm_name == "05-s00c06h0"
+    memnode = xml.get_elements("./numatune/memnode", None)
     assert len(memnode[0].items()) == 3
     assert len(memnode[1].items()) == 3
 
     # No 'name' found
-    xml = qemu_xml.QemuXML(context_wrap(XML_NUMA_NO_NAME, path='/etc/libvirt/qemu/no_name.xml'))
+    xml = qemu_xml.QemuXML(
+        context_wrap(XML_NUMA_NO_NAME, path="/etc/libvirt/qemu/no_name.xml")
+    )
     assert xml.vm_name is None
 
 
 def test_rhel_7_4():
-    xml = qemu_xml.QemuXML(context_wrap(RHEL_7_4_XML, path='/etc/libvirt/qemu/rhel7.4.xml'))
-    assert xml.file_name == 'rhel7.4.xml'
-    assert xml.vm_name == 'rhel7.4'
-    os = xml.get_elements('./os/type')[0]
-    assert os.get('arch') == 'x86_64'
-    assert os.get('machine') == 'pc-i440fx-2.10'
+    xml = qemu_xml.QemuXML(
+        context_wrap(RHEL_7_4_XML, path="/etc/libvirt/qemu/rhel7.4.xml")
+    )
+    assert xml.file_name == "rhel7.4.xml"
+    assert xml.vm_name == "rhel7.4"
+    os = xml.get_elements("./os/type")[0]
+    assert os.get("arch") == "x86_64"
+    assert os.get("machine") == "pc-i440fx-2.10"
 
 
 def test_parse_dom():
-    xml = qemu_xml.QemuXML(context_wrap(RHEL_7_4_XML, path='/etc/libvirt/qemu/rhel7.4.xml'))
+    xml = qemu_xml.QemuXML(
+        context_wrap(RHEL_7_4_XML, path="/etc/libvirt/qemu/rhel7.4.xml")
+    )
     dom = xml.parse_dom()
-    assert dom.get('vcpu', None) == '4'
+    assert dom.get("vcpu", None) == "4"
 
-    xml = qemu_xml.QemuXML(context_wrap(XML_NUMA_NO_NAME, path='/etc/libvirt/qemu/no_name.xml'))
+    xml = qemu_xml.QemuXML(
+        context_wrap(XML_NUMA_NO_NAME, path="/etc/libvirt/qemu/no_name.xml")
+    )
     dom = xml.parse_dom()
-    assert dom.get('vcpu') is None
+    assert dom.get("vcpu") is None
 
 
 def test_blank_xml():
-    xml = qemu_xml.QemuXML(context_wrap(BLANK_XML, path='/etc/libvirt/qemu/blank.xml'))
-    assert xml.file_name == 'blank.xml'
+    xml = qemu_xml.QemuXML(context_wrap(BLANK_XML, path="/etc/libvirt/qemu/blank.xml"))
+    assert xml.file_name == "blank.xml"
     assert xml.vm_name is None
     assert xml.parse_dom() is None
 
 
 def test_documentation():
-    env = {'xml_numa': qemu_xml.QemuXML(context_wrap(XML_NUMA, path='/etc/libvirt/qemu/vm.xml'))}
+    env = {
+        "xml_numa": qemu_xml.QemuXML(
+            context_wrap(XML_NUMA, path="/etc/libvirt/qemu/vm.xml")
+        )
+    }
     failed_count, tests = doctest.testmod(qemu_xml, globs=env)
     assert failed_count == 0

@@ -45,14 +45,14 @@ admin_pass=admin
 def test_checkin_conf():
     result = CheckinConf(context_wrap(CONFIG))
 
-    assert list(result.sections()) == ['logging', 'spacewalk', 'katello']
-    assert result.get('spacewalk', 'host') == ''
+    assert list(result.sections()) == ["logging", "spacewalk", "katello"]
+    assert result.get("spacewalk", "host") == ""
 
 
 def test_checkin_conf_doc_examples():
     env = {
-        'CheckinConf': CheckinConf,
-        'checkin_conf': CheckinConf(context_wrap(CONFIG))
+        "CheckinConf": CheckinConf,
+        "checkin_conf": CheckinConf(context_wrap(CONFIG)),
     }
     failed, total = ic_testmod(checkin_conf, globs=env)
     assert failed == 0

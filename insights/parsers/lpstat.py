@@ -32,12 +32,12 @@ from .. import parser, CommandParser
 from insights.specs import Specs
 
 # Printer states
-PRINTER_STATUS_IDLE = 'IDLE'
-PRINTER_STATUS_PROCESSING = 'PROCESSING'
-PRINTER_STATUS_DISABLED = 'DISABLED'
-PRINTER_STATUS_UNKNOWN = 'UNKNOWN'
+PRINTER_STATUS_IDLE = "IDLE"
+PRINTER_STATUS_PROCESSING = "PROCESSING"
+PRINTER_STATUS_DISABLED = "DISABLED"
+PRINTER_STATUS_UNKNOWN = "UNKNOWN"
 
-START_LINE_MARKER = 'printer '
+START_LINE_MARKER = "printer "
 
 
 @parser(Specs.lpstat_p)
@@ -59,22 +59,22 @@ class LpstatPrinters(CommandParser):
             if line.startswith(START_LINE_MARKER):
                 printer_line = line[marker_len:]
                 # cut printer name until next space character
-                printer_name = printer_line[:printer_line.index(' ')]
+                printer_name = printer_line[: printer_line.index(" ")]
                 state_line_starts = marker_len + len(printer_name) + 1  # 1 is space
                 state_line = line[state_line_starts:]
 
                 printer = {
-                    'name': printer_name,
-                    'status': self._parse_status(state_line)
+                    "name": printer_name,
+                    "status": self._parse_status(state_line),
                 }
                 self.printers.append(printer)
 
     def _parse_status(self, state_line):
-        if 'is idle' in state_line:
+        if "is idle" in state_line:
             return PRINTER_STATUS_IDLE
-        elif 'printing' in state_line:
+        elif "printing" in state_line:
             return PRINTER_STATUS_PROCESSING
-        elif 'disabled' in state_line:
+        elif "disabled" in state_line:
             return PRINTER_STATUS_DISABLED
 
         return PRINTER_STATUS_UNKNOWN
@@ -85,5 +85,5 @@ class LpstatPrinters(CommandParser):
         Arguments:
             status (string)
         """
-        names = [prntr['name'] for prntr in self.printers if prntr['status'] == status]
+        names = [prntr["name"] for prntr in self.printers if prntr["status"] == status]
         return names

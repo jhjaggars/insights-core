@@ -62,33 +62,41 @@ class Uptime(CommandParser):
         line = content[0].strip()
 
         #  10:55:22 up 40 days, 21:17,  1 user,  load average: 0.49, 0.12, 0.04
-        curr_time_re = r'(?P<currtime>\d\d:\d\d:\d\d)'
+        curr_time_re = r"(?P<currtime>\d\d:\d\d:\d\d)"
         # Duration Variations:
         # 30 mins |  5:55 | 1 day, 3 mins | 2 days,  8:05
-        duration_re = r' up  ?(?:(?P<days>\d+) days?)?(?:, )?' + \
-            r'(?:(?:(?P<mins>\d+) mins?)?|(?: ?(?P<hhmm>\d?\d:\d\d)))'
-        users_re = r',  ?(?P<users>\d+) users?'
-        load_re = r',  ?load average: (?P<load1>\d+.\d\d), (?P<load5>\d+.\d\d), (?P<load15>\d+.\d\d)'
+        duration_re = (
+            r" up  ?(?:(?P<days>\d+) days?)?(?:, )?"
+            + r"(?:(?:(?P<mins>\d+) mins?)?|(?: ?(?P<hhmm>\d?\d:\d\d)))"
+        )
+        users_re = r",  ?(?P<users>\d+) users?"
+        load_re = r",  ?load average: (?P<load1>\d+.\d\d), (?P<load5>\d+.\d\d), (?P<load15>\d+.\d\d)"
         line_rex = re.compile(curr_time_re + duration_re + users_re + load_re)
 
         match = line_rex.search(line)
         if not match:
             raise ParseException("No uptime data found on '{line}'".format(line=line))
 
-        uptime_info['updays'] = match.group('days') if match.group('days') else ''
-        uptime_info['currtime'] = match.group('currtime')
-        uptime_info['uphhmm'] = match.group('hhmm') if match.group('hhmm') else ''
-        uptime_info['users'] = match.group('users')
-        uptime_info['loadavg'] = [match.group('load1'), match.group('load5'), match.group('load15')]
-        uptime_info['uptime'] = datetime.timedelta()
-        if not match.group('hhmm') and match.group('mins'):
-            uptime_info['uphhmm'] = '00:{m:02}'.format(m=int(match.group('mins')))
+        uptime_info["updays"] = match.group("days") if match.group("days") else ""
+        uptime_info["currtime"] = match.group("currtime")
+        uptime_info["uphhmm"] = match.group("hhmm") if match.group("hhmm") else ""
+        uptime_info["users"] = match.group("users")
+        uptime_info["loadavg"] = [
+            match.group("load1"),
+            match.group("load5"),
+            match.group("load15"),
+        ]
+        uptime_info["uptime"] = datetime.timedelta()
+        if not match.group("hhmm") and match.group("mins"):
+            uptime_info["uphhmm"] = "00:{m:02}".format(m=int(match.group("mins")))
 
-        if uptime_info['uphhmm']:
-            hours, mins = uptime_info['uphhmm'].split(':')
-            uptime_info['uptime'] += datetime.timedelta(hours=int(hours), minutes=int(mins))
-        if uptime_info['updays']:
-            uptime_info['uptime'] += datetime.timedelta(days=int(uptime_info['updays']))
+        if uptime_info["uphhmm"]:
+            hours, mins = uptime_info["uphhmm"].split(":")
+            uptime_info["uptime"] += datetime.timedelta(
+                hours=int(hours), minutes=int(mins)
+            )
+        if uptime_info["updays"]:
+            uptime_info["uptime"] += datetime.timedelta(days=int(uptime_info["updays"]))
 
         for k, v in uptime_info.items():
             setattr(self, k, v)

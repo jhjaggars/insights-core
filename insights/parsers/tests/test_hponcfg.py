@@ -18,5 +18,5 @@ def test_hponcfg():
     assert "1.40" == conf.firmware_revision
     assert "iLO 4" == conf.device_type
     assert "hpilo" == conf.driver_name
-    assert "foo.example.com" == conf['server_name']
-    assert "" == conf['server_number']
+    assert "foo.example.com" == conf["server_name"]
+    assert "" == conf["server_number"]

@@ -67,6 +67,7 @@ class HammerTaskList(CommandParser):
         can_authenticate (bool): Whether we have valid data; if False it's
             probably due to not being able to authenticate.
     """
+
     def __init__(self, *args, **kwargs):
         self.tasks = []
         self.can_authenticate = False
@@ -76,10 +77,12 @@ class HammerTaskList(CommandParser):
         # We can authenticate if we got at least a heading line - we assume
         # that we don't get one if we can't authenticate, but that we might
         # have zero tasks because the user has cleared old tasks out.
-        self.can_authenticate = any(line.startswith('ID') for line in content)
+        self.can_authenticate = any(line.startswith("ID") for line in content)
         # If we've got content, proceed!
         if self.can_authenticate:
-            self.tasks = parse_delimited_table(content, heading_ignore=['ID'], delim=',')
+            self.tasks = parse_delimited_table(
+                content, heading_ignore=["ID"], delim=","
+            )
 
     def __len__(self):
         return len(self.tasks)

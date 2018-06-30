@@ -76,13 +76,10 @@ class QpidStatQ(CommandParser):
 
     def parse_content(self, content):
         self.data = parse_fixed_table(
-            [line for line in content if '========' not in line],
-            heading_ignore=['queue']
+            [line for line in content if "========" not in line],
+            heading_ignore=["queue"],
         )
-        self.by_queue = dict(
-            (q['queue'], q)
-            for q in self.data
-        )
+        self.by_queue = dict((q["queue"], q) for q in self.data)
 
     def search(self, **kwargs):
         """
@@ -169,13 +166,10 @@ class QpidStatU(CommandParser):
 
     def parse_content(self, content):
         self.data = parse_fixed_table(
-            [line for line in content if '========' not in line],
-            heading_ignore=['subscr']
+            [line for line in content if "========" not in line],
+            heading_ignore=["subscr"],
         )
-        self.by_queue = dict(
-            (q['queue'], q)
-            for q in self.data
-        )
+        self.by_queue = dict((q["queue"], q) for q in self.data)
 
     def search(self, **kwargs):
         """

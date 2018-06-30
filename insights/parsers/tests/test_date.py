@@ -9,25 +9,25 @@ DATE_OUTPUT_INVALID = "Fon Pla 34 27:63:89 CST 20-1"
 
 
 def test_get_date1():
-    DATE = DATE_OUTPUT1 % ('CST')
+    DATE = DATE_OUTPUT1 % ("CST")
     date_info = Date(context_wrap(DATE))
     assert date_info.data == DATE
     assert date_info.datetime is not None
-    assert date_info.timezone == 'CST'
+    assert date_info.timezone == "CST"
 
 
 def test_get_date2():
-    DATE = DATE_OUTPUT2 % ('EDT')
+    DATE = DATE_OUTPUT2 % ("EDT")
     date_info = Date(context_wrap(DATE))
     assert date_info.data == DATE
     assert date_info.datetime is not None
-    assert date_info.timezone == 'EDT'
+    assert date_info.timezone == "EDT"
 
 
 def test_get_date_truncated():
     with pytest.raises(DateParseException) as e_info:
         Date(context_wrap(DATE_OUTPUT_TRUNCATED))
-    assert 'Expected six date parts.  Got ' in str(e_info.value)
+    assert "Expected six date parts.  Got " in str(e_info.value)
 
 
 def test_get_date_invalid():
@@ -37,8 +37,8 @@ def test_get_date_invalid():
 
 
 def test_get_date3():
-    DATE = DATE_OUTPUT1 % ('UTC')
+    DATE = DATE_OUTPUT1 % ("UTC")
     date_info = DateUTC(context_wrap(DATE))
     assert date_info.data == DATE
     assert date_info.datetime is not None
-    assert date_info.timezone == 'UTC'
+    assert date_info.timezone == "UTC"

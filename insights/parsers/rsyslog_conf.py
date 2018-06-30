@@ -51,12 +51,12 @@ class RsyslogConf(Parser):
 
         self.config_items = {}
         # Config items are e.g. "$Word value #optional comment"
-        config_re = re.compile(r'^\s*\$(?P<name>\S+)\s+(?P<value>.*?)(?:\s+#.*)?$')
+        config_re = re.compile(r"^\s*\$(?P<name>\S+)\s+(?P<value>.*?)(?:\s+#.*)?$")
         for line in self.data:
             lstrip = line.strip()
             match = config_re.match(lstrip)
             if match:
-                self.config_items[match.group('name')] = match.group('value')
+                self.config_items[match.group("name")] = match.group("value")
 
     def config_val(self, item, default=None):
         """

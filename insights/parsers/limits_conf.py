@@ -73,8 +73,8 @@ class LimitsConf(Parser):
                 # Wrong number of parts = bad line, store and continue
                 self.bad_lines.append(line)
                 continue
-            domain, typ, item, value = (linelist)
-            if value == 'unlimited' or value == 'infinity':
+            domain, typ, item, value = linelist
+            if value == "unlimited" or value == "infinity":
                 value = -1
             elif value.isdigit():
                 value = int(value)
@@ -84,13 +84,15 @@ class LimitsConf(Parser):
                 continue
 
             # All valid values, add to data
-            self.rules.append({
-                'domain': domain,
-                'type': typ,
-                'item': item,
-                'value': value,
-                'file': self.file_path,
-            })
+            self.rules.append(
+                {
+                    "domain": domain,
+                    "type": typ,
+                    "item": item,
+                    "value": value,
+                    "file": self.file_path,
+                }
+            )
             if domain not in self.domains:
                 self.domains.append(domain)
 
@@ -104,18 +106,21 @@ class LimitsConf(Parser):
         if ruleval == argval:
             return True
 
-        if param == 'domain':
+        if param == "domain":
             # Domains are special:
             # * Usernames are given exactly
             # * Group names are prefixed by @ and given exactly, argval must
             #   also start with @ and is therefore an exact match as above.
             # * Wildcards match everything:
-            if ruleval == '*':
+            if ruleval == "*":
                 return True
             # UID ranges - must be an integer argument:
-            if (not ruleval.startswith('@')) and ':' in ruleval and \
-             isinstance(argval, int):
-                low, high = ruleval.split(':')
+            if (
+                (not ruleval.startswith("@"))
+                and ":" in ruleval
+                and isinstance(argval, int)
+            ):
+                low, high = ruleval.split(":")
                 # :max matches exactly
                 if not low and int(high) == argval:
                     return True
@@ -127,10 +132,14 @@ class LimitsConf(Parser):
                     return True
             # GID ranges - argval must be a string starting with '@' and
             # all numbers.
-            if ruleval.startswith('@') and ':' in ruleval[1:] and \
-             isinstance(argval, str) and \
-             argval.startswith('@') and argval[1:].isdigit():
-                low, high = ruleval[1:].split(':')
+            if (
+                ruleval.startswith("@")
+                and ":" in ruleval[1:]
+                and isinstance(argval, str)
+                and argval.startswith("@")
+                and argval[1:].isdigit()
+            ):
+                low, high = ruleval[1:].split(":")
                 gid = int(argval[1:])
                 # :max matches exactly
                 if not low and int(high) == gid:
@@ -146,7 +155,7 @@ class LimitsConf(Parser):
         # From the man page: "Note, if you specify a type of '-' but neglect
         # to supply the item and value fields then the module will never
         # enforce any limits on the specified user/group etc."
-        if param == 'type' and ruleval == '-':
+        if param == "type" and ruleval == "-":
             return True
 
         return False
@@ -163,16 +172,18 @@ class LimitsConf(Parser):
         # Only work with the list of parameters that are actually specified -
         # this allows us to give other parameters in the future to control
         # the search.
-        search_params = [p for p in ['domain', 'type', 'item'] if p in kwargs]
+        search_params = [p for p in ["domain", "type", "item"] if p in kwargs]
         # If we didn't get a valid list of parameters, then don't do any work
         if not search_params:
             return matched
 
         for rule in self.rules:
-            if all([
-               self._matches(param, rule[param], kwargs[param])
-               for param in search_params
-               ]):
+            if all(
+                [
+                    self._matches(param, rule[param], kwargs[param])
+                    for param in search_params
+                ]
+            ):
                 matched.append(rule)
 
         return matched

@@ -49,8 +49,11 @@ if args.which == "integration":
     if os.path.exists(dest) and args.clean:
         print("Cleaning integration tests.")
         fs.remove(dest)
-    list(repo.build_integration_test_archives(args.package,
-                                              machine_id="c21320b6-29b1-11e5-adc7-28d244603426"))
+    list(
+        repo.build_integration_test_archives(
+            args.package, machine_id="c21320b6-29b1-11e5-adc7-28d244603426"
+        )
+    )
 else:
     dest = args.destination if args.destination else "./demo-archives"
     if os.path.exists(dest) and args.clean:
@@ -60,6 +63,7 @@ else:
     repo.build_all(demo_anchovies, dest=dest, clean=args.clean)
     if args.upload:
         import requests
+
         if args.verbose:
             import json
         session = requests.Session()

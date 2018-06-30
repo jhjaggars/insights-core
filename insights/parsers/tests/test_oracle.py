@@ -110,18 +110,21 @@ perftest.__streams_pool_size=0
 
 
 def test_pfile():
-    p = oracle.OraclePfile(context_wrap(PFILE, path='/u01/oracle/12/dbs/init.ora'))
-    assert p.data['db_name'] == 'orcl'
-    assert p.file_path == '/u01/oracle/12/dbs/init.ora'
+    p = oracle.OraclePfile(context_wrap(PFILE, path="/u01/oracle/12/dbs/init.ora"))
+    assert p.data["db_name"] == "orcl"
+    assert p.file_path == "/u01/oracle/12/dbs/init.ora"
 
 
 def test_spfile():
-    s = oracle.OracleSpfile(context_wrap(SPFILE, path='/u01/oracle/12/dbs/spfileperftest.ora'))
+    s = oracle.OracleSpfile(
+        context_wrap(SPFILE, path="/u01/oracle/12/dbs/spfileperftest.ora")
+    )
     conf = s.data
-    assert conf['*.db_name'] == 'perf_test'
-    assert conf['*.compatible'] == '12.1.0.2.0'
-    assert conf['*.dispatchers'] == '(protocol=tcp) (service=perftestxdb)'
-    assert conf['*.control_files'] == [
-        '/u01/app/oracle/oradata/perf_test/controlfile/o1_mf_cko573p9_.ctl',
-        '/u01/app/oracle/fast_recovery_area/perf_test/controlfile/o1_mf_cko573qn_.ctl']
-    assert s.file_path == '/u01/oracle/12/dbs/spfileperftest.ora'
+    assert conf["*.db_name"] == "perf_test"
+    assert conf["*.compatible"] == "12.1.0.2.0"
+    assert conf["*.dispatchers"] == "(protocol=tcp) (service=perftestxdb)"
+    assert conf["*.control_files"] == [
+        "/u01/app/oracle/oradata/perf_test/controlfile/o1_mf_cko573p9_.ctl",
+        "/u01/app/oracle/fast_recovery_area/perf_test/controlfile/o1_mf_cko573qn_.ctl",
+    ]
+    assert s.file_path == "/u01/oracle/12/dbs/spfileperftest.ora"

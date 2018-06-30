@@ -56,4 +56,5 @@ from insights.specs import Specs
 @parser(Specs.foreman_proxy_conf)
 class ForemanProxyConf(YAMLParser):
     """ Class for parsing the content of ``foreman_proxy_conf``."""
+
     pass

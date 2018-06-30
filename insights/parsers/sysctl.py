@@ -52,7 +52,7 @@ class SysctlConf(Parser):
     def parse_content(self, content):
         # Valid comments are both # and ; so remove one locally,
         # other comments and blank lines are removed by split fxn.
-        lines = [l for l in content if not l.strip().startswith(';')]
+        lines = [l for l in content if not l.strip().startswith(";")]
         self.data = split_kv_pairs(lines, ordered=True)
 
 
@@ -96,4 +96,5 @@ class SysctlConfInitramfs(CommandParser, LogFileOutput):
     .. note::
         Please refer to its super-class :class:`insights.core.LogFileOutput`
     """
+
     pass

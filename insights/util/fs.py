@@ -14,7 +14,7 @@ def read_in_chunks(file_object, chunk_size=1024):
 
 
 def touch(fname, times=None):
-    with open(fname, 'a'):
+    with open(fname, "a"):
         os.utime(fname, times)
 
 

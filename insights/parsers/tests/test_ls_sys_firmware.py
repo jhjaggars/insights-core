@@ -26,5 +26,11 @@ def test_ls_sys_firmware():
     ls_sys_firmware = LsSysFirmware(context_wrap(LS_SYS_FIRMWARE))
     assert "acpi" not in ls_sys_firmware
     assert "/sys/firmware/acpi" in ls_sys_firmware
-    assert ls_sys_firmware.dirs_of("/sys/firmware") == ['.', '..', 'acpi', 'dmi', 'memmap']
-    assert ls_sys_firmware.files_of("/sys/firmware/acpi") == ['pm_profile']
+    assert ls_sys_firmware.dirs_of("/sys/firmware") == [
+        ".",
+        "..",
+        "acpi",
+        "dmi",
+        "memmap",
+    ]
+    assert ls_sys_firmware.files_of("/sys/firmware/acpi") == ["pm_profile"]

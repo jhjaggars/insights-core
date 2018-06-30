@@ -195,15 +195,21 @@ class PamConfEntry(object):
         information about the control flags in a PAM configuration line.
     """
 
-    ControlFlag = namedtuple('ControlFlag', 'flag, value')
+    ControlFlag = namedtuple("ControlFlag", "flag, value")
 
-    type_re = r'(?P<type>-?(?:account|auth|password|session))'
-    control_re = r'(?P<control>required|requisite|sufficient|optional|' +\
-        r'include|substack|\[\w+=\w+(?:\s+\w+=\w+)*\])'
-    mod_path_re = r'(?P<module>[\w.-]+)'
-    mod_args_re = r'(?P<mod_args>\S.*)'
-    line_re = r'\s+'.join([type_re, control_re, mod_path_re]) + \
-        r'(?:\s+' + mod_args_re + r')?'
+    type_re = r"(?P<type>-?(?:account|auth|password|session))"
+    control_re = (
+        r"(?P<control>required|requisite|sufficient|optional|"
+        + r"include|substack|\[\w+=\w+(?:\s+\w+=\w+)*\])"
+    )
+    mod_path_re = r"(?P<module>[\w.-]+)"
+    mod_args_re = r"(?P<mod_args>\S.*)"
+    line_re = (
+        r"\s+".join([type_re, control_re, mod_path_re])
+        + r"(?:\s+"
+        + mod_args_re
+        + r")?"
+    )
     line_rex = re.compile(line_re)
 
     def __init__(self, line, pamd_conf=False, service=None):
@@ -215,7 +221,7 @@ class PamConfEntry(object):
         self.service = service
         self.interface = None
         self.ignored_if_module_not_found = None
-        self._control_raw = ''
+        self._control_raw = ""
         self.control_flags = []
         self.module_name = None
         self.module_args = None
@@ -228,18 +234,22 @@ class PamConfEntry(object):
             # The only valid situation to raise an error - the implementation
             # has called us with pamd_conf = true so we expect a service to
             # be given as a parameter.
-            raise ValueError('Service name must be provided for pam.d conf file')
+            raise ValueError("Service name must be provided for pam.d conf file")
 
         match = self.line_rex.search(line)
         if match:
             # Type can have a '-' in front, if so line is ignored if module
             # cannot be found.
-            self._type_raw = match.group('type')
-            self.ignored_if_module_not_found = self._type_raw[0] == '-'
-            self.interface = self._type_raw[1:] if self.ignored_if_module_not_found else self._type_raw
+            self._type_raw = match.group("type")
+            self.ignored_if_module_not_found = self._type_raw[0] == "-"
+            self.interface = (
+                self._type_raw[1:]
+                if self.ignored_if_module_not_found
+                else self._type_raw
+            )
             # Parse control token, either regular word or [key=val...]
-            self._control_raw = match.group('control')
-            if self._control_raw.startswith('['):
+            self._control_raw = match.group("control")
+            if self._control_raw.startswith("["):
                 self.control_flags = []
                 # Regex assures that it ends with ]
                 for group in self._control_raw[1:-1].split(None):
@@ -248,27 +258,34 @@ class PamConfEntry(object):
                     # or N where N is an unsigned integer.  But keep it simple
                     # for now.
                     # Regex makes sure that each group contains an '=' though.
-                    val, action = group.split('=', 1)
+                    val, action = group.split("=", 1)
                     self.control_flags.append(self.ControlFlag(val, action))
             else:
                 self.control_flags = [self.ControlFlag(self._control_raw, None)]
-            self.module_name = match.group('module')
-            self.module_args = match.group('mod_args') if 'mod_args' in match.groupdict() else None
+            self.module_name = match.group("module")
+            self.module_args = (
+                match.group("mod_args") if "mod_args" in match.groupdict() else None
+            )
             self.module_args_dict = (
-                optlist_to_dict(self.module_args, opt_sep=' ')
+                optlist_to_dict(self.module_args, opt_sep=" ")
                 if self.module_args is not None
                 else {}
             )
         else:
             # Line not valid - report error
-            self._errors.append("Cannot parse line '{l}' as a valid pam.d entry".format(l=self._full_line))
+            self._errors.append(
+                "Cannot parse line '{l}' as a valid pam.d entry".format(
+                    l=self._full_line
+                )
+            )
 
     def __repr__(self):
         return "<PamConfEntry for {svc}: {typ} {ctl} {name}{args}>".format(
-            svc=self.service, typ=self._type_raw, ctl=self._control_raw,
-            name=self.module_name, args=(
-                ' ' + self.module_args if self.module_args else ''
-            )
+            svc=self.service,
+            typ=self._type_raw,
+            ctl=self._control_raw,
+            name=self.module_name,
+            args=(" " + self.module_args if self.module_args else ""),
         )
 
 
@@ -316,6 +333,7 @@ class PamDConf(Parser):
         >>> account_rows[0].control_flags
         [ControlFlag(flag='optional', value=None)]
     """
+
     def parse_content(self, content):
         self.data = []
         # Need unsplit_lines for handling \ line continuations
@@ -354,28 +372,28 @@ class PamDConf(Parser):
         # Because keyword_search takes dicts, and we have objects with complex
         # properties, we convert them to a list of dicts.
         # First, store the things we're going to convert.
-        prop_keys = ('service', 'interface', 'module_name', 'module_args')
+        prop_keys = ("service", "interface", "module_name", "module_args")
         search = []
         # Can't find a neat way to do this as a comprehension, so it's back
         # to loops.
         for obj in self.data:
-            row = {'entry_obj': obj}
+            row = {"entry_obj": obj}
             for key in prop_keys:
                 row[key] = getattr(obj, key)
             # For hysterical reasons, module_args can contain None if not
             # defined, but that's non-iterable: replace with ''
-            if row['module_args'] is None:
-                row['module_args'] = ''
+            if row["module_args"] is None:
+                row["module_args"] = ""
             # Convert control_flags down to key/value dictionary
             flags = {}
             for cf in obj.control_flags:
                 flags[cf.flag] = cf.value
-            row['control_flags'] = flags
+            row["control_flags"] = flags
             search.append(row)
         # Now get the result, and just return the entry objects
         found = []
         for r in keyword_search(search, **kwargs):
-            found.append(r['entry_obj'])
+            found.append(r["entry_obj"])
         return found
 
 
@@ -386,6 +404,7 @@ class PamConf(PamDConf):
     Based on the PamDConf parser class, but the service must be given as
     the first element of the line, rather than assumed from the file name.
     """
+
     def parse_content(self, content):
         self.data = []
         for line in get_active_lines(content):

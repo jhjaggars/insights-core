@@ -24,12 +24,12 @@ Kernel pid terminated (application_controller) ({application_start_failure,kerne
 
 def test_rabbitmq_startup_log():
     log = RabbitMQStartupLog(context_wrap(STARTUP_LOG))
-    assert len(log.get('done')) == 5
+    assert len(log.get("done")) == 5
 
 
 def test_rabbitmq_start_err_log():
     log = RabbitMQStartupErrLog(context_wrap(STARTUP_ERR_LOG))
-    assert len(log.get('Error')) == 1
+    assert len(log.get("Error")) == 1
 
 
 RABBIT_MQ_LOG = """
@@ -51,6 +51,10 @@ fatal_frame_error
 def test_rabbitmq_log():
     # Note that this tests one file - normally shared[RabbitMQLogs] will
     # contain multiple parser objects.
-    log = RabbitMQLogs(context_wrap(RABBIT_MQ_LOG, path='/var/log/rabbitmq/rabbit@queue.example.com.log'))
-    assert len(log.get('AMQP')) == 3
+    log = RabbitMQLogs(
+        context_wrap(
+            RABBIT_MQ_LOG, path="/var/log/rabbitmq/rabbit@queue.example.com.log"
+        )
+    )
+    assert len(log.get("AMQP")) == 3
     assert len(list(log.get_after(datetime(2015, 6, 7, 3, 42, 20)))) == 9

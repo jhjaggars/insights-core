@@ -56,4 +56,5 @@ from insights.specs import Specs
 @parser(Specs.ls_dev)
 class LsDev(CommandParser, FileListing):
     """Parses output of ``ls -lanR /dev`` command."""
+
     pass

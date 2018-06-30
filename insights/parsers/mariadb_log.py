@@ -42,7 +42,5 @@ class MariaDBLog(LogFileOutput):
     .. note::
         Please refer to its super-class :class:`insights.core.LogFileOutput`
     """
-    time_format = {
-        'pre_10.1.5': '%y%m%d %H:%M:%S',
-        'post_10.1.5': '%Y-%m-%d %H:%M:%S'
-    }
+
+    time_format = {"pre_10.1.5": "%y%m%d %H:%M:%S", "post_10.1.5": "%Y-%m-%d %H:%M:%S"}

@@ -48,7 +48,7 @@ class QemuConf(LegacyItemAccess, Parser):
         current_key = ""
         for line in _lines:
             if "=" in line:
-                k, v = line.split('=')
+                k, v = line.split("=")
                 current_key = k.strip()
                 self.data[current_key] = v.strip("\"' ")
             else:

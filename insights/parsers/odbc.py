@@ -20,10 +20,16 @@ from insights.specs import Specs
 # and curent filter_list is not support case insensitive,
 # will add several duplicate keys here to filter out more useful data.
 filter_list = [
-        '[',
-        'DRIVER', 'Driver', 'driver',
-        'SERVER', 'Server', 'server',
-        'NO_SSPS', 'No_ssps', 'no_ssps',
+    "[",
+    "DRIVER",
+    "Driver",
+    "driver",
+    "SERVER",
+    "Server",
+    "server",
+    "NO_SSPS",
+    "No_ssps",
+    "no_ssps",
 ]
 add_filter(Specs.odbc_ini, filter_list)
 
@@ -57,6 +63,7 @@ class ODBCIni(IniConfigFile):
         >>> config.getint('myodbc5w', 'NO_SSPS')
         1
     """
+
     pass
 
 
@@ -88,4 +95,5 @@ class ODBCinstIni(IniConfigFile):
         >>> config.getint('PostgreSQL', 'FileUsage')
         1
     """
+
     pass

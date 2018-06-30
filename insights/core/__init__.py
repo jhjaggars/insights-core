@@ -20,6 +20,7 @@ from insights.core.serde import deserializer, serializer
 from insights.util import deprecated
 
 import sys
+
 # Since XPath expression is not supported by the ElementTree in Python 2.6,
 # import insights.contrib.ElementTree when running python is prior to 2.6 for compatibility.
 # Script insights.contrib.ElementTree is the same with xml.etree.ElementTree in Python 2.7.14
@@ -68,10 +69,15 @@ class Parser(object):
     """
 
     def __init__(self, context):
-        self.file_path = os.path.join("/", context.relative_path) if context.relative_path is not None else None
+        self.file_path = (
+            os.path.join("/", context.relative_path)
+            if context.relative_path is not None
+            else None
+        )
         """str: Full context path of the input file."""
-        self.file_name = os.path.basename(context.path) \
-            if context.path is not None else None
+        self.file_name = (
+            os.path.basename(context.path) if context.path is not None else None
+        )
         """str: Filename portion of the input file."""
         if hasattr(context, "last_client_run"):
             self.last_client_run = context.last_client_run
@@ -118,6 +124,7 @@ def flatten(docs, pred):
             else:
                 results.append(c)
         return results
+
     return inner(docs)
 
 
@@ -314,6 +321,7 @@ class ConfigParser(Parser, ConfigComponent):
     """
     Base Insights component class for Parsers of configuration files.
     """
+
     def parse_content(self, content):
         self.content = content
         self.doc = self.parse_doc(content)
@@ -331,6 +339,7 @@ class ConfigCombiner(ConfigComponent):
     include directives for supplementary configuration files. httpd and nginx
     are examples.
     """
+
     def __init__(self, confs, main_file, include_finder):
         self.confs = confs
         self.main = find_main(confs, main_file)
@@ -392,24 +401,25 @@ class SysconfigOptions(Parser):
 
         # Do not use get_active_lines, it strips comments within quotes
         for line in content:
-            if not line or line.startswith('#'):
+            if not line or line.startswith("#"):
                 continue
 
             try:
                 words = shlex.split(line)
             except ValueError:
                 # Handle foo=bar # unpaired ' or " here
-                line, comment = line.split(' #', 1)
+                line, comment = line.split(" #", 1)
                 words = shlex.split(line)
 
             # Either only one thing or line or rest starts with comment
             # but either way we need to have an equals in the first word.
-            if (len(words) == 1 or (len(words) > 1 and words[1][0] == '#')) \
-                    and '=' in words[0]:
-                key, value = words[0].split('=', 1)
+            if (
+                len(words) == 1 or (len(words) > 1 and words[1][0] == "#")
+            ) and "=" in words[0]:
+                key, value = words[0].split("=", 1)
                 result[key] = value
             # Only store lines if they aren't comments or blank
-            elif len(words) > 0 and words[0][0] != '#':
+            elif len(words) > 0 and words[0][0] != "#":
                 unparsed_lines.append(line)
         self.data = result
         self.unparsed_lines = unparsed_lines
@@ -616,9 +626,13 @@ class XMLParser(LegacyItemAccess, Parser):
         self.data = {}
         # ignore empty xml file
         if len(content) > 3:
-            self.raw = '\n'.join(content)
+            self.raw = "\n".join(content)
             self.dom = ET.fromstring(self.raw)
-            self.xmlns = self.dom.tag.strip("{").split("}")[0] if all(c in self.dom.tag for c in ["{", "}"]) else ""
+            self.xmlns = (
+                self.dom.tag.strip("{").split("}")[0]
+                if all(c in self.dom.tag for c in ["{", "}"])
+                else ""
+            )
             self.data = self.parse_dom()
 
     def get_elements(self, element, xmlns=None):
@@ -670,9 +684,10 @@ class YAMLParser(Parser, LegacyItemAccess):
     """
     A parser class that reads YAML files.  Base your own parser on this.
     """
+
     def parse_content(self, content):
         if type(content) is list:
-            self.data = yaml.safe_load('\n'.join(content))
+            self.data = yaml.safe_load("\n".join(content))
         else:
             self.data = yaml.safe_load(content)
 
@@ -683,8 +698,9 @@ class JSONParser(Parser, LegacyItemAccess):
     """
     A parser class that reads JSON files.  Base your own parser on this.
     """
+
     def parse_content(self, content):
-        self.data = json.loads(''.join(content))
+        self.data = json.loads("".join(content))
         self.doc = from_dict(self.data)
 
 
@@ -775,6 +791,7 @@ class Scannable(six.with_metaclass(ScanMeta, Parser)):
         Sets the `result_key` to the output of `func` if `func` ever returns
         truthy
         """
+
         def scanner(self, obj):
             current_value = getattr(self, result_key, None)
             setattr(self, result_key, current_value or func(obj))
@@ -787,6 +804,7 @@ class Scannable(six.with_metaclass(ScanMeta, Parser)):
         Sets the `result_key` to an iterable of objects for which `func(obj)`
         returns True
         """
+
         def scanner(self, obj):
             if not getattr(self, result_key, None):
                 setattr(self, result_key, [])
@@ -841,7 +859,7 @@ class LogFileOutput(six.with_metaclass(ScanMeta, Parser)):
         'Log file line one'
     """
 
-    time_format = '%Y-%m-%d %H:%M:%S'
+    time_format = "%Y-%m-%d %H:%M:%S"
     """
     The timestamp format assumed for the log files.  A subclass can override
     this for files that have a different timestamp format.  This can be:
@@ -872,7 +890,7 @@ class LogFileOutput(six.with_metaclass(ScanMeta, Parser)):
         Parse the line into a dictionary and return it. Only wrap with
         `raw_message` by default.
         """
-        return {'raw_message': line}
+        return {"raw_message": line}
 
     def _valid_search(self, s):
         """
@@ -881,11 +899,16 @@ class LogFileOutput(six.with_metaclass(ScanMeta, Parser)):
         """
         if isinstance(s, six.string_types):
             return lambda l: s in l
-        elif (isinstance(s, list) and len(s) > 0 and
-              all(isinstance(w, six.string_types) for w in s)):
+        elif (
+            isinstance(s, list)
+            and len(s) > 0
+            and all(isinstance(w, six.string_types) for w in s)
+        ):
             return lambda l: all(w in l for w in s)
         elif s is not None:
-            raise TypeError('Search items must be given as a string or a list of strings')
+            raise TypeError(
+                "Search items must be given as a string or a list of strings"
+            )
 
     def get(self, s):
         """
@@ -931,6 +954,7 @@ class LogFileOutput(six.with_metaclass(ScanMeta, Parser)):
         Define a property that is set to true if the given token is found in
         the log file.  Uses the __contains__ method of the log file.
         """
+
         def _scan(self):
             return token in self
 
@@ -942,6 +966,7 @@ class LogFileOutput(six.with_metaclass(ScanMeta, Parser)):
         Define a property that is set to the list of lines that contain the
         given token.  Uses the get method of the log file.
         """
+
         def _scan(self):
             return self.get(token)
 
@@ -1024,22 +1049,25 @@ class LogFileOutput(six.with_metaclass(ScanMeta, Parser)):
         # character sets.  Note that we don't include time zone or other
         # outputs (e.g. day-of-year) that don't usually occur in time stamps.
         format_conversion_for = {
-            'a': r'\w{3}', 'A': r'\w+',  # Week day name
-            'w': r'[0123456]',  # Week day number
-            'd': r'([0 ][123456789]|[12]\d|3[01])',  # Day of month
-            'b': r'\w{3}', 'B': r'\w+',  # Month name
-            'm': r'([0 ]\d|1[012])',  # Month number
-            'y': r'\d{2}', 'Y': r'\d{4}',  # Year
-            'H': r'([01 ]\d|2[0123])',  # Hour - 24 hour format
-            'I': r'([0 ]?\d|1[012])',  # Hour - 12 hour format
-            'p': r'\w{2}',  # AM / PM
-            'M': r'([012345]\d)',  # Minutes
-            'S': r'([012345]\d|60)',  # Seconds, including leap second
-            'f': r'\d{6}',  # Microseconds
+            "a": r"\w{3}",
+            "A": r"\w+",  # Week day name
+            "w": r"[0123456]",  # Week day number
+            "d": r"([0 ][123456789]|[12]\d|3[01])",  # Day of month
+            "b": r"\w{3}",
+            "B": r"\w+",  # Month name
+            "m": r"([0 ]\d|1[012])",  # Month number
+            "y": r"\d{2}",
+            "Y": r"\d{4}",  # Year
+            "H": r"([01 ]\d|2[0123])",  # Hour - 24 hour format
+            "I": r"([0 ]?\d|1[012])",  # Hour - 12 hour format
+            "p": r"\w{2}",  # AM / PM
+            "M": r"([012345]\d)",  # Minutes
+            "S": r"([012345]\d|60)",  # Seconds, including leap second
+            "f": r"\d{6}",  # Microseconds
         }
 
         # Construct the regex from the time string
-        timefmt_re = re.compile(r'%(\w)')
+        timefmt_re = re.compile(r"%(\w)")
 
         def replacer(match):
             if match.group(1) in format_conversion_for:
@@ -1061,18 +1089,19 @@ class LogFileOutput(six.with_metaclass(ScanMeta, Parser)):
         if isinstance(time_format, dict):
             time_format = list(time_format.values())
         if isinstance(time_format, six.string_types):
-            logs_have_year = ('%Y' in time_format or '%y' in time_format)
-            time_re = re.compile('(' + timefmt_re.sub(replacer, time_format) + ')')
+            logs_have_year = "%Y" in time_format or "%y" in time_format
+            time_re = re.compile("(" + timefmt_re.sub(replacer, time_format) + ")")
 
             # Curry strptime with time_format string.
             def test_parser(logstamp):
                 return datetime.datetime.strptime(logstamp, time_format)
+
             parse_fn = test_parser
         elif isinstance(time_format, list):
-            logs_have_year = all('%Y' in tf or '%y' in tf for tf in time_format)
-            time_re = re.compile('(' + '|'.join(
-                timefmt_re.sub(replacer, tf) for tf in time_format
-            ) + ')')
+            logs_have_year = all("%Y" in tf or "%y" in tf for tf in time_format)
+            time_re = re.compile(
+                "(" + "|".join(timefmt_re.sub(replacer, tf) for tf in time_format) + ")"
+            )
 
             def test_all_parsers(logstamp):
                 # One of these must match, because the regex has selected only
@@ -1083,6 +1112,7 @@ class LogFileOutput(six.with_metaclass(ScanMeta, Parser)):
                     except ValueError:
                         pass
                 return ts
+
             parse_fn = test_all_parsers
         else:
             raise ParseException(
@@ -1178,7 +1208,8 @@ class Syslog(LogFileOutput):
         the year of the logs will be inferred from the year in your timestamp.
         This will also work around December/January crossovers.
     """
-    time_format = '%b %d %H:%M:%S'
+
+    time_format = "%b %d %H:%M:%S"
 
     def _parse_line(self, line):
         """
@@ -1191,16 +1222,16 @@ class Syslog(LogFileOutput):
              'raw_message': '...: ...'
             }
         """
-        msg_info = {'raw_message': line}
-        if ': ' in line:
-            info, msg = [i.strip() for i in line.split(': ', 1)]
-            msg_info['message'] = msg
+        msg_info = {"raw_message": line}
+        if ": " in line:
+            info, msg = [i.strip() for i in line.split(": ", 1)]
+            msg_info["message"] = msg
 
             info_splits = info.split()
             if len(info_splits) == 5:
-                msg_info['timestamp'] = ' '.join(info_splits[:3])
-                msg_info['hostname'] = info_splits[3]
-                msg_info['procname'] = info_splits[4]
+                msg_info["timestamp"] = " ".join(info_splits[:3])
+                msg_info["hostname"] = info_splits[3]
+                msg_info["procname"] = info_splits[4]
         return msg_info
 
 
@@ -1317,9 +1348,9 @@ class IniConfigFile(ConfigParser):
         return section in self.data.sections()
 
     def __repr__(self):
-        return "INI file '{filename}' - sections:{sections}".\
-            format(filename=self.file_name,
-                   sections=self.data.sections())
+        return "INI file '{filename}' - sections:{sections}".format(
+            filename=self.file_name, sections=self.data.sections()
+        )
 
 
 class FileListing(Parser):
@@ -1393,26 +1424,30 @@ class FileListing(Parser):
 
     # I know I'm missing some types in the 'type' subexpression...
     # Modify the last '\S+' to '\S*' to match where there is no '.' at the end
-    perms_regex = r'^(?P<type>[bcdlps-])' +\
-        r'(?P<perms>[r-][w-][sSx-][r-][w-][sSx-][r-][w-][xsSt-]([.+-])?)'
-    links_regex = r'(?P<links>\d+)'
-    owner_regex = r'(?P<owner>[a-zA-Z0-9_-]+)\s+(?P<group>[a-zA-Z0-9_-]+)'
+    perms_regex = (
+        r"^(?P<type>[bcdlps-])"
+        + r"(?P<perms>[r-][w-][sSx-][r-][w-][sSx-][r-][w-][xsSt-]([.+-])?)"
+    )
+    links_regex = r"(?P<links>\d+)"
+    owner_regex = r"(?P<owner>[a-zA-Z0-9_-]+)\s+(?P<group>[a-zA-Z0-9_-]+)"
     # In 'size' we also cope with major, minor format character devices
     # by just catching the \d+, and then splitting it off later.
-    size_regex = r'(?P<size>(?:\d+,\s+)?\d+)'
+    size_regex = r"(?P<size>(?:\d+,\s+)?\d+)"
     # Note that we don't try to determine nonexistent month, day > 31, hour
     # > 23, minute > 59 or improbable year here.
     # TODO: handle non-English formatted dates here.
-    date_regex = r'(?P<date>\w{3}\s[ 0-9][0-9]\s(?:[012]\d:\d{2}|\s\d{4}))'
-    name_regex = r'(?P<name>[^/ ][^/]*?)(?: -> (?P<link>\S.*))?$'
-    normal_regex = '\s+'.join((perms_regex, links_regex, owner_regex,
-                              size_regex, date_regex, name_regex))
+    date_regex = r"(?P<date>\w{3}\s[ 0-9][0-9]\s(?:[012]\d:\d{2}|\s\d{4}))"
+    name_regex = r"(?P<name>[^/ ][^/]*?)(?: -> (?P<link>\S.*))?$"
+    normal_regex = "\s+".join(
+        (perms_regex, links_regex, owner_regex, size_regex, date_regex, name_regex)
+    )
     normal_re = re.compile(normal_regex)
 
-    context_regex = r'(?P<se_user>\w+_u):(?P<se_role>\w+_r):' +\
-        r'(?P<se_type>\w+_t):(?P<se_mls>\S+)'
-    selinux_regex = '\s+'.join((perms_regex, owner_regex, context_regex,
-                               name_regex))
+    context_regex = (
+        r"(?P<se_user>\w+_u):(?P<se_role>\w+_r):"
+        + r"(?P<se_type>\w+_t):(?P<se_mls>\S+)"
+    )
+    selinux_regex = "\s+".join((perms_regex, owner_regex, context_regex, name_regex))
     selinux_re = re.compile(selinux_regex)
 
     def __init__(self, context, selinux=False):
@@ -1432,16 +1467,18 @@ class FileListing(Parser):
         # '-R' flag we should grab this but it's probably not worth parsing
         # the flags to ls for this.
         self.first_path = None
-        path_re = re.compile(r'ls_-\w+(?P<path>.*)$')
+        path_re = re.compile(r"ls_-\w+(?P<path>.*)$")
         match = path_re.search(context.path)
         if match:
-            fpath = match.group('path')
-            self.first_path = '/' if not fpath else fpath.replace('.', '/').replace('_', ' ')
+            fpath = match.group("path")
+            self.first_path = (
+                "/" if not fpath else fpath.replace(".", "/").replace("_", " ")
+            )
         super(FileListing, self).__init__(context)
 
     def parse_file_match(self, this_dir, line):
         # Save all the raw directory entries, even if we can't parse them
-        this_dir['raw_list'].append(line)
+        this_dir["raw_list"].append(line)
         match = self.file_re.search(line)
         if not match:
             # Can't do anything more with the line here
@@ -1449,43 +1486,43 @@ class FileListing(Parser):
 
         # Get the fields from the regex
         this_file = match.groupdict()
-        this_file['raw_entry'] = line
-        this_file['dir'] = this_dir['name']
-        typ = match.group('type')
+        this_file["raw_entry"] = line
+        this_file["dir"] = this_dir["name"]
+        typ = match.group("type")
 
         # There's a bunch of stuff that the SELinux listing doesn't contain:
         if not self.selinux:
             # Type conversions
-            this_file['links'] = int(this_file['links'])
+            this_file["links"] = int(this_file["links"])
             # Is this a character or block device?  If so, it should
             # have a major, minor 'size':
-            size = match.group('size')
-            if typ in 'bc':
+            size = match.group("size")
+            if typ in "bc":
                 # What should we do if we expect a major, minor size but
                 # don't get one?
-                if ',' in size:
-                    major, minor = match.group('size').split(',')
-                    this_file['major'] = int(major.strip())
-                    this_file['minor'] = int(minor.strip())
+                if "," in size:
+                    major, minor = match.group("size").split(",")
+                    this_file["major"] = int(major.strip())
+                    this_file["minor"] = int(minor.strip())
                     # Remove other 'size' entries
-                    del(this_file['size'])
+                    del (this_file["size"])
             else:
                 # What should we do if we get a comma here?
-                if ',' not in size:
-                    this_file['size'] = int(match.group('size'))
+                if "," not in size:
+                    this_file["size"] = int(match.group("size"))
 
         # If this is not a symlink, remove the link key
-        if not this_file['link']:
-            del this_file['link']
+        if not this_file["link"]:
+            del this_file["link"]
         # Now add it to our various properties
-        file_name = this_file['name']
-        this_dir['entries'][file_name] = this_file
-        if typ in 'bc':
-            this_dir['specials'].append(file_name)
-        if typ == 'd':
-            this_dir['dirs'].append(file_name)
+        file_name = this_file["name"]
+        this_dir["entries"][file_name] = this_file
+        if typ in "bc":
+            this_dir["specials"].append(file_name)
+        if typ == "d":
+            this_dir["dirs"].append(file_name)
         else:
-            this_dir['files'].append(file_name)
+            this_dir["files"].append(file_name)
 
     def parse_content(self, content):
         """
@@ -1498,21 +1535,27 @@ class FileListing(Parser):
             l = line.strip()
             if not l:
                 continue
-            if (l.startswith('/') and l.endswith(':')) or (self.first_path):
+            if (l.startswith("/") and l.endswith(":")) or (self.first_path):
                 # Directory name from output first and context path second
-                if (l.startswith('/') and l.endswith(':')):
+                if l.startswith("/") and l.endswith(":"):
                     name = l[:-1]
                 else:
                     name = self.first_path
                 # Unset the first path so we don't come here again.
                 self.first_path = None
                 # New structures for a new directory
-                this_dir = {'entries': {}, 'files': [], 'dirs': [],
-                            'specials': [], 'total': 0, 'raw_list': [],
-                            'name': name}
+                this_dir = {
+                    "entries": {},
+                    "files": [],
+                    "dirs": [],
+                    "specials": [],
+                    "total": 0,
+                    "raw_list": [],
+                    "name": name,
+                }
                 listings[name] = this_dir
-            elif l.startswith('total') and l[6:].isdigit():
-                this_dir['total'] = int(l[6:])
+            elif l.startswith("total") and l[6:].isdigit():
+                this_dir["total"] = int(l[6:])
             elif not this_dir:
                 # This state can happen if processing an archive that filtered
                 # a file listing due to an old spec definition.
@@ -1523,7 +1566,7 @@ class FileListing(Parser):
 
         self.listings = listings
         # No longer need the first path found, if any.
-        delattr(self, 'first_path')
+        delattr(self, "first_path")
 
     # Now some helpers to make some things easier:
     def __contains__(self, directory):
@@ -1537,25 +1580,25 @@ class FileListing(Parser):
         The list of non-special files (i.e. not block or character files)
         in the given directory.
         """
-        return self.listings[directory]['files']
+        return self.listings[directory]["files"]
 
     def dirs_of(self, directory):
         """
         The list of subdirectories in the given directory.
         """
-        return self.listings[directory]['dirs']
+        return self.listings[directory]["dirs"]
 
     def specials_of(self, directory):
         """
         The list of block and character special files in the given directory.
         """
-        return self.listings[directory]['specials']
+        return self.listings[directory]["specials"]
 
     def total_of(self, directory):
         """
         The total blocks of storage consumed by entries in this directory.
         """
-        return self.listings[directory]['total']
+        return self.listings[directory]["total"]
 
     def listing_of(self, directory):
         """
@@ -1564,43 +1607,43 @@ class FileListing(Parser):
         Entries that can be parsed then have fields as described in the class
         description above.
         """
-        return self.listings[directory]['entries']
+        return self.listings[directory]["entries"]
 
     def dir_contains(self, directory, name):
         """
         Does this directory contain this entry name?
         """
-        return name in self.listings[directory]['entries']
+        return name in self.listings[directory]["entries"]
 
     def dir_entry(self, directory, name):
         """
         The parsed data for the given entry name in the given directory.
         """
-        return self.listings[directory]['entries'][name]
+        return self.listings[directory]["entries"][name]
 
     def path_entry(self, path):
         """
         The parsed data given a path, which is separated into its directory
         and entry name.
         """
-        if path[0] != '/':
+        if path[0] != "/":
             return None
-        path_parts = path.split('/')
+        path_parts = path.split("/")
         # Note that here the first element will be '' because it's before the
         # first separator.  That's OK, the join puts it back together.
-        directory = '/'.join(path_parts[:-1])
+        directory = "/".join(path_parts[:-1])
         name = path_parts[-1]
         if directory not in self.listings:
             return None
-        if name not in self.listings[directory]['entries']:
+        if name not in self.listings[directory]["entries"]:
             return None
-        return self.listings[directory]['entries'][name]
+        return self.listings[directory]["entries"][name]
 
     def raw_directory(self, directory):
         """
         The list of raw lines from the directory, as is.
         """
-        return self.listings[directory]['raw_list']
+        return self.listings[directory]["raw_list"]
 
 
 class AttributeDict(dict):

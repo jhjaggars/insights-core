@@ -15,10 +15,12 @@ def load_and_read(path):
 
 
 CONFIGS = [
-    pkgutil.get_data('insights', 'defaults.yaml'),
+    pkgutil.get_data("insights", "defaults.yaml"),
     load_and_read(os.path.join("/etc", NAME)),  # System-wide config
-    load_and_read(os.path.join(os.path.expanduser("~/.local"), NAME)),  # User-specific config
-    load_and_read("." + NAME)  # Directory-specific config
+    load_and_read(
+        os.path.join(os.path.expanduser("~/.local"), NAME)
+    ),  # User-specific config
+    load_and_read("." + NAME),  # Directory-specific config
 ]
 
 config = {}

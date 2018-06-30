@@ -26,10 +26,12 @@ Pattern has 2 elts (size 16)
 
 def test_fcmatch_v1():
     fc_match = FCMatch(context_wrap(FCMATCH_V1))
-    assert fc_match.data == [{'fontformat': '"TrueType"(w)', 'family': '"DejaVu Sans"(s)'},
-                             {'fontformat': '"Type 1"(s)', 'family': '"Nimbus Sans L"(s)'},
-                             {'fontformat': '"Type 1"(s)', 'family': '"Standard Symbols L"(s)'}]
-    assert fc_match[0] == {'fontformat': '"TrueType"(w)', 'family': '"DejaVu Sans"(s)'}
+    assert fc_match.data == [
+        {"fontformat": '"TrueType"(w)', "family": '"DejaVu Sans"(s)'},
+        {"fontformat": '"Type 1"(s)', "family": '"Nimbus Sans L"(s)'},
+        {"fontformat": '"Type 1"(s)', "family": '"Standard Symbols L"(s)'},
+    ]
+    assert fc_match[0] == {"fontformat": '"TrueType"(w)', "family": '"DejaVu Sans"(s)'}
     for item in fc_match:
         if item["family"] == '"DejaVu Sans"(s)':
             assert item["fontformat"] == '"TrueType"(w)'

@@ -34,6 +34,7 @@ class Hostname(CommandParser):
         hostname: The hostname.
         domain: The domain get from the fqdn.
     """
+
     def parse_content(self, content):
         content = list(filter(None, content))
         if len(content) != 1:

@@ -51,6 +51,6 @@ class LsVarLog(CommandParser, FileListing):
             FilePermissions: If found or None if not found.
         """
         if dir_name_where_to_search in self:
-            d = self.listings[dir_name_where_to_search]['entries']
+            d = self.listings[dir_name_where_to_search]["entries"]
             if dir_or_file_name_to_get in d:
-                return FilePermissions(d[dir_or_file_name_to_get]['raw_entry'])
+                return FilePermissions(d[dir_or_file_name_to_get]["raw_entry"])

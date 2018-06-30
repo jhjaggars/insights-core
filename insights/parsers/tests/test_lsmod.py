@@ -25,7 +25,7 @@ ip6table_nat           12864  1
 def test_get_modules_info():
     mod_dict = lsmod.LsMod(context_wrap(LSMODINFO))
     assert len(mod_dict.data) == 16
-    assert 'xt_CHECKSUM' in mod_dict
-    assert mod_dict['tun'].get('depnum') == '3'
-    assert mod_dict['llc'].get('deplist') == 'stp,bridge'
-    assert mod_dict['ip6table_nat'].get('size') == '12864'
+    assert "xt_CHECKSUM" in mod_dict
+    assert mod_dict["tun"].get("depnum") == "3"
+    assert mod_dict["llc"].get("deplist") == "stp,bridge"
+    assert mod_dict["ip6table_nat"].get("size") == "12864"

@@ -65,19 +65,33 @@ JBOSS_STANDALONE_CONFIG = """
 
 def test_jboss_standalone_conf():
     jboss_standalone_conf = JbossStandaloneConf(
-        context_wrap(JBOSS_STANDALONE_CONFIG, path="/root/jboss/jboss-eap-6.4/standalone/configuration/standalone.xml"))
+        context_wrap(
+            JBOSS_STANDALONE_CONFIG,
+            path="/root/jboss/jboss-eap-6.4/standalone/configuration/standalone.xml",
+        )
+    )
     assert jboss_standalone_conf is not None
-    assert jboss_standalone_conf.file_path == "/root/jboss/jboss-eap-6.4/standalone/configuration/standalone.xml"
-    assert jboss_standalone_conf.get_elements(
-        ".//management/security-realms/security-realm/authentication/properties")[0].get(
-        "relative-to") == 'jboss.server.config.dir'
+    assert (
+        jboss_standalone_conf.file_path
+        == "/root/jboss/jboss-eap-6.4/standalone/configuration/standalone.xml"
+    )
+    assert (
+        jboss_standalone_conf.get_elements(
+            ".//management/security-realms/security-realm/authentication/properties"
+        )[0].get("relative-to")
+        == "jboss.server.config.dir"
+    )
 
 
 def test_jboss_standalone_conf_doc_examples():
     env = {
-        'JbossStandaloneConf': JbossStandaloneConf,
-        'jboss_main_config': JbossStandaloneConf(context_wrap(JBOSS_STANDALONE_CONFIG,
-                                                              path='/root/jboss/jboss-eap-6.4/standalone/configuration/standalone.xml'))
+        "JbossStandaloneConf": JbossStandaloneConf,
+        "jboss_main_config": JbossStandaloneConf(
+            context_wrap(
+                JBOSS_STANDALONE_CONFIG,
+                path="/root/jboss/jboss-eap-6.4/standalone/configuration/standalone.xml",
+            )
+        ),
     }
     failed, total = doctest.testmod(jboss_standalone_main_conf, globs=env)
     assert failed == 0

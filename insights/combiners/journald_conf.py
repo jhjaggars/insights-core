@@ -64,11 +64,16 @@ Examples:
 """
 
 from insights.core.plugins import combiner
-from insights.parsers.journald_conf import EtcJournaldConf, EtcJournaldConfD, UsrJournaldConfD
+from insights.parsers.journald_conf import (
+    EtcJournaldConf,
+    EtcJournaldConfD,
+    UsrJournaldConfD,
+)
 
 
 # TODO - further insights work - convert this to a generic option & file priority evaluator for
 #        other combiners.
+
 
 @combiner(EtcJournaldConf, optional=[EtcJournaldConfD, UsrJournaldConfD])
 class JournaldConfAll(object):
@@ -133,6 +138,7 @@ class JournaldConfAll(object):
             # key6 doesn't exist because b.conf from /usr is shadowed by b.conf from /etc
             key7=value11
     """
+
     def __init__(self, journal_conf, journal_conf_d, usr_journal_conf_d):
 
         # preparation for future possible refactoring into a more general combiner
@@ -148,7 +154,9 @@ class JournaldConfAll(object):
             for parser_instance in usr_journal_conf_d:
                 usr_confd[parser_instance.file_name] = parser_instance
 
-        files_shadowed_not_used = set()  # full file paths of files that are shadowed by others
+        files_shadowed_not_used = (
+            set()
+        )  # full file paths of files that are shadowed by others
         effective_confd = {}  # deduplicated *.conf files, taking shadowing /usr by /etc into account
         for file_name, parser_instance in usr_confd.items():
             effective_confd[file_name] = parser_instance
@@ -163,7 +171,9 @@ class JournaldConfAll(object):
                     files_shadowed_not_used.add(shadowed_file_name)
             effective_confd[file_name] = parser_instance
 
-        files_shadowed_not_used = sorted(files_shadowed_not_used)  # deterministic behavior, sorted paths
+        files_shadowed_not_used = sorted(
+            files_shadowed_not_used
+        )  # deterministic behavior, sorted paths
         sorted_file_names = sorted(effective_confd.keys(), key=str)
 
         parsers_list = [effective_confd[file_name] for file_name in sorted_file_names]

@@ -37,7 +37,9 @@ class JbossVersion(Parser):
 
     def parse_content(self, content):
         self.raw = content[0]
-        product, _, version_name = [v.strip() for v in content[0].partition("- Version")]
+        product, _, version_name = [
+            v.strip() for v in content[0].partition("- Version")
+        ]
         version, code_name = version_name.strip().rsplit(".", 1)
         major, minor, release = version.split(".")
         self.parsed = {
@@ -46,7 +48,7 @@ class JbossVersion(Parser):
             "code_name": code_name,
             "major": int(major),
             "minor": int(minor),
-            "release": int(release)
+            "release": int(release),
         }
 
     @property

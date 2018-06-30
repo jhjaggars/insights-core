@@ -40,4 +40,5 @@ from .. import parser
 @parser(Specs.ls_var_run)
 class LsVarRun(FileListing):
     """Parses output of ``ls -lnL /var/run`` command."""
+
     pass

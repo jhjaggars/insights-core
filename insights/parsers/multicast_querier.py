@@ -49,6 +49,7 @@ class MulticastQuerier(CommandParser):
 
     Get a dictionary of "bridge interface" and the value of the parameter "multicast_querier"
     """
+
     @property
     def bri_val(self):
         return self._mapping
@@ -56,9 +57,9 @@ class MulticastQuerier(CommandParser):
     def parse_content(self, content):
         self._mapping = {}
         for line in content:
-            mq_val = ''
-            if line.startswith('/sys/'):
-                bri_iface = line.split('/')[5]
+            mq_val = ""
+            if line.startswith("/sys/"):
+                bri_iface = line.split("/")[5]
             else:
                 mq_val = int(line.strip())
             self._mapping[bri_iface] = mq_val

@@ -71,4 +71,5 @@ from insights.specs import Specs
 @parser(Specs.ls_etc)
 class LsEtc(CommandParser, FileListing):
     """Parses output of ``ls -lanR /etc`` command."""
+
     pass

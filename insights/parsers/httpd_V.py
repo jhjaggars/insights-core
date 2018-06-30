@@ -73,17 +73,17 @@ class HttpdV(LegacyItemAccess, CommandParser):
         compiled_with = {}
         for line in content:
             line = line.strip()
-            if ': ' in line:
-                key, value = [s.strip() for s in line.split(': ', 1)]
+            if ": " in line:
+                key, value = [s.strip() for s in line.split(": ", 1)]
                 self.data[key] = value.lower()
-            elif line.startswith('-'):
+            elif line.startswith("-"):
                 line = line[3:]  # cut off the '-D '
-                if '=' in line:
-                    key, value = line.split('=', 1)
+                if "=" in line:
+                    key, value = line.split("=", 1)
                     compiled_with[key] = value.strip('"')
                 else:
-                    if ' ' in line:
-                        key, value = line.split(' ', 1)
+                    if " " in line:
+                        key, value = line.split(" ", 1)
                         value = value.strip('"()')
                     else:
                         key, value = line, True
@@ -91,9 +91,11 @@ class HttpdV(LegacyItemAccess, CommandParser):
 
         if self.data:
             if compiled_with:
-                self.data['Server compiled with'] = compiled_with
+                self.data["Server compiled with"] = compiled_with
         else:
-            raise ParseException("Input content is not empty but there is no useful parsed data.")
+            raise ParseException(
+                "Input content is not empty but there is no useful parsed data."
+            )
 
     @property
     def httpd_command(self):
@@ -103,7 +105,7 @@ class HttpdV(LegacyItemAccess, CommandParser):
         """
         # Typical `file_path` of HttpdV looks like: '/usr/sbin/httpd_-V'
         # Remove the trailing '_-V'
-        return self.file_path[:-3] if self.file_path else ''
+        return self.file_path[:-3] if self.file_path else ""
 
     @property
     def mpm(self):
@@ -111,7 +113,7 @@ class HttpdV(LegacyItemAccess, CommandParser):
         str: The MPM mode of the running httpd. An Empty string when nothing
         is found.
         """
-        return self.data.get('Server MPM', '')
+        return self.data.get("Server MPM", "")
 
     @property
     def version(self):
@@ -119,7 +121,7 @@ class HttpdV(LegacyItemAccess, CommandParser):
         str: The version of the running httpd. An Empty string when nothing
         is found.
         """
-        return self.get('Server version', '')
+        return self.get("Server version", "")
 
 
 @parser(Specs.httpd_V)
@@ -133,12 +135,13 @@ class HttpdEventV(HttpdV):
     Raises:
         SkipException: When no ``httpd.event -V`` command is found.
     """
+
     def __init__(self, *args, **kwargs):
         deprecated(HttpdEventV, "Use the `HttpdV` parser in this module.")
         super(HttpdEventV, self).__init__(*args, **kwargs)
 
     def parse_content(self, content):
-        if 'event' in self.file_name:
+        if "event" in self.file_name:
             super(HttpdEventV, self).parse_content(content)
         else:
             raise SkipException("No 'httpd.event' command on this host.")
@@ -155,12 +158,13 @@ class HttpdWorkerV(HttpdV):
     Raises:
         SkipException: When no ``httpd.worker -V`` command is found.
     """
+
     def __init__(self, *args, **kwargs):
         deprecated(HttpdWorkerV, "Use the `HttpdV` parser in this module.")
         super(HttpdWorkerV, self).__init__(*args, **kwargs)
 
     def parse_content(self, content):
-        if 'worker' in self.file_name:
+        if "worker" in self.file_name:
             super(HttpdWorkerV, self).parse_content(content)
         else:
             raise SkipException("No 'httpd.worker' command on this host.")

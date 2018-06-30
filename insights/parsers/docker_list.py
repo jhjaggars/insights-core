@@ -73,6 +73,7 @@ class DockerList(CommandParser):
     Why not just use hard-coded fields and columns?  So that we can adapt to
     different output lists.
     """
+
     key_field = None
 
     def parse_content(self, content):
@@ -92,9 +93,9 @@ class DockerList(CommandParser):
         # a finditer to get the positions, and we find by field rather than
         # splitting on three or more spaces because of this.
         headers = []
-        field_re = re.compile(r'\w+(\s\w+)*')
+        field_re = re.compile(r"\w+(\s\w+)*")
         for match in field_re.finditer(content[0]):
-            headers.append({'name': match.group(), 'start': match.start()})
+            headers.append({"name": match.group(), "start": match.start()})
 
         # Parse the rest of the line.  Each field starts at the column
         # given by the header and ends with at least three spaces.
@@ -103,10 +104,10 @@ class DockerList(CommandParser):
             # complicated for words :-)
             row = {}
             for header in headers:
-                value = line[header['start']:].split('   ', 1)[0]
-                if value == '':
+                value = line[header["start"] :].split("   ", 1)[0]
+                if value == "":
                     value = None
-                row[header['name']] = value
+                row[header["name"]] = value
             self.rows.append(row)
 
         # If we have a key_field set, construct a data dictionary on it.
@@ -115,7 +116,7 @@ class DockerList(CommandParser):
             self.data = {}
             for row in self.rows:
                 k = row[self.key_field]
-                if k is not None and k != '<none>':
+                if k is not None and k != "<none>":
                     self.data[k] = row
 
 
@@ -124,7 +125,8 @@ class DockerListImages(DockerList):
     """
     Handle the list of docker images using the DockerList parser class.
     """
-    key_field = 'REPOSITORY'
+
+    key_field = "REPOSITORY"
 
 
 @parser(Specs.docker_list_containers)
@@ -132,4 +134,5 @@ class DockerListContainers(DockerList):
     """
     Handle the list of docker images using the DockerList parser class.
     """
-    key_field = 'NAMES'
+
+    key_field = "NAMES"

@@ -91,7 +91,7 @@ def test_smoketest():
     assert "/var/log/ppp" in result
     assert "/var/log/rhsm" in result
     assert "/var/log/tuned" in result
-    assert "audit.log" in result.listings["/var/log/audit"]['entries']
+    assert "audit.log" in result.listings["/var/log/audit"]["entries"]
     assert "audit.log" == result.get_filepermissions("/var/log/audit", "audit.log").path
 
 
@@ -113,7 +113,7 @@ def test_dir_parsed():
             ls[current_dir].append(fileperm.path)
     for dir in ls:
         assert dir in result
-        dir_from_parser = result.listings[dir]['entries']
+        dir_from_parser = result.listings[dir]["entries"]
         # Two way cross-check:
         # Were all files in our simple parse found in the parser?
         for fil in ls[dir]:

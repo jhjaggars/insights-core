@@ -69,6 +69,7 @@ class VDSMLog(LogFileOutput):
          'lineno': '304'
         }
     """
+
     def parse_lines(self, lines):
         """Parse log lines to be used with keep_scan or get
 
@@ -88,14 +89,16 @@ class VDSMLog(LogFileOutput):
 
         This will NOT parse Python Traceback. Any unparsed line(s) will be yield as a list
         """
-        time_format = '%Y-%m-%d %H:%M:%S,%f'
+        time_format = "%Y-%m-%d %H:%M:%S,%f"
 
         # Parse data & time including milisecond at the begining of
         # line. Will ignore TZ hours difference.
         # Example: "2017-04-18 13:56:28,096+0200"
         #          2017    -   04  -   18  " "     13:56:28    ,  096     +0200
         #         \d{4}    - \d{2} - \d{2} \s+  [\d{2}:]+\d{2} , \d{3}  (ignored)     # noqa
-        re_datetime_obj = re.compile(r"^(\d{4}-\d{2}-\d{2}\s+[\d{2}:]+\d{2},\d{3})")  # noqa
+        re_datetime_obj = re.compile(
+            r"^(\d{4}-\d{2}-\d{2}\s+[\d{2}:]+\d{2},\d{3})"
+        )  # noqa
 
         # Parse object name
         # Example: "[virt.vm]"
@@ -119,18 +122,20 @@ class VDSMLog(LogFileOutput):
         for line in lines:
             # import pdb; pdb.set_trace()
             if isinstance(line, dict):
-                line = line['raw_message']
+                line = line["raw_message"]
             if re_datetime_obj.match(line):
                 # VDSM version 4 log parser
                 fields = dict()
                 thread_and_module = re_thread_and_module.findall(line)
                 timestamp = re_datetime_obj.search(line).group()
-                fields['level'] = re_level_obj.search(line).group()
-                fields['thread'] = thread_and_module[0]
-                fields['logname'] = re_name_obj.findall(line)[0]
-                fields['message'] = re_message_obj.findall(line)[0].strip()
-                fields['module'], fields['lineno'] = thread_and_module[-1].split(':')  # noqa
-                fields['asctime'] = datetime.strptime(timestamp, time_format)
+                fields["level"] = re_level_obj.search(line).group()
+                fields["thread"] = thread_and_module[0]
+                fields["logname"] = re_name_obj.findall(line)[0]
+                fields["message"] = re_message_obj.findall(line)[0].strip()
+                fields["module"], fields["lineno"] = thread_and_module[-1].split(
+                    ":"
+                )  # noqa
+                fields["asctime"] = datetime.strptime(timestamp, time_format)
                 yield fields
             else:
                 # VDSM version 3 log parser
@@ -139,20 +144,30 @@ class VDSMLog(LogFileOutput):
                 #
                 # If the line is too short, for some reason, then as many
                 # fields as possible are pulled from the line.
-                fieldnames = ('thread', 'level', 'timestamp', 'module', 'line', 'logname')
+                fieldnames = (
+                    "thread",
+                    "level",
+                    "timestamp",
+                    "module",
+                    "line",
+                    "logname",
+                )
                 fields = dict()
-                parts = line.split('::', 6)
-                fields.update(dict((k, v) for (k, v) in zip(fieldnames, filter(None, parts))))
+                parts = line.split("::", 6)
+                fields.update(
+                    dict((k, v) for (k, v) in zip(fieldnames, filter(None, parts)))
+                )
                 if len(parts) == 7:
-                    func, msg = parts[6].split(' ', 1)
-                    fields['message'] = msg
+                    func, msg = parts[6].split(" ", 1)
+                    fields["message"] = msg
                 # Did we get a timestamp in there?
-                if 'timestamp' in fields:
+                if "timestamp" in fields:
                     # Try to convert the datetime if possible
                     try:
-                        fields['asctime'] = datetime.strptime(
-                            fields['timestamp'], time_format)
-                        del fields['timestamp']
+                        fields["asctime"] = datetime.strptime(
+                            fields["timestamp"], time_format
+                        )
+                        del fields["timestamp"]
                     except:
                         pass
                 yield fields

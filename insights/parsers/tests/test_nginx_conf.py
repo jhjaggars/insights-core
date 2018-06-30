@@ -94,15 +94,21 @@ http {
 
 def test_nginxconfiguration():
     nginxconf = nginx_conf.NginxConf(context_wrap(NGINXCONF))
-    assert nginxconf['user'] == 'root'
-    assert nginxconf['events']['worker_connections'] == '4096'
-    assert nginxconf['mail']['server'][0]['listen'] == '143'
-    assert nginxconf['http']['access_log'] == 'logs/access.log  main'
-    assert nginxconf['http']['server'][0]['location'][0]['fastcgi_pass'] == '127.0.0.1:1025'
-    assert nginxconf['http']['server'][1]['location'][1]['name'] == '/'
-    assert nginxconf['http']['upstream'][1]['name'] == 'big_server_com'
-    assert nginxconf["http"]["include"][0] == 'conf/mime.types'
-    assert nginxconf['http']['upstream'][1]['server'][0] == '127.0.0.3:8000 weight=5'
-    assert nginxconf['http']['log_format'] == """main  '$remote_addr - $remote_user [$time_local] "$request" '
+    assert nginxconf["user"] == "root"
+    assert nginxconf["events"]["worker_connections"] == "4096"
+    assert nginxconf["mail"]["server"][0]["listen"] == "143"
+    assert nginxconf["http"]["access_log"] == "logs/access.log  main"
+    assert (
+        nginxconf["http"]["server"][0]["location"][0]["fastcgi_pass"]
+        == "127.0.0.1:1025"
+    )
+    assert nginxconf["http"]["server"][1]["location"][1]["name"] == "/"
+    assert nginxconf["http"]["upstream"][1]["name"] == "big_server_com"
+    assert nginxconf["http"]["include"][0] == "conf/mime.types"
+    assert nginxconf["http"]["upstream"][1]["server"][0] == "127.0.0.3:8000 weight=5"
+    assert (
+        nginxconf["http"]["log_format"]
+        == """main  '$remote_addr - $remote_user [$time_local] "$request" '
 '$status $body_bytes_sent "$http_referer" '
 '"$http_user_agent" "$http_x_forwarded_for"'"""
+    )

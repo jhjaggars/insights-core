@@ -1,5 +1,11 @@
 from insights.parsers import iptables
-from insights.parsers.iptables import IPTablesConfiguration, IPTables, IP6Tables, IPTabPermanent, IP6TabPermanent
+from insights.parsers.iptables import (
+    IPTablesConfiguration,
+    IPTables,
+    IP6Tables,
+    IPTabPermanent,
+    IP6TabPermanent,
+)
 from insights.tests import context_wrap
 import doctest
 
@@ -45,7 +51,7 @@ PARSED_TCP_REJECT_RULE = {
     "target_action": "jump",
     "constraints": "-p tcp",
     "target": "REJECT",
-    "target_options": "--reject-with tcp-reset"
+    "target_options": "--reject-with tcp-reset",
 }
 
 
@@ -60,7 +66,7 @@ def check_iptables_rules_parsing(iptables_obj):
         "table": "nat",
         "name": "POSTROUTING",
         "packet_counter": 3,
-        "byte_counter": 450
+        "byte_counter": 450,
     }
     assert "tcp-reset" in ipt
     assert "--sport" not in ipt
@@ -144,13 +150,13 @@ COMMIT
 
 
 PARSED_TCP_REJECT_RULE_6 = {
-    'table': 'filter',
-    'chain': 'REJECT-LOG',
-    'rule': '-p tcp -j REJECT --reject-with tcp-reset',
-    'target_action': 'jump',
-    'constraints': '-p tcp',
-    'target': 'REJECT',
-    'target_options': '--reject-with tcp-reset',
+    "table": "filter",
+    "chain": "REJECT-LOG",
+    "rule": "-p tcp -j REJECT --reject-with tcp-reset",
+    "target_action": "jump",
+    "constraints": "-p tcp",
+    "target": "REJECT",
+    "target_options": "--reject-with tcp-reset",
 }
 
 
@@ -161,11 +167,11 @@ def check_ip6tables_rules_parsing(ip6tables_obj):
     assert len(ipt.table_chains("mangle")) == 5
     assert ipt.rules[-1] == PARSED_TCP_REJECT_RULE_6
     assert ipt.get_table("nat")[-1] == {
-        'policy': 'ACCEPT',
-        'table': 'nat',
-        'byte_counter': 0,
-        'name': 'POSTROUTING',
-        'packet_counter': 0,
+        "policy": "ACCEPT",
+        "table": "nat",
+        "byte_counter": 0,
+        "name": "POSTROUTING",
+        "packet_counter": 0,
     }
     assert "tcp-reset" in ipt
     assert "--sport" not in ipt
@@ -217,10 +223,7 @@ COMMIT
 
 
 def test_ip6tables_doc():
-    env = {
-            'IPTables': IPTables,
-            'ipt': IPTables(context_wrap(IPTABLES_SAVE_DOC)),
-          }
+    env = {"IPTables": IPTables, "ipt": IPTables(context_wrap(IPTABLES_SAVE_DOC))}
     failed, total = doctest.testmod(iptables, globs=env)
     assert failed == 0
 
@@ -262,55 +265,50 @@ COMMIT
 
 PARSED_TCP_REJECT_RULEs = [
     {
-        'table': 'filter',
-        'chain': 'INPUT',
-        'rule': '-j REJECT --reject-with icmp6-adm-prohibited',
-        'target_action': 'jump',
-        'constraints': '',
-        'target': 'REJECT',
-        'target_options': '--reject-with icmp6-adm-prohibited',
+        "table": "filter",
+        "chain": "INPUT",
+        "rule": "-j REJECT --reject-with icmp6-adm-prohibited",
+        "target_action": "jump",
+        "constraints": "",
+        "target": "REJECT",
+        "target_options": "--reject-with icmp6-adm-prohibited",
     },
     {
-        'table': 'filter',
-        'chain': 'OUTPUT',
-        'rule': '-d 192.168.0.23/32 -m comment --comment "Permit IP to device net-j" -j ACCEPT',
-        'target': 'ACCEPT',
-        'target_options': None,
-        'target_action': 'jump',
-        'constraints': '-d 192.168.0.23/32 -m comment --comment "Permit IP to device net-j"'
+        "table": "filter",
+        "chain": "OUTPUT",
+        "rule": '-d 192.168.0.23/32 -m comment --comment "Permit IP to device net-j" -j ACCEPT',
+        "target": "ACCEPT",
+        "target_options": None,
+        "target_action": "jump",
+        "constraints": '-d 192.168.0.23/32 -m comment --comment "Permit IP to device net-j"',
+    },
+    {"table": "filter", "rule": "", "chain": "DROP"},
+    {
+        "table": "filter",
+        "chain": "REJECT-LOG",
+        "rule": "-p tcp -j REJECT --reject-with tcp-reset",
+        "target": "REJECT",
+        "target_options": "--reject-with tcp-reset",
+        "target_action": "jump",
+        "constraints": "-p tcp",
     },
     {
-        'table': 'filter',
-        'rule': '',
-        'chain': 'DROP'
+        "table": "filter",
+        "chain": "INPUT",
+        "rule": "-p tcp -m tcp --dport 11 -m conntrack --ctstate NEW -j",
+        "target": "",
+        "target_options": None,
+        "target_action": "jump",
+        "constraints": "-p tcp -m tcp --dport 11 -m conntrack --ctstate NEW",
     },
-    {
-        'table': 'filter',
-        'chain': 'REJECT-LOG',
-        'rule': '-p tcp -j REJECT --reject-with tcp-reset',
-        'target': 'REJECT',
-        'target_options': '--reject-with tcp-reset',
-        'target_action': 'jump',
-        'constraints': '-p tcp'
-    },
-    {
-        'table': 'filter',
-        'chain': 'INPUT',
-        'rule': '-p tcp -m tcp --dport 11 -m conntrack --ctstate NEW -j',
-        'target': '',
-        'target_options': None,
-        'target_action': 'jump',
-        'constraints': '-p tcp -m tcp --dport 11 -m conntrack --ctstate NEW'
-    }
 ]
 
 
 def test_ip6tables_save_special():
-    ipt = IP6Tables(context_wrap(IP6TABLES_SAVE_SPECIAL.format(s_1='')))
+    ipt = IP6Tables(context_wrap(IP6TABLES_SAVE_SPECIAL.format(s_1="")))
     assert len(ipt.rules) == 5
     assert len(ipt.get_chain("INPUT")) == 2
     assert len(ipt.get_chain("OUTPUT")) == 1
     for rst, exp in zip(ipt.rules, PARSED_TCP_REJECT_RULEs):
         assert rst == exp
-    assert ipt.get_chain("DROP") == [
-                {'table': 'filter', 'rule': '', 'chain': 'DROP'}]
+    assert ipt.get_chain("DROP") == [{"table": "filter", "rule": "", "chain": "DROP"}]

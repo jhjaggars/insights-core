@@ -70,8 +70,10 @@ KRB5CONFIG2 = """
 
 
 def test_active_krb5_nest():
-    krb51 = Krb5Configuration(context_wrap(KRB5CONFIG, path='/etc/krb5.conf'))
-    krb52 = Krb5Configuration(context_wrap(KRB5CONFIG2, path='/etc/krb5.conf.d/test.conf'))
+    krb51 = Krb5Configuration(context_wrap(KRB5CONFIG, path="/etc/krb5.conf"))
+    krb52 = Krb5Configuration(
+        context_wrap(KRB5CONFIG2, path="/etc/krb5.conf.d/test.conf")
+    )
     result = AllKrb5Conf([krb51, krb52])
     assert result["logging"]["kdc"] == "FILE:/var/log/krb5kdc.log"
     assert result.has_option("logging", "admin_server")
@@ -83,7 +85,9 @@ def test_active_krb5_nest():
     assert not result.has_option("realms", "nosuchoption")
     assert not result.has_option("nosucsection", "nosuchoption")
     assert not result.options("realmsno")
-    assert sorted(result.options("logging")) == sorted(['default', 'admin_server', 'kdc'])
+    assert sorted(result.options("logging")) == sorted(
+        ["default", "admin_server", "kdc"]
+    )
     assert result.include == ["/etc/krb5test.conf"]
     assert result.includedir == ["/etc/krb5.conf.d/"]
     assert result.module == ["/etc/krb5test.conf:residual"]

@@ -8,10 +8,10 @@ import pytest
 
 
 class FakeMessagesClass(LogFileOutput):
-    time_format = '%b %d %H:%M:%S'
+    time_format = "%b %d %H:%M:%S"
 
     def bad_get_after(self, timestamp, lines=None):
-        self.time_format = '%q/%1 %z:%v:%j'
+        self.time_format = "%q/%1 %z:%v:%j"
         return super(FakeMessagesClass, self).get_after(timestamp, lines)
 
     def superget(self, s):
@@ -19,10 +19,10 @@ class FakeMessagesClass(LogFileOutput):
             if s in line:
                 parts = line.split(None, 6)
                 yield {
-                    'timestamp': ' '.join(parts[0:3]),
-                    'hostname': parts[3],
-                    'service': parts[4][:-1],  # strip colon
-                    'message': parts[5]
+                    "timestamp": " ".join(parts[0:3]),
+                    "hostname": parts[3],
+                    "service": parts[4][:-1],  # strip colon
+                    "message": parts[5],
                 }
 
     def listget(self, s):
@@ -69,49 +69,57 @@ Mar 27 03:49:10 system pulp: pulp.server.webservices.middleware.exception:ERROR:
 
 def test_messages_scanners():
     # Messages that are present can be kept
-    FakeMessagesClass.keep_scan('puppet_master_logs', ' puppet-master')
+    FakeMessagesClass.keep_scan("puppet_master_logs", " puppet-master")
     # Messages that are absent still turn up as an empty list
-    FakeMessagesClass.keep_scan('kernel_logs', ' kernel')
+    FakeMessagesClass.keep_scan("kernel_logs", " kernel")
     # Token scan of something that's present
-    FakeMessagesClass.token_scan('middleware_exception_present', 'pulp.server.webservices.middleware.exception')
+    FakeMessagesClass.token_scan(
+        "middleware_exception_present", "pulp.server.webservices.middleware.exception"
+    )
     # Token scan of something that's absent
-    FakeMessagesClass.token_scan('cron_present', 'CRONTAB')
+    FakeMessagesClass.token_scan("cron_present", "CRONTAB")
 
     # Check that duplicate scanners raise a value exception
     with pytest.raises(ValueError) as exc:
-        FakeMessagesClass.keep_scan('kernel_logs', ' kernel')
+        FakeMessagesClass.keep_scan("kernel_logs", " kernel")
     assert "'kernel_logs' is already a registered scanner key" in str(exc)
 
     def count_lost_messages(self):
         imuxsock_lines = 0
         lost_messages = 0
         for line in self.lines:
-            if 'imuxsock lost' in line:
+            if "imuxsock lost" in line:
                 parts = line.split(None)
                 if parts[7].isdigit():
                     imuxsock_lines += 1
                     lost_messages += int(parts[7])
-        return "lost {msgs} messages in {lines} lines".format(msgs=lost_messages, lines=imuxsock_lines)
-    FakeMessagesClass.scan('lost_messages', count_lost_messages)
+        return "lost {msgs} messages in {lines} lines".format(
+            msgs=lost_messages, lines=imuxsock_lines
+        )
 
-    ctx = context_wrap(MESSAGES, path='/var/log/messages')
+    FakeMessagesClass.scan("lost_messages", count_lost_messages)
+
+    ctx = context_wrap(MESSAGES, path="/var/log/messages")
     log = FakeMessagesClass(ctx)
-    assert hasattr(log, 'puppet_master_logs')
-    assert hasattr(log, 'kernel_logs')
-    assert hasattr(log, 'middleware_exception_present')
-    assert hasattr(log, 'cron_present')
-    assert hasattr(log, 'lost_messages')
+    assert hasattr(log, "puppet_master_logs")
+    assert hasattr(log, "kernel_logs")
+    assert hasattr(log, "middleware_exception_present")
+    assert hasattr(log, "cron_present")
+    assert hasattr(log, "lost_messages")
 
     assert len(log.puppet_master_logs) == 6
-    assert log.puppet_master_logs[0]['raw_message'] == 'Mar 27 03:18:24 system puppet-master[48226]: Setting manifest is deprecated in puppet.conf. See http://links.puppetlabs.com/env-settings-deprecations'
+    assert (
+        log.puppet_master_logs[0]["raw_message"]
+        == "Mar 27 03:18:24 system puppet-master[48226]: Setting manifest is deprecated in puppet.conf. See http://links.puppetlabs.com/env-settings-deprecations"
+    )
     assert log.kernel_logs == []
     assert log.middleware_exception_present
     assert not log.cron_present
-    assert log.lost_messages == 'lost 451 messages in 3 lines'
+    assert log.lost_messages == "lost 451 messages in 3 lines"
 
 
 def test_messages_get_after():
-    ctx = context_wrap(MESSAGES, path='/var/log/messages')
+    ctx = context_wrap(MESSAGES, path="/var/log/messages")
     log = FakeMessagesClass(ctx)
     assert len(log.lines) == 31
 
@@ -119,39 +127,39 @@ def test_messages_get_after():
     # Remember, logs with no date are assumed to be in year we give it
     assert len(list(log.get_after(datetime(2017, 3, 27, 3, 39, 46)))) == 3
     # Get subset of lines after date
-    pulp = log.get('pulp')  # includes /pulp/ in traceback
+    pulp = log.get("pulp")  # includes /pulp/ in traceback
     assert len(pulp) == 8
     # Get lines after date, with one keyword
-    after = list(log.get_after(datetime(2017, 3, 27, 3, 20, 30), 'pulp'))
+    after = list(log.get_after(datetime(2017, 3, 27, 3, 20, 30), "pulp"))
     assert len(after) == 5
     # Get lines after date, with one keyword
-    after = list(log.get_after(datetime(2017, 3, 27, 3, 40, 30), 'pulp'))
+    after = list(log.get_after(datetime(2017, 3, 27, 3, 40, 30), "pulp"))
     assert len(after) == 1
 
     # Get lines after date, with one keywords list
-    after = list(log.get_after(datetime(2017, 3, 27, 3, 20, 30), ['pulp', 'ERROR']))
+    after = list(log.get_after(datetime(2017, 3, 27, 3, 20, 30), ["pulp", "ERROR"]))
     assert len(after) == 2
-    after = list(log.get_after(datetime(2017, 3, 27, 3, 40, 30), 'pulp'))
+    after = list(log.get_after(datetime(2017, 3, 27, 3, 40, 30), "pulp"))
     assert len(after) == 1
     # No lines are found
-    assert list(log.get_after(datetime(2017, 3, 27, 3, 49, 46), 'pulp')) == []
+    assert list(log.get_after(datetime(2017, 3, 27, 3, 49, 46), "pulp")) == []
 
     tmp_time = datetime(2017, 3, 27, 3, 39, 46)
     with pytest.raises(TypeError):
-        list(log.get_after(tmp_time, ['type=', False, 'AVC']))
+        list(log.get_after(tmp_time, ["type=", False, "AVC"]))
     with pytest.raises(TypeError):
-        list(log.get_after(tmp_time, set(['type=', 'AVC'])))
+        list(log.get_after(tmp_time, set(["type=", "AVC"])))
 
 
 def test_messages_get_after_bad_time_format():
-    ctx = context_wrap(MESSAGES, path='/var/log/messages')
+    ctx = context_wrap(MESSAGES, path="/var/log/messages")
     log = FakeMessagesClass(ctx)
     assert len(log.lines) == 31
 
     # The timestamp format should only contain parts that get_after recognises
     with pytest.raises(ParseException) as exc:
         assert list(log.bad_get_after(datetime(2017, 3, 27, 3, 39, 46))) is None
-    assert 'get_after does not understand strptime format ' in str(exc)
+    assert "get_after does not understand strptime format " in str(exc)
 
 
 MESSAGES_ROLLOVER_YEAR = """
@@ -179,7 +187,7 @@ Jan  1 01:00:29 duradm13 xinetd[21465]: EXIT: nrpe status=0 pid=6210 duration=0(
 def test_messages_log_time_wrap():
     # Check rollover process for when dates in logs without a year go from
     # December from January.
-    ctx = context_wrap(MESSAGES_ROLLOVER_YEAR, path='/var/log/messages')
+    ctx = context_wrap(MESSAGES_ROLLOVER_YEAR, path="/var/log/messages")
     log = FakeMessagesClass(ctx)
     assert len(log.lines) == 18
 
@@ -204,11 +212,11 @@ HTTPD_ACCESS_LOG = """
 
 
 class FakeAccessLog(LogFileOutput):
-    time_format = '%d/%b/%Y:%H:%M:%S'
+    time_format = "%d/%b/%Y:%H:%M:%S"
 
 
 def test_logs_with_year():
-    ctx = context_wrap(HTTPD_ACCESS_LOG, path='/var/log/httpd/access_log')
+    ctx = context_wrap(HTTPD_ACCESS_LOG, path="/var/log/httpd/access_log")
     log = FakeAccessLog(ctx)
     assert len(log.lines) == 8
 
@@ -226,11 +234,11 @@ DATE_CHANGE_MARIADB_LOG = """
 
 
 class FakeMariaDBLog(LogFileOutput):
-    time_format = ['%y%m%d %H:%M:%S', '%Y-%m-%d %H:%M:%S']
+    time_format = ["%y%m%d %H:%M:%S", "%Y-%m-%d %H:%M:%S"]
 
 
 class DictMariaDBLog(LogFileOutput):
-    time_format = {'old': '%y%m%d %H:%M:%S', 'new': '%Y-%m-%d %H:%M:%S'}
+    time_format = {"old": "%y%m%d %H:%M:%S", "new": "%Y-%m-%d %H:%M:%S"}
 
 
 class BadClassMariaDBLog(LogFileOutput):
@@ -238,21 +246,27 @@ class BadClassMariaDBLog(LogFileOutput):
 
 
 def test_logs_with_two_timestamps():
-    ctx = context_wrap(DATE_CHANGE_MARIADB_LOG, path='/var/log/mariadb/mariadb.log')
+    ctx = context_wrap(DATE_CHANGE_MARIADB_LOG, path="/var/log/mariadb/mariadb.log")
     log = FakeMariaDBLog(ctx)
     assert len(log.lines) == 6
 
     new_ver = list(log.get_after(datetime(2017, 1, 1, 9, 0, 0)))
     assert len(new_ver) == 1
-    assert new_ver[0]['raw_message'] == '2017-01-03 09:36:17 139651251140544 [Note] MariaDB 10.1.5 started successfully'
+    assert (
+        new_ver[0]["raw_message"]
+        == "2017-01-03 09:36:17 139651251140544 [Note] MariaDB 10.1.5 started successfully"
+    )
 
     dict_log = DictMariaDBLog(ctx)
     new_ver_d = list(dict_log.get_after(datetime(2017, 1, 1, 9, 0, 0)))
     assert len(new_ver_d) == 1
-    assert new_ver_d[0]['raw_message'] == '2017-01-03 09:36:17 139651251140544 [Note] MariaDB 10.1.5 started successfully'
+    assert (
+        new_ver_d[0]["raw_message"]
+        == "2017-01-03 09:36:17 139651251140544 [Note] MariaDB 10.1.5 started successfully"
+    )
 
     # get_after should only supply a string or list for time_format
     with pytest.raises(ParseException) as exc:
         logerr = BadClassMariaDBLog(ctx)
         assert list(logerr.get_after(datetime(2017, 3, 27, 3, 39, 46))) is None
-    assert 'get_after does not recognise time formats of type ' in str(exc)
+    assert "get_after does not recognise time formats of type " in str(exc)

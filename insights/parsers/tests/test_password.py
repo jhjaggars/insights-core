@@ -30,19 +30,23 @@ session     required      pam_unix.so
 
 
 def test_password_auth_pam_conf():
-    pam_conf = PasswordAuthPam(context_wrap(PW_AUTH_PAM_CONF, path='etc/pam.d/password-auth'))
+    pam_conf = PasswordAuthPam(
+        context_wrap(PW_AUTH_PAM_CONF, path="etc/pam.d/password-auth")
+    )
     assert len(pam_conf) == 17
-    assert pam_conf[0].service == 'password-auth'
-    assert pam_conf[0].interface == 'auth'
+    assert pam_conf[0].service == "password-auth"
+    assert pam_conf[0].interface == "auth"
     assert len(pam_conf[0].control_flags) == 1
-    assert pam_conf[0].control_flags[0].flag == 'required'
-    assert pam_conf[0].module_name == 'pam_env.so'
+    assert pam_conf[0].control_flags[0].flag == "required"
+    assert pam_conf[0].module_name == "pam_env.so"
     assert pam_conf[0].module_args is None
 
     # session     [success=1 default=ignore] pam_succeed_if.so service in crond quiet use_uid
-    assert pam_conf[15].interface == 'session'
+    assert pam_conf[15].interface == "session"
     assert len(pam_conf[15].control_flags) == 2
-    assert pam_conf[15].control_flags == [PamConfEntry.ControlFlag(flag='success', value='1'),
-                                         PamConfEntry.ControlFlag(flag='default', value='ignore')]
-    assert pam_conf[15].module_name == 'pam_succeed_if.so'
-    assert pam_conf[15].module_args == 'service in crond quiet use_uid'
+    assert pam_conf[15].control_flags == [
+        PamConfEntry.ControlFlag(flag="success", value="1"),
+        PamConfEntry.ControlFlag(flag="default", value="ignore"),
+    ]
+    assert pam_conf[15].module_name == "pam_succeed_if.so"
+    assert pam_conf[15].module_args == "service in crond quiet use_uid"

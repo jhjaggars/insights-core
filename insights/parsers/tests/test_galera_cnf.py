@@ -40,8 +40,8 @@ quote-names
 def test_galera_cnf():
     cnf = GaleraCnf(context_wrap(GALERA_CNF))
     assert cnf is not None
-    assert cnf.get('client', 'port') == '3306'
-    assert cnf.get('isamchk', 'key_buffer_size') == '16M'
-    assert cnf.get('mysqld', 'max_connections') == '8192'
-    assert 'not_there' not in cnf
-    assert cnf.get('mysqldump', 'quick') is None
+    assert cnf.get("client", "port") == "3306"
+    assert cnf.get("isamchk", "key_buffer_size") == "16M"
+    assert cnf.get("mysqld", "max_connections") == "8192"
+    assert "not_there" not in cnf
+    assert cnf.get("mysqldump", "quick") is None

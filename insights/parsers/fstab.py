@@ -111,15 +111,16 @@ class FSTabEntry(LegacyItemAccess):
         fs_passno (int): check the filesystem on reboot in this pass number
         raw (str): the RAW line which is useful to front-end
     """
+
     attrs = {
-        'fs_spec': '',
-        'fs_file': '',
-        'fs_vfstype': '',
-        'raw_fs_mntops': '',
-        'fs_mntops': MountOpts(),
-        'fs_freq': 0,
-        'fs_passno': 0,
-        'raw': '',
+        "fs_spec": "",
+        "fs_file": "",
+        "fs_vfstype": "",
+        "raw_fs_mntops": "",
+        "fs_mntops": MountOpts(),
+        "fs_freq": 0,
+        "fs_passno": 0,
+        "raw": "",
     }
 
     def __init__(self, data={}):
@@ -171,22 +172,26 @@ class FSTab(Parser):
         fstab_output = parse_delimited_table([FS_HEADINGS] + get_active_lines(content))
         self.data = []
         for line in fstab_output:
-            if 'fs_file' in line:
+            if "fs_file" in line:
                 # Decode fs_file to transfer the '\040' to ' '.
                 # Encode first and then decode works for both Python2 and Python3.
-                line['fs_file'] = line['fs_file'].encode().decode("unicode-escape")
-            line['fs_freq'] = int(line['fs_freq']) if 'fs_freq' in line else 0
-            line['fs_passno'] = int(line['fs_passno']) if 'fs_passno' in line else 0
+                line["fs_file"] = line["fs_file"].encode().decode("unicode-escape")
+            line["fs_freq"] = int(line["fs_freq"]) if "fs_freq" in line else 0
+            line["fs_passno"] = int(line["fs_passno"]) if "fs_passno" in line else 0
             # optlist_to_dict converts 'key=value' to key: value and
             # 'key' to key: True
-            if 'raw_fs_mntops' in line:
-                line['fs_mntops'] = MountOpts(optlist_to_dict(line.get('raw_fs_mntops')))
+            if "raw_fs_mntops" in line:
+                line["fs_mntops"] = MountOpts(
+                    optlist_to_dict(line.get("raw_fs_mntops"))
+                )
             else:
                 # if there is no mntops, it is defaults.
                 # (/dev/foo /foo somefs defaults   0 0) and (/dev/foo /foo somefs) are same
-                line['fs_mntops'] = MountOpts(optlist_to_dict('defaults'))
+                line["fs_mntops"] = MountOpts(optlist_to_dict("defaults"))
             # add `raw` here for displaying convenience on front-end
-            line['raw'] = [l for l in content if l.strip().startswith(line['fs_spec'])][0]
+            line["raw"] = [l for l in content if l.strip().startswith(line["fs_spec"])][
+                0
+            ]
             self.data.append(FSTabEntry(line))
         # assert: all mount points of valid entries are unique by definition
         self.mounted_on = dict((row.fs_file, row) for row in self.data)
@@ -228,14 +233,14 @@ class FSTab(Parser):
         eg: '/VM TOOLS/cache' or '/VM\040TOOLS/cache'
         """
         path = path.strip() if path else path
-        if not path or not path.startswith('/'):
+        if not path or not path.startswith("/"):
             return
 
         mos = self.mounted_on
         mps = sorted(mos, reverse=True)
 
-        path = path if path.endswith('/') else path + '/'
+        path = path if path.endswith("/") else path + "/"
         for mp in mps:
-            tmp = mp if mp.endswith('/') else mp + '/'
+            tmp = mp if mp.endswith("/") else mp + "/"
             if path.startswith(tmp):
-                return mos[mp].get('fs_spec', None)
+                return mos[mp].get("fs_spec", None)

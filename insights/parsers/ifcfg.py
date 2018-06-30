@@ -54,13 +54,13 @@ JSON_FIELDS = ["TEAM_CONFIG", "TEAM_PORT_CONFIG"]
 QUOTES = "\"'"
 
 bond_mode_map = {
-    'balance-rr': 0,
-    'active-backup': 1,
-    'balance-xor': 2,
-    'broadcast': 3,
-    '802.3ad': 4,
-    'balance-tlb': 5,
-    'balance-alb': 6
+    "balance-rr": 0,
+    "active-backup": 1,
+    "balance-xor": 2,
+    "broadcast": 3,
+    "802.3ad": 4,
+    "balance-tlb": 5,
+    "balance-alb": 6,
 }
 
 
@@ -80,7 +80,7 @@ class IfCFG(LegacyItemAccess, CommandParser):
     def __init__(self, context):
         super(IfCFG, self).__init__(context)
         self.data["iface"] = context.path.rsplit("-", 1)[1]
-        self.ifname = self.data['iface']
+        self.ifname = self.data["iface"]
 
     def parse_content(self, content):
         self.data = {}
@@ -102,7 +102,7 @@ class IfCFG(LegacyItemAccess, CommandParser):
                 value = json.loads(value.replace("\\", ""))
             if key == "BONDING_OPTS":
                 value_map = OrderedDict()
-                value = re.sub(r'\s*=\s*', '=', value)
+                value = re.sub(r"\s*=\s*", "=", value)
                 for key_value_pair in value.split():
                     sub_key, sub_value = [
                         s.strip() for s in key_value_pair.split("=", 1)
@@ -117,7 +117,7 @@ class IfCFG(LegacyItemAccess, CommandParser):
         (int) the numeric value of bonding mode, or `None` if no bonding
         mode is found.
         """
-        if "BONDING_OPTS" not in self or 'mode' not in self['BONDING_OPTS']:
+        if "BONDING_OPTS" not in self or "mode" not in self["BONDING_OPTS"]:
             return None
 
         m = self["BONDING_OPTS"]["mode"]

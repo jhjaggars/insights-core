@@ -36,21 +36,31 @@ LSSCSI_5 = """
 def test_lsscsi():
     scsi = lsscsi.LsSCSI(context_wrap(LSSCSI_1))
     assert len(scsi.data) == 4
-    assert scsi[0] == {'Model': 'Controller', 'Vendor': 'IET',
-                         'HCTL': '[1:0:0:0]', 'Peripheral-Type': 'storage',
-                         'Primary-Device-Node': '-', 'Revision': '0001'}
-    assert scsi[1]['Peripheral-Type'] == 'cd/dvd'
-    assert ['-', '/dev/sr0', '/dev/sdb', '/dev/st0'] == scsi.device_nodes
+    assert scsi[0] == {
+        "Model": "Controller",
+        "Vendor": "IET",
+        "HCTL": "[1:0:0:0]",
+        "Peripheral-Type": "storage",
+        "Primary-Device-Node": "-",
+        "Revision": "0001",
+    }
+    assert scsi[1]["Peripheral-Type"] == "cd/dvd"
+    assert ["-", "/dev/sr0", "/dev/sdb", "/dev/st0"] == scsi.device_nodes
 
     scsi = lsscsi.LsSCSI(context_wrap(LSSCSI_2))
     assert len(scsi.data) == 1
-    assert scsi[0] == {'Model': 'QEMU DVD-ROM', 'Vendor': 'QEMU',
-                       'HCTL': '[1:0:0:1]', 'Peripheral-Type': 'cd/dvd',
-                       'Primary-Device-Node': '/dev/sr0', 'Revision': '2.5+'}
+    assert scsi[0] == {
+        "Model": "QEMU DVD-ROM",
+        "Vendor": "QEMU",
+        "HCTL": "[1:0:0:1]",
+        "Peripheral-Type": "cd/dvd",
+        "Primary-Device-Node": "/dev/sr0",
+        "Revision": "2.5+",
+    }
 
     scsi = lsscsi.LsSCSI(context_wrap(LSSCSI_3))
     assert len(scsi.data) == 1
-    assert scsi[0]['Model'] == 'QEMU  DVD-ROM'
+    assert scsi[0]["Model"] == "QEMU  DVD-ROM"
 
     scsi = lsscsi.LsSCSI(context_wrap(LSSCSI_4))
     assert len(scsi.data) == 4
@@ -69,7 +79,6 @@ def test_bad_lsscsi():
 
 def test_lsscsi_documentation():
     failed_count, tests = doctest.testmod(
-        lsscsi,
-        globs={'lsscsi': lsscsi.LsSCSI(context_wrap(LSSCSI_1))}
+        lsscsi, globs={"lsscsi": lsscsi.LsSCSI(context_wrap(LSSCSI_1))}
     )
     assert failed_count == 0

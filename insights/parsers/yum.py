@@ -2,28 +2,27 @@ from .. import parser, CommandParser
 from insights.specs import Specs
 
 eus = [
-    '5.0.z',
-    '5.1.z',
-    '5.2.z',
-    '5.3.ll',
-    '5.3.z',
-    '5.4.z',
-    '5.6.ll',
-    '5.6.z',
-    '5.9.ll',
-    '5.9.z'
-    '6.0.z',
-    '6.1.z',
-    '6.2.aus',
-    '6.2.z',
-    '6.3.z',
-    '6.4.aus',
-    '6.4.z',
-    '6.5.aus',
-    '6.5.z',
-    '6.6.aus',
-    '6.6.z',
-    '6.7.z'
+    "5.0.z",
+    "5.1.z",
+    "5.2.z",
+    "5.3.ll",
+    "5.3.z",
+    "5.4.z",
+    "5.6.ll",
+    "5.6.z",
+    "5.9.ll",
+    "5.9.z" "6.0.z",
+    "6.1.z",
+    "6.2.aus",
+    "6.2.z",
+    "6.3.z",
+    "6.4.aus",
+    "6.4.z",
+    "6.5.aus",
+    "6.5.z",
+    "6.6.aus",
+    "6.6.z",
+    "6.7.z",
 ]
 
 
@@ -50,7 +49,6 @@ def _parse(lines):
 
 @parser(Specs.yum_repolist)
 class YumRepoList(CommandParser):
-
     def __len__(self):
         return len(self.data)
 
@@ -62,7 +60,7 @@ class YumRepoList(CommandParser):
 
     def parse_content(self, content):
         self.data = list(_parse(content))
-        self.repos = dict((d['id'], d) for d in self.data)
+        self.repos = dict((d["id"], d) for d in self.data)
 
     @property
     def eus(self):
@@ -76,5 +74,5 @@ class YumRepoList(CommandParser):
 
     @property
     def rhel_repos(self):
-        '''Get list of RHEL repos/Repo IDs'''
-        return [i.split('/')[0] for i in self.repos.keys() if i.startswith('rhel')]
+        """Get list of RHEL repos/Repo IDs"""
+        return [i.split("/")[0] for i in self.repos.keys() if i.startswith("rhel")]

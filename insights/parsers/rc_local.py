@@ -36,6 +36,7 @@ class RcLocal(Parser):
     ['echo never > /sys/kernel/mm/redhat_transparent_hugepage/enabled']
 
     """
+
     def parse_content(self, content):
         self.data = [l for l in get_active_lines(content)]
 

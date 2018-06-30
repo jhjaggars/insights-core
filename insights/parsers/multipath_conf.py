@@ -120,17 +120,23 @@ class MultipathConf(Parser, LegacyItemAccess):
         section_name = p.Word(p.alphas + "_")
         attr_name = attr_value = p.Word(p.alphanums + "_/")
         LBRACE, RBRACE = map(p.Suppress, "{}")
-        attr = p.Group(attr_name + (attr_value | p.quotedString.setParseAction(p.removeQuotes)))
+        attr = p.Group(
+            attr_name + (attr_value | p.quotedString.setParseAction(p.removeQuotes))
+        )
         attr_list = p.Dict(p.ZeroOrMore(attr))
         simple_section = p.Group(section_name + LBRACE + attr_list + RBRACE)
-        complex_section = p.Group(section_name + LBRACE + p.OneOrMore(simple_section) + RBRACE)
+        complex_section = p.Group(
+            section_name + LBRACE + p.OneOrMore(simple_section) + RBRACE
+        )
         simple_or_complex = p.Dict(simple_section | complex_section)
         my_conf = p.Group(p.ZeroOrMore(simple_or_complex))
         my_conf.ignore("#" + p.restOfLine)
         return my_conf
 
     def parse_content(self, content):
-        self.data = MultipathConf._create_parser().parseString("\n".join(content))[0].asDict()
+        self.data = (
+            MultipathConf._create_parser().parseString("\n".join(content))[0].asDict()
+        )
 
 
 @parser(Specs.multipath_conf)
@@ -140,6 +146,7 @@ class MultipathConfTree(ConfigParser):
 
     See the :py:class:`insights.core.ConfigComponent` class for example usage.
     """
+
     def parse_doc(self, content):
         return parse_doc("\n".join(content), ctx=self, line_end="\n")
 
@@ -150,4 +157,5 @@ def get_tree(root=None):
     your local machine or an archive. It's for use in interactive sessions.
     """
     from insights import run
+
     return run(MultipathConfTree, root=root).get(MultipathConfTree)

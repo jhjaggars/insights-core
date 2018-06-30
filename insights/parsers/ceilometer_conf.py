@@ -68,4 +68,5 @@ class CeilometerConf(IniConfigFile):
             },
         }
     """
+
     pass

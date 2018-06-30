@@ -109,44 +109,70 @@ LOGROTATE_MAN_PAGE_DOC_3 = """
 
 def test_web_xml_doc_examples():
     env = {
-            'all_lrt': LogrotateConfAll(
-                [
-                    LogrotateConf(context_wrap(LOGROTATE_MAN_PAGE_DOC_1, path='/etc/logrotate.conf')),
-                    LogrotateConf(context_wrap(LOGROTATE_MAN_PAGE_DOC_2, path='/etc/logrotate.d/httpd')),
-                    LogrotateConf(context_wrap(LOGROTATE_MAN_PAGE_DOC_3, path='/etc/logrotate.d/newscrit'))
-                ])
-          }
+        "all_lrt": LogrotateConfAll(
+            [
+                LogrotateConf(
+                    context_wrap(LOGROTATE_MAN_PAGE_DOC_1, path="/etc/logrotate.conf")
+                ),
+                LogrotateConf(
+                    context_wrap(
+                        LOGROTATE_MAN_PAGE_DOC_2, path="/etc/logrotate.d/httpd"
+                    )
+                ),
+                LogrotateConf(
+                    context_wrap(
+                        LOGROTATE_MAN_PAGE_DOC_3, path="/etc/logrotate.d/newscrit"
+                    )
+                ),
+            ]
+        )
+    }
     failed, total = doctest.testmod(logrotate_conf, globs=env)
     assert failed == 0
 
 
 def test_logrotate_conf_combiner():
     all_lrt = LogrotateConfAll(
-            [
-                LogrotateConf(context_wrap(LOGROTATE_CONF_1, path='/etc/logrotate.conf')),
-                LogrotateConf(context_wrap(LOGROTATE_CONF_2, path='/etc/logrotate.d/candlepin')),
-                LogrotateConf(context_wrap(LOGROTATE_CONF_3, path='/etc/logrotate.d/xx'))
-            ])
-    assert all_lrt.global_options == ['weekly', 'rotate', 'create', 'dateext', 'include']
-    assert all_lrt['rotate'] == '4'
-    assert '/var/log/httpd/access.log' not in all_lrt
-    assert all_lrt['/var/log/httpd/access.log'] is None
-    assert all_lrt.options_of_logfile('/var/log/httpd/access.log') is None
-    assert all_lrt.configfile_of_logfile('/var/log/httpd/access.log') is None
-    assert '/var/log/candlepin/error.log' in all_lrt
-    assert all_lrt['/var/log/candlepin/candlepin.log']['rotate'] == '52'
-    assert all_lrt.configfile_of_logfile('/var/log/wtmp') == '/etc/logrotate.conf'
-    assert all_lrt.configfile_of_logfile('/var/log/candlepin/access.log') == '/etc/logrotate.d/candlepin'
-    assert all_lrt.configfile_of_logfile('/var/log/maillog') == '/etc/logrotate.d/xx'
-    assert all_lrt.options_of_logfile('/var/log/maillog')['sharedscripts'] is True
+        [
+            LogrotateConf(context_wrap(LOGROTATE_CONF_1, path="/etc/logrotate.conf")),
+            LogrotateConf(
+                context_wrap(LOGROTATE_CONF_2, path="/etc/logrotate.d/candlepin")
+            ),
+            LogrotateConf(context_wrap(LOGROTATE_CONF_3, path="/etc/logrotate.d/xx")),
+        ]
+    )
+    assert all_lrt.global_options == [
+        "weekly",
+        "rotate",
+        "create",
+        "dateext",
+        "include",
+    ]
+    assert all_lrt["rotate"] == "4"
+    assert "/var/log/httpd/access.log" not in all_lrt
+    assert all_lrt["/var/log/httpd/access.log"] is None
+    assert all_lrt.options_of_logfile("/var/log/httpd/access.log") is None
+    assert all_lrt.configfile_of_logfile("/var/log/httpd/access.log") is None
+    assert "/var/log/candlepin/error.log" in all_lrt
+    assert all_lrt["/var/log/candlepin/candlepin.log"]["rotate"] == "52"
+    assert all_lrt.configfile_of_logfile("/var/log/wtmp") == "/etc/logrotate.conf"
+    assert (
+        all_lrt.configfile_of_logfile("/var/log/candlepin/access.log")
+        == "/etc/logrotate.d/candlepin"
+    )
+    assert all_lrt.configfile_of_logfile("/var/log/maillog") == "/etc/logrotate.d/xx"
+    assert all_lrt.options_of_logfile("/var/log/maillog")["sharedscripts"] is True
 
 
 def test_logrotate_conf_combiner_no_logfile():
     all_lrt = LogrotateConfAll(
-            [
-                LogrotateConf(context_wrap(LOGROTATE_CONF_NO_FILE, path='/etc/logrotate.conf')),
-            ])
-    assert all_lrt.global_options == ['dateext', 'include']
+        [
+            LogrotateConf(
+                context_wrap(LOGROTATE_CONF_NO_FILE, path="/etc/logrotate.conf")
+            )
+        ]
+    )
+    assert all_lrt.global_options == ["dateext", "include"]
     assert all_lrt.log_files == []
-    assert all_lrt.options_of_logfile('/var/log/httpd/access.log') is None
-    assert all_lrt.configfile_of_logfile('/var/log/httpd/access.log') is None
+    assert all_lrt.options_of_logfile("/var/log/httpd/access.log") is None
+    assert all_lrt.configfile_of_logfile("/var/log/httpd/access.log") is None

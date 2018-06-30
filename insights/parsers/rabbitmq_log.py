@@ -63,6 +63,7 @@ class RabbitMQStartupLog(LogFileOutput):
     Note:
         Please refer to its super-class ``LogFileOutput``
     """
+
     pass
 
 
@@ -80,6 +81,7 @@ class RabbitMQStartupErrLog(LogFileOutput):
     .. note::
         Please refer to its super-class :py:class:`insights.core.LogFileOutput`
     """
+
     pass
 
 
@@ -124,4 +126,5 @@ class RabbitMQLogs(LogFileOutput):
         INFO lines: 2
         ERROR lines: 0
     """
-    time_format = '%d-%b-%Y::%H:%M:%S'
+
+    time_format = "%d-%b-%Y::%H:%M:%S"

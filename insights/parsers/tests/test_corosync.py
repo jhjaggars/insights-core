@@ -17,8 +17,8 @@ COROSYNC_OPTIONS=""
 
 def test_corosync_1():
     result = CoroSyncConfig(context_wrap(corosync_content))
-    assert result.data['COROSYNC_OPTIONS'] == ""
-    assert result.data['COROSYNC_INIT_TIMEOUT'] == "60"
+    assert result.data["COROSYNC_OPTIONS"] == ""
+    assert result.data["COROSYNC_INIT_TIMEOUT"] == "60"
 
-    assert result.options == ''
+    assert result.options == ""
     assert result.unparsed_lines == []
